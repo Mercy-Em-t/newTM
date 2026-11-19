@@ -409,51 +409,143 @@
          * EXECUTIVE WHITEPAPER PRINT & PDF EXPORT STYLES
          * ===================================================================== */
         @media print {
-            body {
+            /* 1. Global Page Reset & Paper Geometry */
+            @page {
+                size: A4 portrait;
+                margin: 1.6cm 1.4cm 1.6cm 1.4cm;
+            }
+            *, *::before, *::after {
+                background: transparent !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            html, body {
                 background: #ffffff !important;
                 color: #0b020e !important;
-                font-size: 11pt !important;
-                line-height: 1.6 !important;
-            }
-            nav, footer, #cmdKBackdrop, #cmdKTriggerBtn, .toast-notification,
-            .theme-toggle, .bottom-dock, .mobile-drawer, #librarySearchInput,
-            .lib-filter-btn, .pop-topic-btn, button, a.commission-cta {
-                display: none !important;
-            }
-            #modalBackdrop {
-                position: static !important;
-                background: transparent !important;
-                display: block !important;
+                font-size: 10.5pt !important;
+                line-height: 1.55 !important;
+                width: 100% !important;
+                margin: 0 !important;
                 padding: 0 !important;
                 overflow: visible !important;
             }
-            #modalBackdrop > div {
-                max-width: 100% !important;
-                box-shadow: none !important;
-                border: none !important;
-                background: transparent !important;
-                padding: 0 !important;
-            }
-            #modalCloseBtn {
+
+            /* 2. Eliminate All Sticky / Fixed Navigation Chrome & Floating Overlays */
+            header,
+            header.glass-nav,
+            #desktopSidebar,
+            aside,
+            nav,
+            footer,
+            #cmdKBackdrop,
+            #cmdKTriggerBtn,
+            #toastNotification,
+            .toast-notification,
+            .theme-toggle,
+            .bottom-dock,
+            #mobileMenu,
+            #mobileMenuBtn,
+            #modalStickyHeader,
+            #modalActionBar,
+            #modalMultipageFooter,
+            #modalTocPopover,
+            button,
+            .sidebar-toggle-icon,
+            .btn-luminous,
+            .btn-ghost-twilight,
+            .no-print {
                 display: none !important;
             }
-            .t-text-primary, .t-text-secondary, .t-text-muted, p, span, h1, h2, h3, h4, h5, h6 {
+
+            /* 3. Full-Width Main Layout (Remove Sidebar Left Padding) */
+            main#appView {
+                padding-left: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            /* 4. Strictly Prevent Card Slicing & Section Fragmentation Across Pages */
+            .glass-card,
+            .inner-panel,
+            .protocol-card,
+            .case-section-drawer,
+            .editorial-pullquote,
+            .marginalia-note,
+            .blueprint-box,
+            pre,
+            code,
+            table,
+            tr,
+            figure,
+            img,
+            svg,
+            .grid > div {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Prevent Headings from Being Left Stranded at Bottom of Page */
+            h1, h2, h3, h4, h5, h6 {
                 color: #0b020e !important;
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+
+            /* 5. High-Contrast Monograph Typography */
+            p, span, li, dt, dd, td, th {
+                color: #18181b !important;
             }
             .t-accent-editorial, .t-accent-warm, .text-precious-gold {
                 color: #6B0733 !important;
-                font-weight: bold !important;
+                font-weight: 700 !important;
             }
-            .blueprint-box, pre, code {
-                background: #f4f4f5 !important;
-                color: #0b020e !important;
+            .t-text-primary {
+                color: #09090b !important;
+                font-weight: 600 !important;
+            }
+            .t-text-secondary, .t-text-muted {
+                color: #3f3f46 !important;
+            }
+
+            /* 6. Clean Paper Borders & Surfaces */
+            .inner-panel, .glass-card, .border, .t-border-subtle {
                 border: 1px solid #d4d4d8 !important;
-                page-break-inside: avoid;
+                background: #fafafa !important;
+                border-radius: 8px !important;
             }
-            .editorial-pullquote {
-                border-left: 3px solid #6B0733 !important;
-                padding-left: 1rem !important;
-                page-break-inside: avoid;
+
+            .blueprint-box, pre {
+                background: #f4f4f5 !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 6px !important;
+                padding: 10px !important;
+                font-size: 8.5pt !important;
+                color: #0f172a !important;
+            }
+
+            /* 7. Monograph Reader & Modal Print Formatting */
+            #modalBackdrop {
+                position: static !important;
+                display: block !important;
+                padding: 0 !important;
+                background: transparent !important;
+                overflow: visible !important;
+            }
+            #modalContainer {
+                max-width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+            }
+            #modalScrollContainer {
+                overflow: visible !important;
+                padding: 0 !important;
+            }
+            .case-content {
+                display: block !important;
             }
         }
 
