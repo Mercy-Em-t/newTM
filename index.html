@@ -1388,51 +1388,72 @@
             const PROTOCOL_STEPS = [
                 {
                     num: '01',
-                    short: 'Feasibility & Audit',
-                    phase: 'PHASE 01 // INITIATION & FEASIBILITY',
-                    question: 'Why build it & will it deliver measurable ROI?',
+                    short: 'Strategy & Blueprint',
+                    shortTag: 'DIAGNOSE & PLAN',
+                    phase: 'PHASE 01 // STRATEGY & BLUEPRINT',
+                    question: 'Know exactly what to build, what it will cost, and eliminate costly rework before writing a line of code.',
                     timeline: 'Week 1',
                     pricingKes: 'From KES 300,000 / wk',
                     pricingUsd: 'From $2,300 / wk',
-                    title: 'Initiation, Feasibility & Technical Audit',
-                    summary: 'Over 70% of software overruns stem from missing requirements. We dissect operational bottlenecks, concurrency risks, commercial constraints, and data integrity vulnerabilities before committing engineering capital.',
+                    title: 'Strategy & Architecture Blueprint',
+                    summary: 'Most software projects overrun because teams build on unverified assumptions. We diagnose operational bottlenecks, concurrency risks, and business constraints before committing engineering capital—giving you a locked budget and clear timeline.',
                     deliverables: [
+                        'Operational & Growth Bottleneck Diagnosis Memo',
+                        'Decoupled Delivery Roadmap with Guaranteed Budget & Milestones',
+                        'System Architecture Blueprint & Security Safeguard Plan',
+                        'Executive Feasibility Review & Return-on-Investment Model'
+                    ],
+                    techDeliverables: [
                         'Operational & Concurrency Audit Memo',
                         'Decoupled Feasibility & Phased Milestone Roadmap',
                         'Calculated Failure-Mode & Bottleneck Assessment',
                         'Guaranteed Delivery Budget & SLA Specification'
                     ],
-                    signoff: 'Mutual executive sign-off on scope boundaries, ROI model, and formal phase gate.'
+                    signoff: 'Mutual executive sign-off on scope boundaries, ROI milestones, and guaranteed delivery budget.'
                 },
                 {
                     num: '02',
-                    short: 'Requirements & Modeling',
-                    phase: 'PHASE 02 // REQUIREMENTS & MODELING',
-                    question: 'What are the exact data flows & business rules?',
+                    short: 'Interactive Prototype',
+                    shortTag: 'PROTOTYPE & RULES',
+                    phase: 'PHASE 02 // PROTOTYPE & RULES',
+                    question: 'See, click through, and validate your complete system workflows and screens before building.',
                     timeline: 'Weeks 1 – 2',
                     pricingKes: 'From KES 350,000 / wk',
                     pricingUsd: 'From $2,700 / wk',
-                    title: 'Requirements Engineering & Domain Modeling',
-                    summary: 'I author formal engineering blueprints conforming to ISO/IEC 29148: normalized 3NF PostgreSQL schemas, entity boundaries, and deterministic state transitions. No ambiguous wireframes—pure engineering rigor.',
+                    title: 'Interactive Prototype & Systems Model',
+                    summary: 'We transform your business requirements into a live clickable prototype and verified database rules. You and your team click through every screen, user journey, and transaction state before production development begins.',
                     deliverables: [
+                        'Clickable Interactive Prototype (Test Real User Journeys)',
+                        'Ironclad Business Rules & Transaction State Machine Logic',
+                        'Complete Database Schema (Zero Duplicate Records or Broken States)',
+                        'Third-Party API & Payment Integration Architecture'
+                    ],
+                    techDeliverables: [
                         'Normalized 3NF PostgreSQL Domain Schema Spec',
                         'Deterministic State Machines & Transition Invariant Proofs',
                         'ISO/IEC 29148 Software Requirements Specification (SRS)',
                         'OpenAPI 3.1 Contract & Boundary Schema Definitions'
                     ],
-                    signoff: 'Formal schema validation review, data boundary sign-off, and state-machine locking.'
+                    signoff: 'Clickable prototype validation sign-off, data boundary review, and state-machine locking.'
                 },
                 {
                     num: '03',
-                    short: 'Architecture & Design',
-                    phase: 'PHASE 03 // ARCHITECTURE & DESIGN',
-                    question: 'How will the database, APIs, and UI function?',
+                    short: 'Production Engine',
+                    shortTag: 'CRASH-PROOF ENGINE',
+                    phase: 'PHASE 03 // PRODUCTION ENGINE',
+                    question: 'A high-speed, crash-proof engine built and stress-tested under heavy real-world volume.',
                     timeline: 'Weeks 2 – 4',
                     pricingKes: 'From KES 800,000',
                     pricingUsd: 'From $6,150',
-                    title: 'High-Assurance Architecture & Design',
-                    summary: 'Execution of core service abstractions, row-level concurrency controls, idempotent webhook listeners, and PIN-isolated staging environments under real network conditions.',
+                    title: 'High-Assurance Production Build',
+                    summary: 'We build your core backend engines, database rules, and web interfaces with crash-proof controls. Customers will never encounter duplicate charges, ghost inventory, or dropped orders even during sudden traffic spikes.',
                     deliverables: [
+                        'Crash-Proof High-Traffic Engine (Zero Duplicate Orders or Over-Selling)',
+                        'Private Client Staging Vault (Test and Approve Before Going Live)',
+                        'Multi-Tenant Safe Harbor Architecture (Total Data Privacy)',
+                        'Automated Self-Testing Shield (Prevents New Updates from Breaking Existing Features)'
+                    ],
+                    techDeliverables: [
                         'Row-Level Pessimistic Locking & Idempotent Event Rails',
                         'Isolated Client Staging Vault & Interactive Preview',
                         'Multi-Tenant Safe Harbor Security Architecture',
@@ -1442,15 +1463,22 @@
                 },
                 {
                     num: '04',
-                    short: 'Construction & Cutover',
-                    phase: 'PHASE 04 // CONSTRUCTION & CUTOVER',
-                    question: 'Production build, load testing, and go-live.',
+                    short: 'Cutover & Handover',
+                    shortTag: 'ZERO-DOWNTIME LAUNCH',
+                    phase: 'PHASE 04 // ZERO-DOWNTIME LAUNCH',
+                    question: 'Zero-downtime launch, staff training, complete documentation, and 100% code ownership.',
                     timeline: 'Weeks 4 – 8+',
                     pricingKes: 'From KES 1,500,000',
                     pricingUsd: 'From $11,500',
-                    title: 'Production Build, Load Gate & Zero-Defect Cutover',
-                    summary: 'Full production build, zero-downtime cutover migrations, stress-tested under African mobile network latency, accompanied by operational runbooks and sovereign self-hosted infrastructure handover.',
+                    title: 'Cutover, Launch & Executive Handover',
+                    summary: 'We migrate your live customer data with zero downtime, configure 24/7 automated health monitoring, train your internal team, and hand over 100% of the sovereign source code and operational runbooks.',
                     deliverables: [
+                        'Zero-Downtime Live Launch & Seamless Data Cutover',
+                        'Hardened Cloud/Server Infrastructure Setup (Linux / Docker)',
+                        '24/7 Self-Healing System Monitoring & Telemetry Daemon',
+                        'Comprehensive Staff Operational Runbooks & 100% Code Handover'
+                    ],
+                    techDeliverables: [
                         'Hardened Containerized Deployment (Ubuntu Linux / Docker)',
                         'Zero-Downtime Migration & Data Backfill Scripts',
                         '24/7 Self-Healing System Monitoring & Telemetry Daemon',
@@ -4454,8 +4482,8 @@ COMMIT;`
                                     <!-- Block 1: Main Headline (Mobile: Row 1 / Desktop: Left col-span-7, row 1) -->
                                     <div class="lg:col-span-7 lg:row-start-1 z-10">
                                         <h1 class="font-serif font-normal text-3xl sm:text-5xl lg:text-6xl xl:text-[4.4rem] leading-[1.08] tracking-tight t-text-primary mb-0">
-                                            Stop Building Software on Assumptions.
-                                            <span class="block italic font-medium t-accent-editorial mt-2 text-2xl sm:text-4xl lg:text-5xl">Systems Architected to Endure.</span>
+                                            Stop Gambling on Fragile Software.
+                                            <span class="block italic font-medium t-accent-editorial mt-2 text-2xl sm:text-4xl lg:text-5xl">Software Built Right the First Time.</span>
                                         </h1>
                                     </div>
 
@@ -4633,7 +4661,7 @@ COMMIT;`
                                     <!-- Block 3: Narrative Lead + WhatsApp Desk + CTAs + Stats (Mobile: Row 3 / Desktop: Left col-span-7, row 2) -->
                                     <div class="lg:col-span-7 lg:row-start-2 z-10 space-y-5 sm:space-y-6">
                                         <p class="text-sm sm:text-lg leading-relaxed t-text-secondary max-w-xl font-light">
-                                            Over 70% of enterprise software overruns stem from missing requirements and unchecked scope creep. Through <strong class="font-semibold t-text-primary">Savannah Atelier</strong>, I deliver vendor-neutral engineering blueprints, atomic PostgreSQL backends, and decoupled phase-gated execution—guaranteeing locked budgets and zero-defect cutovers.
+                                            Most custom platforms fail because of rushed development, missed deadlines, and bloated budgets. Through <strong class="font-semibold t-text-primary">Savannah Atelier</strong>, I design and engineer fast, rock-solid web systems and digital storefronts tailored to your exact business workflow—delivered on fixed timelines, locked budgets, and zero surprises.
                                         </p>
 
                                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
@@ -4734,7 +4762,7 @@ COMMIT;`
                         <!-- INTERACTIVE 4-PHASE COMMISSIONING PROTOCOL -->
                         <section class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-t t-border-subtle">
                             <div class="max-w-7xl mx-auto">
-                                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+                                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
                                     <div>
                                         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
                                         <div>
@@ -4751,15 +4779,52 @@ COMMIT;`
                                     </div>
                                     </div>
                                     <p class="text-sm t-text-secondary max-w-lg">
-                                        Click any phase to inspect deliverables, timeline expectations, and client sign-off criteria.
+                                        Every system is delivered in transparent, milestone-gated phases—ensuring you approve concrete deliverables before committing next-stage capital.
                                     </p>
+                                </div>
+
+                                <!-- Interactive Scope Finder Card -->
+                                <div class="glass-card rounded-2xl p-5 sm:p-6 mb-7 border border-precious-gold/30">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-precious-gold animate-ping"></span>
+                                            <h3 class="font-mono text-xs uppercase tracking-[0.18em] t-accent-editorial font-bold">Scope Finder &middot; Where should you start?</h3>
+                                        </div>
+                                        <span class="font-mono text-[10px] t-text-muted uppercase tracking-wider">Click a starting point to see its deliverables:</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <button type="button" onclick="selectProtocolScope(0)" class="p-3.5 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all text-left group">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-mono text-[10px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Step 1</span>
+                                                <span class="font-mono text-[10px] text-emerald-400 group-hover:underline">Phase 01 &rarr;</span>
+                                            </div>
+                                            <h4 class="text-xs sm:text-sm font-semibold t-text-primary mb-1">New Platform Concept</h4>
+                                            <p class="text-[11px] t-text-secondary leading-snug">"I have a business workflow or idea, but need a locked budget &amp; technical blueprint first."</p>
+                                        </button>
+                                        <button type="button" onclick="selectProtocolScope(1)" class="p-3.5 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all text-left group">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-mono text-[10px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Step 2</span>
+                                                <span class="font-mono text-[10px] text-emerald-400 group-hover:underline">Phase 02 &rarr;</span>
+                                            </div>
+                                            <h4 class="text-xs sm:text-sm font-semibold t-text-primary mb-1">Validate Before Building</h4>
+                                            <p class="text-[11px] t-text-secondary leading-snug">"We want a clickable prototype and locked business rules before writing production code."</p>
+                                        </button>
+                                        <button type="button" onclick="selectProtocolScope(2)" class="p-3.5 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all text-left group">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-mono text-[10px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Step 3</span>
+                                                <span class="font-mono text-[10px] text-emerald-400 group-hover:underline">Phase 03 &rarr;</span>
+                                            </div>
+                                            <h4 class="text-xs sm:text-sm font-semibold t-text-primary mb-1">Production System Build</h4>
+                                            <p class="text-[11px] t-text-secondary leading-snug">"We need an engineering partner to build a high-speed, crash-proof engine under heavy traffic."</p>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div class="glass-card rounded-3xl p-6 sm:p-10">
                                     <div id="protocolTabsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-7" role="tablist">
                                         ${PROTOCOL_STEPS.map((s, idx) => `
                                             <button type="button" data-protocol-idx="${idx}" role="tab" aria-selected="${idx === currentProtocolIndex}" class="protocol-tab text-left p-4 rounded-2xl border transition-all duration-300">
-                                                <span class="font-mono text-[11px] block mb-1 t-accent-warm">${s.num} // PHASE</span>
+                                                <span class="font-mono text-[10px] block mb-1 t-accent-warm font-semibold">${s.num} // ${s.shortTag || 'PHASE'}</span>
                                                 <span class="font-medium text-sm t-text-primary">${s.short}</span>
                                             </button>
                                         `).join('')}
@@ -5042,6 +5107,7 @@ COMMIT;`
                     currentProtocolIndex = idx;
                     window.currentProtocolIdx = idx;
                     window.updateActiveProtocol = updateProtocol;
+                    window.updateProtocol = updateProtocol;
                     const step = PROTOCOL_STEPS[idx];
                     const panel = document.getElementById('protocolDetailPanel');
                     if (!panel || !step) return;
@@ -5052,40 +5118,59 @@ COMMIT;`
                     panel.innerHTML = `
                         <div class="lg:col-span-7 space-y-3.5">
                             <div class="flex flex-wrap items-center gap-2.5">
-                                <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm">${step.phase}</span>
-                                <span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full theme-badge">${step.timeline}</span>
+                                <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm font-semibold">${step.phase}</span>
+                                <span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full theme-badge font-medium">${step.timeline}</span>
                                 <span id="protoPriceBadge" class="font-mono text-[11px] px-3 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold">${currentPrice}</span>
                             </div>
-                            <div class="p-2.5 rounded-xl bg-fae-fruit/10 border-l-2 border-fae-fruit my-1">
+                            <div class="p-3 rounded-xl bg-fae-fruit/10 border-l-2 border-fae-fruit my-1">
                                 <p class="font-serif italic text-sm sm:text-base t-accent-editorial">"${step.question}"</p>
                             </div>
-                            <h3 class="font-serif text-3xl t-text-primary">${step.title}</h3>
+                            <h3 class="font-serif text-2xl sm:text-3xl t-text-primary font-normal">${step.title}</h3>
                             <p class="text-sm sm:text-base t-text-secondary leading-relaxed">${step.summary}</p>
                             <div class="pt-2">
                                 <p class="font-mono text-[10px] uppercase tracking-[0.18em] t-accent-warm mb-1">Gate Verification &amp; Sign-Off Criteria</p>
                                 <p class="text-xs sm:text-sm t-text-primary">${step.signoff}</p>
                             </div>
                         </div>
-                        <div class="lg:col-span-5 glass-card rounded-xl p-5 flex flex-col justify-between">
+                        <div class="lg:col-span-5 glass-card rounded-2xl p-5 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-3 border-b t-border-subtle pb-2">
-                                    <p class="font-mono text-[11px] uppercase tracking-[0.18em] t-accent-warm">Phase Deliverables</p>
+                                    <p class="font-mono text-[11px] uppercase tracking-[0.18em] t-accent-warm font-semibold">Client Deliverables</p>
                                     <span class="font-mono text-xs t-accent-editorial font-bold">${currentPrice}</span>
                                 </div>
                                 <ul class="space-y-2.5 mb-4">
                                     ${step.deliverables.map((d) => `
-                                        <li class="flex items-start gap-2.5 text-sm t-text-primary">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-fae-fruit mt-2 shrink-0"></span>
+                                        <li class="flex items-start gap-2.5 text-xs sm:text-sm t-text-primary">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></span>
                                             <span>${d}</span>
                                         </li>
                                     `).join('')}
                                 </ul>
+
+                                <!-- Progressive Disclosure: Technical Invariants Toggle -->
+                                <details class="group mt-3 pt-3 border-t t-border-subtle text-xs">
+                                    <summary class="cursor-pointer font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] t-accent-warm hover:t-accent-editorial flex items-center justify-between select-none py-1 transition-colors">
+                                        <span>Inspect Technical Specifications &amp; Invariants</span>
+                                        <span class="transition-transform group-open:rotate-180 text-xs">&dtrif;</span>
+                                    </summary>
+                                    <div class="mt-2.5 p-3 rounded-xl inner-panel space-y-1.5 border border-fae-fruit/20">
+                                        <p class="font-mono text-[9px] uppercase tracking-wider text-precious-gold font-bold mb-1">Formal Architecture Safeguards:</p>
+                                        <ul class="space-y-1.5">
+                                            ${(step.techDeliverables || []).map((t) => `
+                                                <li class="flex items-start gap-2 text-[11px] font-mono t-text-muted">
+                                                    <span class="text-fae-fruit shrink-0">&bull;</span>
+                                                    <span>${t}</span>
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                </details>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 pt-2 border-t t-border-subtle">
-                                <a href="#/commission" onclick="setTimeout(() => { selectCommissionPhase('${step.num}'); }, 100);" class="py-2.5 text-center rounded-xl btn-luminous text-[11px] font-mono uppercase tracking-wider">
+                            <div class="grid grid-cols-2 gap-2 pt-3 border-t t-border-subtle mt-4">
+                                <a href="#/commission" onclick="setTimeout(() => { selectCommissionPhase('${step.num}'); }, 100);" class="py-2.5 text-center rounded-xl btn-luminous text-[11px] font-mono uppercase tracking-wider font-semibold">
                                     Book Phase ${step.num}
                                 </a>
-                                <a href="https://wa.me/254710720949?text=${encodeURIComponent('Hello Mercy, I would like to book Phase ' + step.num + ' (' + step.title + ') from your Decoupled Framework.')}" target="_blank" class="py-2.5 text-center rounded-xl inner-panel hover:border-fae-fruit text-[11px] font-mono uppercase tracking-wider t-text-primary inline-flex items-center justify-center gap-1.5">
+                                <a href="https://wa.me/254710720949?text=${encodeURIComponent('Hello Mercy, I would like to book Phase ' + step.num + ' (' + step.title + ') with Savannah Atelier.')}" target="_blank" class="py-2.5 text-center rounded-xl inner-panel hover:border-fae-fruit text-[11px] font-mono uppercase tracking-wider t-text-primary inline-flex items-center justify-center gap-1.5">
                                     <span>WhatsApp</span>
                                     <span class="text-emerald-400 font-bold">&rarr;</span>
                                 </a>
@@ -6396,38 +6481,38 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                                 <!-- Left Engagement Framing: Scope Qualifier & Tiers -->
                                 <div class="lg:col-span-5 space-y-6">
-                                    <!-- Interactive Scope Qualifier Tool (From Root Website Copy) -->
+                                    <!-- Interactive Scope Qualifier Tool (Client-Centric Milestone Guide) -->
                                     <div id="scopeQualifierCard" class="glass-card rounded-2xl p-5 border border-precious-gold/30">
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="w-2.5 h-2.5 rounded-full bg-precious-gold animate-ping"></span>
                                             <h3 class="font-mono text-xs uppercase tracking-[0.18em] t-accent-editorial font-bold">Interactive Scope Qualifier</h3>
                                         </div>
                                         <p class="text-xs t-text-secondary mb-4 leading-relaxed">
-                                            Not sure where your project starts? Select the prompt below that best matches your current state:
+                                            Not sure where your project starts? Select the prompt below that best matches your situation:
                                         </p>
                                         <div class="space-y-2.5 text-left">
                                             <button type="button" onclick="qualifyScope(1)" class="w-full text-left p-3 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all group">
                                                 <div class="flex items-start gap-2.5">
                                                     <span class="font-mono text-[11px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Phase 1</span>
-                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We have a business problem or concept, but no formal technical documentation."</p>
+                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We have a business concept or workflow, but need a locked budget &amp; technical blueprint first."</p>
                                                 </div>
-                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Book Feasibility & Audit &rarr;</span>
+                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Book Strategy &amp; Blueprint &rarr;</span>
                                             </button>
 
                                             <button type="button" onclick="qualifyScope(2)" class="w-full text-left p-3 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all group">
                                                 <div class="flex items-start gap-2.5">
                                                     <span class="font-mono text-[11px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Phase 2</span>
-                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We know what the system should do, but lack relational data models and technical specs."</p>
+                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We know our user workflows, but want a clickable prototype and locked rules before building."</p>
                                                 </div>
-                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Book Requirements & Modeling &rarr;</span>
+                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Book Interactive Prototype &rarr;</span>
                                             </button>
 
                                             <button type="button" onclick="qualifyScope(3)" class="w-full text-left p-3 rounded-xl inner-panel hover:border-fae-fruit hover:bg-white/5 transition-all group">
                                                 <div class="flex items-start gap-2.5">
-                                                    <span class="font-mono text-[11px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Phase 3/4</span>
-                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We already have complete specifications and need an architecture audit or build partner."</p>
+                                                    <span class="font-mono text-[11px] px-2 py-0.5 rounded-md theme-badge group-hover:border-fae-fruit">Phase 3</span>
+                                                    <p class="text-xs t-text-primary font-medium leading-snug">"We need an engineering partner to build a high-speed, crash-proof production engine."</p>
                                                 </div>
-                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Submit Specs for Architecture Audit &rarr;</span>
+                                                <span class="block mt-1 font-mono text-[10px] text-emerald-400 group-hover:underline pl-8">Action: Commission Production Build &rarr;</span>
                                             </button>
                                         </div>
                                     </div>
@@ -6437,21 +6522,21 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                                     <div class="space-y-3.5">
                                         <div class="glass-card rounded-2xl p-5">
                                             <div class="flex items-center justify-between mb-1">
-                                                <h2 class="text-sm font-semibold t-text-primary">Architecture Audit</h2>
-                                                <span class="font-mono text-[11px] t-accent-editorial font-bold">From KES 300,000 / $2,500</span>
+                                                <h2 class="text-sm font-semibold t-text-primary">Strategy &amp; Blueprint</h2>
+                                                <span class="font-mono text-[11px] t-accent-editorial font-bold">From KES 300,000 / $2,300</span>
                                             </div>
-                                            <p class="text-xs t-text-secondary">1–2 week deep technical audit, concurrency review, and formal refactoring blueprint.</p>
+                                            <p class="text-xs t-text-secondary">1–2 week deep technical audit, concurrency review, and formal locked delivery roadmap.</p>
                                         </div>
                                         <div class="glass-card rounded-2xl p-5">
                                             <div class="flex items-center justify-between mb-1">
-                                                <h2 class="text-sm font-semibold t-text-primary">Full-Stack System Commission</h2>
-                                                <span class="font-mono text-[11px] t-accent-editorial font-bold">From KES 800,000 / $6,500</span>
+                                                <h2 class="text-sm font-semibold t-text-primary">Production Build Commission</h2>
+                                                <span class="font-mono text-[11px] t-accent-editorial font-bold">From KES 800,000 / $6,150</span>
                                             </div>
-                                            <p class="text-xs t-text-secondary">End-to-end architecture, implementation, PIN-isolated staging preview, and production handover.</p>
+                                            <p class="text-xs t-text-secondary">End-to-end architecture, crash-proof checkout locking, private staging preview, and zero-downtime cutover.</p>
                                         </div>
                                         <div class="glass-card rounded-2xl p-5">
                                             <div class="flex items-center justify-between mb-1">
-                                                <h2 class="text-sm font-semibold t-text-primary">Technical Advisory</h2>
+                                                <h2 class="text-sm font-semibold t-text-primary">Fractional Systems Advisory</h2>
                                                 <span class="font-mono text-[11px] t-accent-editorial font-bold">KES 350,000 / $2,700 wk</span>
                                             </div>
                                             <p class="text-xs t-text-secondary">Ongoing fractional systems architecture, schema governance, and engineering leadership review.</p>
@@ -6493,10 +6578,11 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                                                     <label for="cType" class="block font-mono text-[11px] uppercase tracking-[0.16em] t-accent-warm mb-2">Engagement Type *</label>
                                                     <select id="cType" required class="theme-input custom-select w-full px-4 py-3.5 rounded-xl text-sm">
                                                         <option value="">Select engagement type...</option>
-                                                        <option value="Phase 01: Feasibility & Audit">Phase 01: Feasibility & Architecture Audit</option>
-                                                        <option value="Phase 02: Requirements & Modeling">Phase 02: Requirements & Domain Modeling</option>
-                                                        <option value="Full-Stack System Commission">Phase 03/04: Full-Stack System Commission</option>
-                                                        <option value="Technical Advisory & Governance">Technical Advisory & Strategic Governance</option>
+                                                        <option value="Phase 01: Strategy & Architecture Blueprint">Phase 01: Strategy &amp; Architecture Blueprint</option>
+                                                        <option value="Phase 02: Interactive Prototype & Systems Model">Phase 02: Interactive Prototype &amp; Systems Model</option>
+                                                        <option value="Phase 03: High-Assurance Production Build">Phase 03: High-Assurance Production Build</option>
+                                                        <option value="Phase 04: Turnkey Cutover & Launch">Phase 04: Turnkey Cutover &amp; Launch</option>
+                                                        <option value="Fractional Systems Advisory & Governance">Fractional Systems Advisory &amp; Governance</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -6510,10 +6596,10 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                                                     <label for="cBudget" class="block font-mono text-[11px] uppercase tracking-[0.16em] t-accent-warm mb-2">Investment Tier (KES / USD) *</label>
                                                     <select id="cBudget" required class="theme-input custom-select w-full px-4 py-3.5 rounded-xl text-sm">
                                                         <option value="">Select investment tier (KES / USD)...</option>
-                                                        <option value="KES 300,000 / $2,300 – $5,000 (Phase 01)">KES 300,000 / $2,300 – $5,000 (Phase 01: Feasibility & Audit)</option>
-                                                        <option value="KES 350,000 / $2,700 – $5,000 (Phase 02)">KES 350,000 / $2,700 – $5,000 (Phase 02: Requirements & Modeling)</option>
-                                                        <option value="KES 800,000 / $6,150 – $12,000 (Phase 03)">KES 800,000 / $6,150 – $12,000 (Phase 03: Architecture & Design)</option>
-                                                        <option value="KES 1,500,000+ / $11,500+ (Phase 04)">KES 1,500,000+ / $11,500+ (Phase 04: Full Production Cutover)</option>
+                                                        <option value="KES 300,000 / $2,300 (Phase 01: Strategy & Blueprint)">KES 300,000 / $2,300 (Phase 01: Strategy &amp; Blueprint)</option>
+                                                        <option value="KES 350,000 / $2,700 (Phase 02: Interactive Prototype)">KES 350,000 / $2,700 (Phase 02: Interactive Prototype)</option>
+                                                        <option value="KES 800,000 / $6,150 (Phase 03: Production Engine Build)">KES 800,000 / $6,150 (Phase 03: Production Engine Build)</option>
+                                                        <option value="KES 1,500,000+ / $11,500+ (Phase 04: Turnkey Go-Live)">KES 1,500,000+ / $11,500+ (Phase 04: Turnkey Go-Live)</option>
                                                         <option value="Custom Retainer / Strategic Advisory">Custom Retainer / Strategic Advisory</option>
                                                     </select>
                                                 </div>
@@ -8176,26 +8262,45 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
              * ================================================================= */
             
             // Scope Qualifier & Phase Selector Handlers
+            window.selectProtocolScope = function(idx) {
+                const btn = document.querySelector(`.protocol-tab[data-protocol-idx="${idx}"]`);
+                if (btn) {
+                    btn.click();
+                } else if (typeof window.updateActiveProtocol === 'function') {
+                    window.updateActiveProtocol(idx);
+                } else if (typeof window.updateProtocol === 'function') {
+                    window.updateProtocol(idx);
+                }
+                const panel = document.getElementById('protocolDetailPanel');
+                if (panel) {
+                    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            };
+
             window.qualifyScope = function(phaseNum) {
                 const typeEl = document.getElementById('cType');
                 const summaryEl = document.getElementById('cSummary');
                 const budgetEl = document.getElementById('cBudget');
 
                 if (phaseNum === 1) {
-                    if (typeEl) typeEl.value = 'Phase 01: Feasibility & Audit';
-                    if (budgetEl) budgetEl.value = 'KES 300,000 / $2,300 – $5,000 (Phase 01)';
-                    if (summaryEl) summaryEl.value = 'We have a business problem or concept, but lack formal technical documentation. Need operational feasibility, concurrency audit, and phased technical roadmap.';
+                    if (typeEl) typeEl.value = 'Phase 01: Strategy & Architecture Blueprint';
+                    if (budgetEl) budgetEl.value = 'KES 300,000 / $2,300 (Phase 01: Strategy & Blueprint)';
+                    if (summaryEl) summaryEl.value = 'We have a business concept or workflow, but need an expert feasibility diagnosis, system architecture blueprint, and locked budget before writing code.';
                 } else if (phaseNum === 2) {
-                    if (typeEl) typeEl.value = 'Phase 02: Requirements & Modeling';
-                    if (budgetEl) budgetEl.value = 'KES 350,000 / $2,700 – $5,000 (Phase 02)';
-                    if (summaryEl) summaryEl.value = 'We understand our functional requirements, but require formal 3NF relational schemas, OpenAPI specs, and ISO/IEC 29148 system contracts before construction.';
+                    if (typeEl) typeEl.value = 'Phase 02: Interactive Prototype & Systems Model';
+                    if (budgetEl) budgetEl.value = 'KES 350,000 / $2,700 (Phase 02: Interactive Prototype)';
+                    if (summaryEl) summaryEl.value = 'We know our core requirements, but want an interactive clickable prototype, verified business rules, and complete database schema to test user journeys first.';
+                } else if (phaseNum === 3) {
+                    if (typeEl) typeEl.value = 'Phase 03: High-Assurance Production Build';
+                    if (budgetEl) budgetEl.value = 'KES 800,000 / $6,150 (Phase 03: Production Engine Build)';
+                    if (summaryEl) summaryEl.value = 'We need a high-speed, crash-proof production build with automated concurrency safeguards, private staging vault, and zero-defect quality guarantees.';
                 } else {
-                    if (typeEl) typeEl.value = 'Full-Stack System Commission';
-                    if (budgetEl) budgetEl.value = 'KES 800,000 / $6,150 – $12,000 (Phase 03)';
-                    if (summaryEl) summaryEl.value = 'We have complete specifications or an existing platform requiring architectural audit, row-level PostgreSQL locks, and high-assurance production cutover.';
+                    if (typeEl) typeEl.value = 'Phase 04: Turnkey Cutover & Launch';
+                    if (budgetEl) budgetEl.value = 'KES 1,500,000+ / $11,500+ (Phase 04: Turnkey Go-Live)';
+                    if (summaryEl) summaryEl.value = 'We need a complete turnkey commissioning from architecture through production build, zero-downtime data cutover, and full operational team handover.';
                 }
 
-                showToast(`Scope qualified for Phase ${phaseNum}. Form pre-filled.`);
+                showToast(`Scope set for Phase ${phaseNum}. Form pre-filled.`);
                 const formEl = document.getElementById('commissionForm');
                 if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
             };
