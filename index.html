@@ -1598,13 +1598,13 @@
                     lead: 'Conversational commerce behaves fundamentally differently from traditional browser-based checkout funnels. When an artisan or retailer broadcasts a limited-inventory SKU drop inside a high-traffic WhatsApp broadcast channel, hundreds of concurrent buyers confirm purchase intent within the same 400-millisecond window—frequently over mobile networks with jitter, packet loss, and automatic webhook retry cascades.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'The Fallacy of Optimistic Locking in Conversational Commerce',
                             content: 'In standard web applications, optimistic locking via version columns (e.g. version = version + 1) is celebrated for high-throughput reads. However, when 200 buyers simultaneously attempt to purchase the final 3 units of an exclusive release, optimistic locking degrades catastrophically into write starvation. 197 transactions fail their version check, triggering exponential backoffs and retry floods that overwhelm the application tier while leaving buyers in agonizing conversational limbo.',
                             pullQuote: 'In conversational commerce, optimistic concurrency control is an architectural anti-pattern. Under contention spikes, it guarantees write starvation and phantom cart commitments.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'Pessimistic Row-Level Locking with NOWAIT',
                             content: 'Inside Order Guard, we rejected optimistic application-level reconciliation entirely. Stock allocation is treated as a strict financial transaction executed directly inside a single PostgreSQL ACID boundary using SELECT ... FOR UPDATE NOWAIT.',
                             blueprintTitle: 'PostgreSQL Atomic Reservation & Lock Ledger',
@@ -1634,14 +1634,14 @@ WHERE sku_id = 'SKU-SAVANNAH-409';
 COMMIT;`
                         },
                         {
-                            num: '§ 3.0',
+                            num: '03.0',
                             heading: 'Idempotent Ingestion Across Mobile Network Jitter',
                             content: 'WhatsApp webhook delivery via headless Baileys gateways or official BSP endpoints does not guarantee exactly-once delivery. When cell towers switch hands or packet ACK timeouts fire, duplicate webhook events arrive with identical message payloads milliseconds apart.',
                             marginalia: 'Savannah Field Observation: Over Nairobi cellular masts during 8:00 PM peak commerce drops, 6.2% of inbound WhatsApp order webhooks arrive duplicated within a 140ms window. Without cryptographic idempotency keys, duplicate reservations are guaranteed.',
                             contentAfter: 'Every incoming event payload is fingerprinted using a deterministic SHA-256 hash of (tenant_id + sender_phone + message_id + timestamp_bucket). The event is routed through an atomic Redis SETNX gate with a 30-minute expiration window before any database transaction is initiated.'
                         },
                         {
-                            num: '§ 4.0',
+                            num: '04.0',
                             heading: 'Production Invariants & Measurable Outcomes',
                             content: 'Over six months of live production routing millions in conversational volume across self-hosted Ubuntu Linux servers, Order Guard maintained zero oversells, sub-25ms average lock acquisition latencies, and total deterministic auditability for merchant accounting.',
                             axioms: [
@@ -1665,13 +1665,13 @@ COMMIT;`
                     lead: 'Multi-tenant scheduling systems fail silently when domain state transitions are scattered across ad-hoc database queries and UI event listeners. In university athletic tournaments, a sudden afternoon thunderstorm or an unannounced player walkover sends ripples across court assignments, umpire allocations, and downstream bracket seedings across dozens of concurrent divisions.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'The Cascading Fragility of Procedural Tournament Scheduling',
                             content: 'Prior to refactoring, tournament administrators relied on fragmented spreadsheets and procedural CRUD scripts. When a match was delayed by rain, staff manually dragged match rows across courts. If an administrator rescheduled a semi-final before its dependent quarter-final completed, the bracket entered an impossible state: athletes scheduled on two distinct courts simultaneously, with zero automated validation.',
                             pullQuote: 'When rain delays strike, procedural systems cascade into silent bracket corruption. Only mathematically defined, deterministic state machines can preserve tournament integrity.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'The Finite State Machine Architecture',
                             content: 'In Tennissuite, every match is governed by an explicit Finite State Machine (FSM). State mutations cannot occur through raw SQL UPDATE calls; they must pass through audited transition methods that verify strict domain invariants.',
                             blueprintTitle: 'Tennissuite Deterministic Match State Transition Machine',
@@ -1697,14 +1697,14 @@ COMMIT;`
     overlap with an active match on the same court_id.`
                         },
                         {
-                            num: '§ 3.0',
+                            num: '03.0',
                             heading: 'Multi-Tenant Isolation via 3NF Composite Foreign Keys',
                             content: 'Because Tennissuite hosts multiple university conferences on a single shared PostgreSQL engine, tenant isolation could not rely on superficial WHERE tenant_id = ? clauses alone. A single omitted clause in a reporting query would leak athlete medical clearances and private match communications.',
                             marginalia: 'Architectural Defense: All relational foreign keys enforce compound foreign constraints: FOREIGN KEY (tenant_id, tournament_id) REFERENCES tournaments(tenant_id, id). It is mathematically impossible to link a match to a tournament belonging to another tenant.',
                             contentAfter: 'This normalized 3NF schema, coupled with PostgreSQL row-level security (RLS) policies, guarantees airtight multi-tenant privacy while allowing shared connection pooling and low infrastructure operating costs.'
                         },
                         {
-                            num: '§ 4.0',
+                            num: '04.0',
                             heading: 'Production Outcomes & Engineering Impact',
                             content: 'The architectural refactor cut tournament scheduling overhead by over 70%, eliminated 100% of double-booking incidents during live regional championships, and provided real-time progression feeds to thousands of players, coaches, and spectators.',
                             axioms: [
@@ -1728,13 +1728,13 @@ COMMIT;`
                     lead: 'Independent software consultancies frequently lose operational trust in the silent gap between project kickoff and final handover. Expecting non-technical founders, chief commercial officers, or institutional executives to navigate git repositories, read pull requests, or debug local Docker containers creates severe friction and delays milestone approvals.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'The Executive Cognitive Gap in Technical Commissioning',
                             content: 'When engineers present raw terminal outputs or staging environments behind complex VPN gateways, executive stakeholders feel alienated. Approval meetings devolve into defensive discussions over incomplete UI stubs or transient network timeouts rather than rigorous review of business invariants and core workflows.',
                             pullQuote: 'Executive sponsors should never decipher pull requests or debug staging VPNs. High-trust engineering consultancy is founded on calm, sovereign staging environments.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'The Architecture of Sovereign PIN-Isolated Staging Vaults',
                             content: 'At Savannah Atelier, every active client commission is provisioned within an isolated, cryptographic preview gateway. Clients receive a single clean URL paired with a private 4-digit PIN. The gateway decrypts their verified milestone environment, complete with simulated production data, a live system telemetry dashboard, and a phase-signoff checklist.',
                             blueprintTitle: 'Savannah Atelier Staging Gateway & Access Protocol',
@@ -1760,14 +1760,14 @@ COMMIT;`
    +─────────────────────────────────────────────────────────────+`
                         },
                         {
-                            num: '§ 3.0',
+                            num: '03.0',
                             heading: 'Turning Reviews into Calm, High-Trust Milestone Approvals',
                             content: 'Instead of ambiguous Zoom screenshares, executive clients test real workflows on their mobile devices during their own time. When they test an order placement or schedule change, they see the actual database state reflect cleanly.',
                             marginalia: 'Consultancy Metric: Client approval turnaround times collapsed from an average of 9 business days to under 36 hours once sovereign PIN staging vaults were introduced across all active Savannah Atelier projects.',
                             contentAfter: 'The staging vault maintains an immutable audit log of sign-off approvals, generating formal ISO-conforming acceptance certificates upon phase completion.'
                         },
                         {
-                            num: '§ 4.0',
+                            num: '04.0',
                             heading: 'Delivery Axioms for Independent Technical Leaders',
                             content: 'True technical authority is demonstrated not through complex jargon, but through radical clarity, deterministic delivery schedules, and respect for client executive focus.',
                             axioms: [
@@ -1791,13 +1791,13 @@ COMMIT;`
                     lead: 'Enterprise organizations with legacy monolithic architectures inevitably hit a velocity wall: deployment cycles stretch into multi-week regression exercises, database locks cascade across unrelated modules, and minor schema adjustments risk system-wide outages.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'The Strangler Fig Pattern in Enterprise Modernization',
                             content: 'Big-bang rewrites boast an 80% failure rate in enterprise software. Instead, Savannah Atelier applies the Strangler Fig pattern: intercepting domain boundaries via an API gateway, migrating specific high-churn capabilities (e.g. billing, order reservations) into isolated services, and delegating reads through replicated 3NF materialized views.',
                             pullQuote: 'A legacy rewrite should never halt running revenue. We strangle the monolith at the network perimeter, one atomic boundary at a time.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'Boundary Isolation & Database Decoupling',
                             content: 'The hardest aspect of decoupling is not network transport; it is relational database disentanglement. Monoliths share tables with unchecked foreign keys across departmental domains.',
                             blueprintTitle: 'Monolith Perimeter Gateway & Strangler Interceptor',
@@ -1816,7 +1816,7 @@ COMMIT;`
              └──────( Change Data Capture / Debezium )───┘`
                         },
                         {
-                            num: '§ 3.0',
+                            num: '03.0',
                             heading: 'Zero-Downtime Cutover Verification',
                             content: 'Prior to full traffic migration, both the legacy monolith and the new service run in parallel under dark-launch traffic mirroring. Read responses are compared at the gateway to certify 100% data parity before the legacy module is permanently decommissioned.'
                         }
@@ -1835,13 +1835,13 @@ COMMIT;`
                     lead: 'Commercial live video broadcasting across East Africa suffers from exorbitant bandwidth egress charges and high network buffering when routed through centralized American or European CDN edges. In Emurugat Labs, we engineered Nueve: a low-latency, edge-aware streaming core.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'The Edge Latency Bottleneck in African Media Streams',
                             content: 'Routing video chunks from Nairobi to Frankfurt and back to Nairobi introduces an unavoidable 160ms minimum round-trip physical delay before considering TCP congestion and transcoding queues. Nueve terminates RTMP/WebRTC feeds directly on local Nairobi edge nodes.',
                             pullQuote: 'Routing local video traffic through overseas CDNs wastes bandwidth and destroys real-time interactive latency. Sovereign edge infrastructure is the answer.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'FFmpeg Pipeline & Zero-Copy Transcoding',
                             content: 'Nueve leverages custom automated ffmpeg pipelines and hardware acceleration to transcode single-source high-bitrate feeds into multi-quality HLS streams with under 1.8 seconds of glass-to-glass latency.'
                         }
@@ -1860,13 +1860,13 @@ COMMIT;`
                     lead: 'Authentication and authorization microservices operate in the direct critical path of every single inbound API request. If an IAM service introduces 15ms of garbage collection pause or suffers from memory leaks under sustained load, the entire distributed system suffers degraded SLAs.',
                     sections: [
                         {
-                            num: '§ 1.0',
+                            num: '01.0',
                             heading: 'Zero-Cost Abstractions and Memory Safety Without GC',
                             content: 'By building our Identity Access Manager in Rust, we eliminated garbage collection pauses entirely. Cryptographic JWT signature verification, PBKDF2 password hashing, and RBAC permission checks execute in sub-millisecond latencies under constant memory utilization.',
                             pullQuote: 'In the critical security path, garbage collector pauses are an operational liability. Rust gives us deterministic, sub-millisecond token evaluation.'
                         },
                         {
-                            num: '§ 2.0',
+                            num: '02.0',
                             heading: 'Hardware Key & Multi-Tenant RBAC Integration',
                             content: 'The microservice supports WebAuthn FIDO2 hardware keys, tenant-scoped API tokens, and deterministic permission matrix evaluation compiled into optimized binary representations.'
                         }
@@ -3762,23 +3762,19 @@ COMMIT;`
 
                 openModal(`
                     <article id="editorialReaderContainer" class="space-y-7 pr-2 sm:pr-4 font-reading-md">
-                        <!-- Top Sticky Reader Bar -->
-                        <div class="sticky top-0 z-20 -mt-3 pt-3 pb-4 border-b t-border-subtle flex flex-wrap items-center justify-between gap-3 pr-12 sm:pr-14" style="background: var(--nav-bg); backdrop-filter: blur(16px);">
-                            <div class="flex items-center gap-2.5">
-                                <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full theme-badge">
+                        <!-- Top Sticky Reader Bar (Raised flush to modal container top to eliminate scroll bleed) -->
+                        <div class="sticky top-0 z-20 -mt-5 sm:-mt-8 md:-mt-10 pt-4 sm:pt-6 md:pt-6 pb-3 sm:pb-3.5 -mx-5 sm:-mx-8 md:-mx-10 px-5 sm:px-8 md:px-10 border-b t-border-subtle flex items-center justify-between gap-3 shadow-md" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full theme-badge shrink-0">
                                     ${pub.volume}
                                 </span>
-                                <span class="font-mono text-xs t-text-muted">&middot; ${pub.readTime}</span>
+                                <span class="font-mono text-xs t-text-muted truncate">&middot; ${pub.readTime}</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="font-mono text-[11px] t-text-muted mr-1">Type:</span>
-                                <button type="button" id="fontSmBtn" class="px-2.5 py-1 rounded-lg inner-panel text-xs font-mono t-text-secondary hover:t-text-primary">A-</button>
-                                <button type="button" id="fontLgBtn" class="px-2.5 py-1 rounded-lg inner-panel text-xs font-mono t-text-secondary hover:t-text-primary">A+</button>
-                                <button type="button" onclick="window.print()" class="px-3 py-1 rounded-lg inner-panel text-xs font-mono t-accent-editorial hover:border-precious-gold transition-colors flex items-center gap-1.5 ml-2" title="Print Whitepaper or Save as PDF">
-                                    <svg class="w-3.5 h-3.5 text-precious-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                                    <span>Print / PDF</span>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button type="button" onclick="window.print()" class="w-8 h-8 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-precious-gold flex items-center justify-center transition-all hover:scale-105 shrink-0" title="Print or Save as PDF" aria-label="Print or Save as PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                                 </button>
-                                <button type="button" id="copyCitationBtn" class="px-3.5 py-1 rounded-lg inner-panel text-xs font-mono t-accent-editorial hover:border-fae-fruit ml-2">
+                                <button type="button" id="copyCitationBtn" class="px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial transition-colors shrink-0">
                                     Cite Monograph
                                 </button>
                             </div>
@@ -3837,7 +3833,11 @@ COMMIT;`
                             <span class="font-mono text-xs t-text-muted">Savannah Atelier Monograph Series</span>
                         </footer>
                     </article>
-                `);
+                `, {
+                    title: pub.title,
+                    subtitle: `${pub.volume} · ${pub.readTime}`,
+                    badge: 'MONOGRAPH'
+                });
 
                 // Event Listeners for Citation & Reader Controls
                 document.getElementById('copyCitationBtn').addEventListener('click', () => {
@@ -3858,22 +3858,7 @@ COMMIT;`
                     });
                 });
 
-                const readerContainer = document.getElementById('editorialReaderContainer');
-                document.getElementById('fontSmBtn').addEventListener('click', () => {
-                    if (readerContainer) {
-                        readerContainer.classList.remove('font-reading-lg');
-                        readerContainer.classList.add('font-reading-md');
-                        showToast('Standard typography active.');
-                    }
-                });
 
-                document.getElementById('fontLgBtn').addEventListener('click', () => {
-                    if (readerContainer) {
-                        readerContainer.classList.remove('font-reading-md');
-                        readerContainer.classList.add('font-reading-lg');
-                        showToast('Large editorial typography active.');
-                    }
-                });
 
                 document.getElementById('pubCommissionBtn').addEventListener('click', () => {
                     closeModal();
@@ -7356,7 +7341,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                         lead: document.getElementById('cmsPubLead').value.trim(),
                         sections: [
                             {
-                                num: '§ 1.0',
+                                num: '01.0',
                                 heading: 'Architectural Decomposition',
                                 content: document.getElementById('cmsPubLead').value.trim(),
                                 pullQuote: document.getElementById('cmsPubPullquote').value.trim() || undefined,
