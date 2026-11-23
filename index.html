@@ -348,16 +348,23 @@
         /* =====================================================================
          * EDITORIAL READING ENGINE STYLES (STRIPE PRESS / MONOGRAPH STYLE)
          * ===================================================================== */
+        .drop-cap::first-letter {
+            font-family: "Cormorant Garamond", Georgia, serif;
+            float: left;
+            font-size: 2.25rem;
+            line-height: 0.88;
+            margin-right: 0.5rem;
+            margin-top: 0.12rem;
+            color: var(--accent-editorial);
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(244, 185, 86, 0.3);
+        }
         @media (min-width: 640px) {
             .drop-cap::first-letter {
-                font-family: "Cormorant Garamond", Georgia, serif;
-                float: left;
                 font-size: 3.75rem;
                 line-height: 0.8;
                 margin-right: 0.75rem;
                 margin-top: 0.2rem;
-                color: var(--accent-editorial);
-                font-weight: 600;
                 text-shadow: 0 0 25px rgba(244, 185, 86, 0.35);
             }
         }
@@ -1391,7 +1398,7 @@
                     num: '01',
                     short: 'Strategy & Blueprint',
                     shortTag: 'DIAGNOSE & PLAN',
-                    phase: 'PHASE 01 // STRATEGY & BLUEPRINT',
+                    phase: 'PHASE 01 &middot; STRATEGY & BLUEPRINT',
                     question: 'Know exactly what to build, what it will cost, and eliminate costly rework before writing a line of code.',
                     timeline: 'Week 1',
                     pricingKes: 'From KES 300,000 / wk',
@@ -1416,7 +1423,7 @@
                     num: '02',
                     short: 'Interactive Prototype',
                     shortTag: 'PROTOTYPE & RULES',
-                    phase: 'PHASE 02 // PROTOTYPE & RULES',
+                    phase: 'PHASE 02 &middot; PROTOTYPE & RULES',
                     question: 'See, click through, and validate your complete system workflows and screens before building.',
                     timeline: 'Weeks 1 – 2',
                     pricingKes: 'From KES 350,000 / wk',
@@ -1441,7 +1448,7 @@
                     num: '03',
                     short: 'Production Engine',
                     shortTag: 'CRASH-PROOF ENGINE',
-                    phase: 'PHASE 03 // PRODUCTION ENGINE',
+                    phase: 'PHASE 03 &middot; PRODUCTION ENGINE',
                     question: 'A high-speed, crash-proof engine built and stress-tested under heavy real-world volume.',
                     timeline: 'Weeks 2 – 4',
                     pricingKes: 'From KES 800,000',
@@ -1466,7 +1473,7 @@
                     num: '04',
                     short: 'Cutover & Handover',
                     shortTag: 'ZERO-DOWNTIME LAUNCH',
-                    phase: 'PHASE 04 // ZERO-DOWNTIME LAUNCH',
+                    phase: 'PHASE 04 &middot; ZERO-DOWNTIME LAUNCH',
                     question: 'Zero-downtime launch, staff training, complete documentation, and 100% code ownership.',
                     timeline: 'Weeks 4 – 8+',
                     pricingKes: 'From KES 1,500,000',
@@ -3110,7 +3117,7 @@ COMMIT;`
                             <button type="button" onclick="jumpToSection(${idx + 1})" class="w-full text-left p-2 rounded-xl hover:bg-white/10 flex items-center justify-between text-xs transition-colors group">
                                 <span class="flex items-center gap-2.5 truncate">
                                     <span class="w-2 h-2 rounded-full ${sec.dotClass || 'bg-precious-gold'} shrink-0"></span>
-                                    <span class="truncate t-text-primary group-hover:text-precious-gold">${sec.num} // ${sec.title}</span>
+                                    <span class="truncate t-text-primary group-hover:text-precious-gold">${sec.num} &middot; ${sec.title}</span>
                                 </span>
                                 <span class="font-mono text-[10px] t-text-muted shrink-0 ml-2">P.${idx + 1}</span>
                             </button>
@@ -3474,7 +3481,7 @@ COMMIT;`
                         <header class="border-b t-border-subtle pb-6">
                             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                                 <span class="font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-1 rounded-full bg-precious-gold/20 text-precious-gold border border-precious-gold/30">
-                                    LIVE ARCHITECTURE SIMULATION // IN-APP TOUR
+                                    LIVE ARCHITECTURE SIMULATION &middot; IN-APP TOUR
                                 </span>
                                 <span class="font-mono text-xs text-emerald-400 flex items-center gap-1.5">
                                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
@@ -3781,7 +3788,7 @@ COMMIT;`
                         <header class="space-y-3 pt-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-[11px] uppercase tracking-[0.22em] t-accent-warm">${pub.category}</span>
-                                <span class="font-mono text-xs t-text-muted">// REF: ${pub.ref}</span>
+                                <span class="font-mono text-xs t-accent-warm whitespace-nowrap shrink-0">${pub.ref}</span>
                             </div>
                             <h1 id="modalTitle" class="font-serif text-3xl sm:text-5xl font-light t-text-primary leading-[1.08] tracking-tight">
                                 ${pub.title}
@@ -3887,7 +3894,7 @@ COMMIT;`
                                 <span class="font-mono text-[10px] uppercase tracking-[0.22em] px-2.5 py-1 rounded-full theme-badge text-emerald-400 border-emerald-500/30">
                                     Subcontractor &amp; Talent Desk
                                 </span>
-                                <span class="font-mono text-xs t-text-muted">// SAV-TALENT-2027</span>
+                                <span class="font-mono text-xs t-accent-warm">SAV-TALENT-2027</span>
                             </div>
                             <h2 id="modalTitle" class="font-serif text-3xl sm:text-4xl t-text-primary leading-tight">
                                 Specialist Talent Portal &amp; Mutual NDA
@@ -3996,7 +4003,7 @@ COMMIT;`
                                 <span class="font-mono text-[10px] uppercase tracking-[0.22em] px-2.5 py-1 rounded-full theme-badge text-precious-gold border-precious-gold/30">
                                     R&amp;D Sandbox &middot; Experimental Wing
                                 </span>
-                                <span class="font-mono text-xs t-text-muted">// LABS-RUNNER-01</span>
+                                <span class="font-mono text-xs t-accent-warm">LABS-RUNNER-01</span>
                             </div>
                             <h2 id="modalTitle" class="font-serif text-3xl sm:text-4xl t-text-primary leading-tight">
                                 Emurugat Labs (R&amp;D Sandbox)
@@ -4135,7 +4142,7 @@ COMMIT;`
                         ${book.savannahNotes ? `
                             <div class="glass-card rounded-2xl p-5 border border-fae-fruit/30 bg-fae-fruit/5 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-mono text-[10px] uppercase tracking-wider text-fae-fruit font-bold">Field Note // Savannah Atelier Desk</span>
+                                    <span class="font-mono text-[10px] uppercase tracking-wider text-fae-fruit font-bold">Field Note &middot; Savannah Atelier Desk</span>
                                     <span class="font-mono text-[10px] t-text-muted">Direct Application</span>
                                 </div>
                                 <p class="text-xs sm:text-sm t-text-primary leading-relaxed font-mono">
@@ -4692,7 +4699,7 @@ COMMIT;`
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     <article class="glass-card rounded-3xl p-8 flex flex-col justify-between">
                                         <div>
-                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">01 // Architectural Strategy</span>
+                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">01 &middot; Architectural Strategy</span>
                                             <h3 class="font-serif text-3xl t-text-primary mb-3">Systems Architecture &amp; Roadmap</h3>
                                             <p class="text-sm leading-relaxed t-text-secondary mb-6 font-light">
                                                 Before writing a line of code, I dissect your business workflow, calculate concurrency risks, and design a locked architectural blueprint. You get absolute clarity on timeline, exact costs, and a system structured never to need expensive rewrites.
@@ -4707,7 +4714,7 @@ COMMIT;`
 
                                     <article class="glass-card rounded-3xl p-8 flex flex-col justify-between">
                                         <div>
-                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">02 // Turnkey Commissioning</span>
+                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">02 &middot; Turnkey Commissioning</span>
                                             <h3 class="font-serif text-3xl t-text-primary mb-3">High-Speed Custom Platforms</h3>
                                             <p class="text-sm leading-relaxed t-text-secondary mb-6 font-light">
                                                 Turnkey delivery of fast web applications, WhatsApp-native storefronts, and automated business ops. You test every feature inside private, password-protected staging vaults—ensuring the user experience is polished before public launch.
@@ -4722,7 +4729,7 @@ COMMIT;`
 
                                     <article class="glass-card rounded-3xl p-8 flex flex-col justify-between">
                                         <div>
-                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">03 // Zero-Downtime Reliability</span>
+                                            <span class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm block mb-4">03 &middot; Zero-Downtime Reliability</span>
                                             <h3 class="font-serif text-3xl t-text-primary mb-3">Crash-Proof Operations &amp; Handover</h3>
                                             <p class="text-sm leading-relaxed t-text-secondary mb-6 font-light">
                                                 Engineered so your platform never crashes, double-bills a customer, or drops an order under traffic spikes. I handle zero-downtime live cutover, staff runbooks, and 100% code handover so your business stays entirely sovereign.
@@ -4803,7 +4810,7 @@ COMMIT;`
                                     <div id="protocolTabsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-7" role="tablist">
                                         ${PROTOCOL_STEPS.map((s, idx) => `
                                             <button type="button" data-protocol-idx="${idx}" role="tab" aria-selected="${idx === currentProtocolIndex}" class="protocol-tab text-left p-4 rounded-2xl border transition-all duration-300">
-                                                <span class="font-mono text-[10px] block mb-1 t-accent-warm font-semibold">${s.num} // ${s.shortTag || 'PHASE'}</span>
+                                                <span class="font-mono text-[10px] block mb-1 t-accent-warm font-semibold">${s.num} &middot; ${s.shortTag || 'PHASE'}</span>
                                                 <span class="font-medium text-sm t-text-primary">${s.short}</span>
                                             </button>
                                         `).join('')}
@@ -6181,7 +6188,7 @@ COMMIT;`
                                     <div class="flex items-center gap-2.5 mb-2.5">
                                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                                         <span class="font-mono text-xs uppercase tracking-[0.24em] text-emerald-400 font-bold">R&amp;D Sandbox &middot; Live Staging Cluster</span>
-                                        <span class="font-mono text-xs t-text-muted">// LABS-RUNNER-01</span>
+                                        <span class="font-mono text-xs t-accent-warm">LABS-RUNNER-01</span>
                                     </div>
                                     <h1 class="font-serif text-4xl sm:text-6xl font-light t-text-primary">
                                         Emurugat <span class="italic t-accent-editorial">Labs</span>
@@ -6446,7 +6453,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
                             <div class="mb-10 sm:mb-14 pb-8 border-b t-border-subtle max-w-5xl">
                                 <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full inner-panel border border-precious-gold/30 mb-3.5">
                                     <span class="w-2 h-2 rounded-full bg-precious-gold animate-pulse"></span>
-                                    <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-precious-gold font-bold">Client Onboarding // Direct Technical Desk</span>
+                                    <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-precious-gold font-bold">Client Onboarding &middot; Direct Technical Desk</span>
                                 </div>
                                 <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold t-text-primary leading-[1.04] tracking-tight">
                                     Commission a <span class="italic font-normal t-accent-editorial">System</span>
