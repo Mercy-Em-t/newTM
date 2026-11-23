@@ -4247,48 +4247,25 @@ COMMIT;`
                 const totalEps = episodes.length;
 
                 openModal(`
-                    <div class="space-y-6 pr-1 sm:pr-4">
+                    <div class="space-y-5 pr-1 sm:pr-4">
                         <!-- Header Bar -->
-                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                            <div class="space-y-2">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-0.5 rounded-full theme-badge">
-                                        ${item.seriesNumber ? `${item.seriesNumber} &middot; ` : ''}${item.categoryLabel || 'Studio Series'}
-                                    </span>
-                                    <span class="font-mono text-xs t-accent-editorial">&bull;</span>
-                                    <span class="font-mono text-xs font-semibold t-accent-warm">${cleanRuntime} Total Runtime</span>
-                                </div>
-                                <h3 id="modalTitle" class="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold t-text-primary leading-tight tracking-tight">${item.title}</h3>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="space-y-1">
+                                <span class="font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] t-accent-warm font-semibold opacity-90 block">
+                                    ${item.seriesNumber ? `${item.seriesNumber} &middot; ` : ''}${item.categoryLabel || 'Visual Essay'}
+                                </span>
+                                <h3 id="modalTitle" class="font-serif text-2xl sm:text-4xl font-semibold t-text-primary leading-tight tracking-tight">${item.title}</h3>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0 pt-1">
-                                <button type="button" onclick="minimizeToMiniPlayer()" class="px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial flex items-center gap-1.5 transition-all shadow-sm" title="Minimize to draggable floating Picture-in-Picture mini-player">
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button type="button" onclick="minimizeToMiniPlayer()" class="px-3.5 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial flex items-center gap-1.5 transition-all shadow-sm" title="Minimize to floating Picture-in-Picture mini-player">
                                     <svg class="w-3.5 h-3.5 text-precious-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M14 9h6v6"/><circle cx="16" cy="11" r="1"/>
                                     </svg>
                                     <span class="hidden sm:inline">Mini Player</span>
                                 </button>
-                                <button type="button" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '#/studio?v=${item.id}'); showToast('Direct video link copied to clipboard!');" class="p-2.5 rounded-full btn-ghost-twilight text-xs" title="Copy shareable link">
+                                <button type="button" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '#/studio?v=${item.id}'); showToast('Direct video link copied to clipboard!');" class="p-2 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs text-lavender-rose/80 hover:text-precious-gold transition-all" title="Copy shareable link" aria-label="Copy direct video link">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                                 </button>
-                                <a href="https://www.youtube.com/@MercyVerse-all1000lifetimes" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full btn-ghost-twilight text-xs font-mono">
-                                    <svg class="w-3.5 h-3.5 text-rose-500 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                                    <span>Channel &nearr;</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Series / Playlist Info Bar -->
-                        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl inner-panel border t-border-subtle text-xs font-mono">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                <span class="t-text-primary font-medium">Currently Playing: <span class="font-semibold text-precious-gold">Episode <span id="activeEpNumDisplay">${currentEp.episodeNumber}</span> of ${totalEps}</span></span>
-                                <span class="t-text-muted">&bull; <span id="activeEpDurationDisplay">${currentEp.duration}</span></span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <a href="https://www.youtube.com/playlist?list=${item.playlistId || 'PL_savannah_series'}" target="_blank" rel="noopener noreferrer" class="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1.5 text-xs transition-colors">
-                                    <span>Watch Full Playlist on YouTube</span>
-                                    <span>&nearr;</span>
-                                </a>
                             </div>
                         </div>
 
@@ -4297,27 +4274,35 @@ COMMIT;`
                             <iframe id="activeStudioIframe" class="w-full h-full" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(currentEp.youtubeVideoId || item.youtubeVideoId)}?autoplay=1&rel=0&enablejsapi=1" title="${currentEp.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
 
-                        <!-- Active Episode Title & Navigation Controls -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl glass-card border t-border-subtle">
+                        <!-- Active Episode Status Bar & Navigation Controls (Directly Under Video) -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl glass-card border t-border-subtle">
                             <div class="space-y-0.5">
-                                <span class="font-mono text-[10px] uppercase tracking-wider text-precious-gold font-bold">Now Playing</span>
-                                <h4 id="activeEpTitleDisplay" class="font-serif text-lg sm:text-xl t-text-primary font-medium">${currentEp.title}</h4>
+                                <div class="flex items-center gap-2 text-xs font-mono">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <span class="font-semibold text-precious-gold">Episode <span id="activeEpNumDisplay">${currentEp.episodeNumber}</span> of ${totalEps}</span>
+                                    <span class="t-text-muted">&bull; <span id="activeEpDurationDisplay">${currentEp.duration}</span></span>
+                                </div>
+                                <h4 id="activeEpTitleDisplay" class="font-serif text-base sm:text-lg t-text-primary font-medium">${currentEp.title}</h4>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
                                 <button type="button" onclick="switchStudioEpisode(-1)" class="px-3.5 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-secondary hover:t-text-primary flex items-center gap-1 transition-all">
-                                    <span>&larr; Prev Ep</span>
+                                    <span>&larr; Prev</span>
                                 </button>
                                 <button type="button" onclick="switchStudioEpisode(1)" class="px-3.5 py-1.5 rounded-full btn-luminous text-xs font-mono flex items-center gap-1 transition-all">
-                                    <span>Next Ep &rarr;</span>
+                                    <span>Next &rarr;</span>
                                 </button>
+                                <a href="https://www.youtube.com/playlist?list=${item.playlistId || 'PL_savannah_series'}" target="_blank" rel="noopener noreferrer" class="p-2 sm:px-3 sm:py-1.5 rounded-full inner-panel border t-border-subtle hover:border-rose-400 text-rose-400 text-xs font-mono flex items-center gap-1 transition-all" title="Watch Full Playlist on YouTube">
+                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                    <span class="hidden sm:inline">Playlist &nearr;</span>
+                                </a>
                             </div>
                         </div>
 
                         <!-- Interactive Playlist Episodes Queue -->
                         <div class="inner-panel rounded-2xl p-5 space-y-3.5 border t-border-subtle">
-                            <div class="flex items-center justify-between">
-                                <span class="font-mono text-xs uppercase tracking-[0.2em] t-accent-warm font-semibold">Series Playlist Queue</span>
-                                <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-opal/20 t-accent-editorial font-bold">${episodes.length} Episodes</span>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] t-accent-warm font-semibold truncate">Series Playlist Queue</span>
+                                <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-opal/20 t-accent-editorial font-bold whitespace-nowrap shrink-0">${episodes.length} Episodes</span>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="studioEpisodeList">
@@ -4407,7 +4392,11 @@ COMMIT;`
                             </div>
                         </div>
                     </div>
-                `);
+                `, {
+                    title: item.title,
+                    subtitle: `${item.seriesNumber ? `${item.seriesNumber} · ` : ''}${item.categoryLabel || 'Visual Essay'}`,
+                    badge: 'STUDIO ARCHIVE'
+                });
             }
 
             window.openStudioVideoModal = openStudioVideoModal;
