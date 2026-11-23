@@ -4321,11 +4321,8 @@ COMMIT;`
                         <!-- Interactive Playlist Episodes Queue -->
                         <div class="inner-panel rounded-2xl p-5 space-y-3.5 border t-border-subtle">
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-mono text-xs uppercase tracking-[0.2em] t-accent-warm font-semibold">Series Playlist Queue</span>
-                                    <span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-opal/20 t-accent-editorial font-bold">${episodes.length} Episodes</span>
-                                </div>
-                                <span class="font-mono text-[10px] t-text-muted">Click Any Episode to Stream</span>
+                                <span class="font-mono text-xs uppercase tracking-[0.2em] t-accent-warm font-semibold">Series Playlist Queue</span>
+                                <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-opal/20 t-accent-editorial font-bold">${episodes.length} Episodes</span>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="studioEpisodeList">
@@ -4355,8 +4352,8 @@ COMMIT;`
                         <!-- Interactive Chapters Section -->
                         <div class="inner-panel rounded-2xl p-5 space-y-3 border t-border-subtle">
                             <div class="flex items-center justify-between">
-                                <p class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm font-semibold">Interactive Chapters &middot; Click to Seek</p>
-                                <span class="font-mono text-[10px] t-text-muted">Direct Timestamp Seek</span>
+                                <p class="font-mono text-[11px] uppercase tracking-[0.2em] t-accent-warm font-semibold">Interactive Chapters</p>
+                                <span class="font-mono text-[10px] t-text-muted">Timestamp Seek</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 ${(item.chapters || []).map((ch) => `
