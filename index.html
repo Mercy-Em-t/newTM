@@ -988,7 +988,7 @@
         </div>
 
         <!-- Responsive Mobile Drawer -->
-        <div id="mobileMenu" class="hidden xl:hidden border-t t-border-subtle max-h-[calc(100vh-3.5rem)] overflow-y-auto luxury-scrollbar overscroll-contain" style="background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+        <div id="mobileMenu" class="hidden xl:hidden border-t border-b t-border-subtle max-h-[calc(100vh-3.5rem)] overflow-y-auto luxury-scrollbar overscroll-contain shadow-2xl relative z-30" style="background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
             <nav class="px-4 py-4 flex flex-col space-y-2 text-sm" aria-label="Mobile Navigation">
                 <!-- Mobile Drawer Theme Switcher -->
                 <div class="p-2.5 mb-1 rounded-2xl inner-panel border t-border-subtle flex items-center justify-between">
@@ -1049,6 +1049,9 @@
             </nav>
         </div>
     </header>
+
+    <!-- Mobile Menu Backdrop Blur & Dimming Overlay -->
+    <div id="mobileMenuBackdrop" class="hidden fixed inset-0 top-14 sm:top-16 z-20 bg-black/75 backdrop-blur-md transition-all duration-300 xl:hidden" aria-hidden="true"></div>
 
     <!-- ===================================================================== -->
     <!-- MAIN SPA VIEW OUTLET                                                  -->
@@ -2962,26 +2965,55 @@ COMMIT;`
              * ================================================================= */
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
             const menuIconOpen = document.getElementById('menuIconOpen');
             const menuIconClose = document.getElementById('menuIconClose');
 
             function closeMobileMenu() {
                 if (!mobileMenu) return;
                 mobileMenu.classList.add('hidden');
+                if (mobileMenuBackdrop) mobileMenuBackdrop.classList.add('hidden');
                 mobileMenuBtn.setAttribute('aria-expanded', 'false');
                 menuIconOpen.classList.remove('hidden');
                 menuIconClose.classList.add('hidden');
+                // Restore body scroll only if modal is not currently open
+                const modalBackdrop = document.getElementById('modalBackdrop');
+                if (!modalBackdrop || modalBackdrop.classList.contains('hidden')) {
+                    document.body.style.overflow = '';
+                }
+            }
+
+            function openMobileMenu() {
+                if (!mobileMenu) return;
+                mobileMenu.classList.remove('hidden');
+                if (mobileMenuBackdrop) mobileMenuBackdrop.classList.remove('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'true');
+                menuIconOpen.classList.add('hidden');
+                menuIconClose.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             }
 
             mobileMenuBtn.addEventListener('click', () => {
-                const isHidden = mobileMenu.classList.toggle('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', String(!isHidden));
-                menuIconOpen.classList.toggle('hidden', !isHidden);
-                menuIconClose.classList.toggle('hidden', isHidden);
+                const isOpen = !mobileMenu.classList.contains('hidden');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
             });
+
+            if (mobileMenuBackdrop) {
+                mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
+            }
 
             document.querySelectorAll('.mobile-nav-link').forEach((link) => {
                 link.addEventListener('click', closeMobileMenu);
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1280 && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    closeMobileMenu();
+                }
             });
 
             /* =================================================================
