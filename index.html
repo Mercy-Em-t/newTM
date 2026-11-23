@@ -3722,6 +3722,8 @@ COMMIT;`
                 }, 2000);
             };
 
+            window.openCaseStudyModal = openCaseStudyModal;
+
             function openPublicationModal(pubId) {
                 const pub = PUBLICATIONS.find((item) => item.id === pubId);
                 if (!pub) return;
@@ -3854,7 +3856,7 @@ COMMIT;`
                                     </span>
                                     <span class="font-mono text-xs t-text-muted">${nextPub.readTime}</span>
                                 </div>
-                                <h3 class="font-serif text-xl sm:text-2xl t-text-primary group-hover:text-precious-gold font-medium leading-snug transition-colors">
+                                <h3 class="font-serif text-xl sm:text-2xl t-text-primary group-hover:text-precious-gold font-semibold leading-snug tracking-tight transition-colors">
                                     ${nextPub.title}
                                 </h3>
                                 <p class="font-serif italic text-xs sm:text-sm t-text-secondary mt-1.5 line-clamp-2">
@@ -3865,10 +3867,13 @@ COMMIT;`
 
                         <!-- Editorial Author & Commissioning Footer -->
                         <footer class="pt-6 border-t t-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <button type="button" id="pubCommissionBtn" class="w-full sm:w-auto px-6 py-3 rounded-full btn-luminous text-xs font-mono uppercase tracking-wider">
+                            <div class="space-y-0.5 text-center sm:text-left">
+                                <p class="text-xs sm:text-sm t-text-secondary font-light">Planning a high-concurrency platform or multi-tenant system?</p>
+                                <span class="font-mono text-[11px] t-text-muted">Savannah Atelier Monograph Series</span>
+                            </div>
+                            <button type="button" id="pubCommissionBtn" class="w-full sm:w-auto px-6 py-3.5 rounded-full btn-luminous text-xs font-mono uppercase tracking-wider font-semibold shrink-0">
                                 Commission Architecture &rarr;
                             </button>
-                            <span class="font-mono text-xs t-text-muted">Savannah Atelier Monograph Series</span>
                         </footer>
                         </div>
                     </article>
@@ -3909,6 +3914,8 @@ COMMIT;`
                     }, 150);
                 });
             }
+
+            window.openPublicationModal = openPublicationModal;
 
             
             function openTalentPortalModal() {
