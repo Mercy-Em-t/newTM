@@ -754,18 +754,6 @@
                 </svg>
             </button>
 
-            <!-- Live Nairobi EAT Clock Telemetry (Expanded) -->
-            <div class="sidebar-expanded-only mt-3.5 flex items-center justify-between px-3 py-1.5 rounded-xl inner-panel border t-border-subtle">
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                    <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-400 font-bold">ONLINE</span>
-                </div>
-                <div class="font-mono text-[11px] t-text-secondary flex items-center gap-1.5">
-                    <span>EAT</span>
-                    <span id="sidebarNairobiClock" class="nairobi-clock-val font-bold t-accent-editorial">--:--:--</span>
-                </div>
-            </div>
-
             <!-- Spotlight Search Button (Expanded: full / Collapsed: icon) -->
             <button type="button" onclick="openCmdK()" class="sidebar-expanded-only w-full mt-2.5 flex items-center justify-between px-3 py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-muted hover:t-text-primary transition-all group" title="Search all assets (Cmd+K)">
                 <span class="flex items-center gap-2">
@@ -8332,31 +8320,6 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
             window.updateCommissionPricingDisplay = function() {
                 // updates budget dropdown and tier cards if on commission view
             };
-
-            function updateNairobiClock() {
-                let timeStr = '';
-                try {
-                    timeStr = new Intl.DateTimeFormat('en-GB', {
-                        timeZone: 'Africa/Nairobi',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    }).format(new Date());
-                } catch (err) {
-                    timeStr = new Date().toLocaleTimeString();
-                }
-
-                document.querySelectorAll('.nairobi-clock-val').forEach((el) => {
-                    el.textContent = timeStr;
-                });
-                const footerClock = document.getElementById('nairobiClock');
-                if (footerClock) footerClock.textContent = timeStr;
-                const sbClock = document.getElementById('sidebarNairobiClock');
-                if (sbClock) sbClock.textContent = timeStr;
-            }
-            updateNairobiClock();
-            setInterval(updateNairobiClock, 1000);
         })();
     </script>
 
