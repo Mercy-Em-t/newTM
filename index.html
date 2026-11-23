@@ -5633,15 +5633,19 @@ COMMIT;`
 
                             <div class="space-y-5">
                                 ${PUBLICATIONS.map((pub) => `
-                                    <article class="glass-card rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                                    <article class="glass-card rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 group hover:border-precious-gold/30 transition-all duration-300">
                                         <div class="space-y-2.5 max-w-3xl">
-                                            <div class="flex flex-wrap items-center gap-3">
+                                            <div class="flex flex-wrap items-center gap-2.5">
                                                 <span class="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 rounded-full theme-badge">${pub.category}</span>
-                                                <span class="font-mono text-xs t-accent-warm">${pub.readTime}</span>
-                                                <span class="font-mono text-xs t-text-muted">&middot; ${pub.date}</span>
+                                                <span class="font-mono text-xs t-accent-warm font-semibold">${pub.readTime}</span>
                                             </div>
-                                            <h2 class="font-serif text-2xl sm:text-3xl t-text-primary leading-snug">${pub.title}</h2>
-                                            <p class="text-sm t-text-secondary leading-relaxed">${pub.subtitle || pub.lead}</p>
+                                            <h2 class="font-serif text-2xl sm:text-3xl font-semibold t-text-primary group-hover:t-accent-editorial transition-colors leading-snug tracking-tight">${pub.title}</h2>
+                                            <div class="flex items-center gap-2 font-mono text-xs t-text-muted">
+                                                <span class="t-text-secondary font-medium">By Tryphen Emurugat</span>
+                                                <span>&middot;</span>
+                                                <span>${pub.date}</span>
+                                            </div>
+                                            <p class="text-sm t-text-secondary leading-relaxed pt-0.5">${pub.subtitle || pub.lead}</p>
                                         </div>
                                         <div class="shrink-0">
                                             <button type="button" data-pub-id="${pub.id}" class="read-pub-trigger inline-flex items-center gap-2 px-5 py-3 rounded-full btn-ghost-twilight text-xs sm:text-sm font-medium">
