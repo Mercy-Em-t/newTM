@@ -4345,12 +4345,13 @@ COMMIT;`
                 appView.innerHTML = `
                     <div class="view-enter">
                         <!-- EDITORIAL SPLIT HERO -->
-                        <section id="heroSection" class="relative pt-10 pb-20 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                        <section id="heroSection" class="relative pt-8 pb-16 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
                             <div class="max-w-7xl mx-auto">
-                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-                                    <!-- Left Positioning (Order 1 on mobile and desktop) -->
-                                    <div class="lg:col-span-7 z-10 order-1 lg:order-1">
-                                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full inner-panel mb-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                                    
+                                    <!-- Block 1: Eyebrow + Main Headline (Mobile: Row 1 / Desktop: Left col-span-7, row 1) -->
+                                    <div class="lg:col-span-7 lg:row-start-1 z-10">
+                                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full inner-panel mb-5">
                                             <span class="relative flex h-2.5 w-2.5">
                                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fae-fruit opacity-80"></span>
                                                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-fae-fruit ring-2 ring-precious-gold/50"></span>
@@ -4360,16 +4361,16 @@ COMMIT;`
                                             </span>
                                         </div>
 
-                                        <h1 class="font-serif font-light text-3xl sm:text-5xl lg:text-6xl xl:text-[4.4rem] leading-[1.08] tracking-tight t-text-primary mb-5">
+                                        <h1 class="font-serif font-light text-3xl sm:text-5xl lg:text-6xl xl:text-[4.4rem] leading-[1.08] tracking-tight t-text-primary mb-0">
                                             Stop Building Software on Assumptions.
                                             <span class="block italic font-normal t-accent-editorial mt-1.5 text-2xl sm:text-4xl lg:text-5xl">Systems Architected to Endure.</span>
                                         </h1>
+                                    </div>
 
-                                        <!-- MOBILE HERO ORB: Centered prominently right beneath headline on mobile (< lg) -->
-                                        <div class="lg:hidden flex items-center justify-center relative w-full max-w-[210px] xs:max-w-[230px] sm:max-w-[260px] mx-auto my-3 select-none">
-<div class="relative w-full max-w-[520px] lg:max-w-[575px] aspect-square flex items-center justify-center select-none">
-                                            <div class="absolute inset-[12%] rounded-full blur-[72px] pointer-events-none" style="background: radial-gradient(circle, rgba(217,115,82,0.34) 0%, rgba(158,30,91,0.28) 42%, rgba(104,80,173,0.18) 70%, transparent 88%);"></div>
-
+                                    <!-- Block 2: THE SINGLE CELESTIAL ASTROLABE & GLASS ORB (Mobile: Row 2 under headline / Desktop: Right col-span-5 spanning rows 1 & 2) -->
+                                    <div class="lg:col-span-5 lg:row-start-1 lg:row-span-2 flex items-center justify-center relative w-full max-w-[210px] xs:max-w-[240px] sm:max-w-[280px] lg:max-w-[575px] mx-auto my-3 lg:my-0 select-none z-10">
+                                        <div class="relative w-full aspect-square flex items-center justify-center select-none">
+                                            <div class="absolute inset-[10%] rounded-full blur-[64px] lg:blur-[84px] pointer-events-none" style="background: radial-gradient(circle, rgba(217,115,82,0.38) 0%, rgba(158,30,91,0.32) 42%, rgba(104,80,173,0.22) 70%, transparent 88%);"></div>
                                             <svg viewBox="0 0 600 600" class="w-full h-full overflow-visible drop-shadow-[0_28px_48px_rgba(10,2,16,0.52)]" role="img" aria-label="Twilight fluid alcohol-ink waves, Harvest Moon orb, celestial astrolabe rings with Nairobi coordinates, and four-pointed stars">
                                                 <defs>
                                                     <linearGradient id="inkOpalCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -4535,27 +4536,29 @@ COMMIT;`
                                                 </g>
                                             </svg>
                                         </div>
-                                        </div>
+                                    </div>
 
-                                        <p class="text-sm sm:text-lg leading-relaxed t-text-secondary max-w-xl mb-4 sm:mb-7 font-light">
+                                    <!-- Block 3: Narrative Lead + WhatsApp Desk + CTAs + Stats (Mobile: Row 3 / Desktop: Left col-span-7, row 2) -->
+                                    <div class="lg:col-span-7 lg:row-start-2 z-10 space-y-5 sm:space-y-6">
+                                        <p class="text-sm sm:text-lg leading-relaxed t-text-secondary max-w-xl font-light">
                                             Over 70% of enterprise software overruns stem from missing requirements and unchecked scope creep. Through <strong class="font-semibold t-text-primary">Savannah Atelier</strong>, I deliver vendor-neutral engineering blueprints, atomic PostgreSQL backends, and decoupled phase-gated execution—guaranteeing locked budgets and zero-defect cutovers.
                                         </p>
 
                                         <!-- Direct WhatsApp Desk Indicator -->
-                                        <div class="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-2xl inner-panel max-w-md mb-4 sm:mb-8 border border-fae-fruit/20">
-                                            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                        <div class="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-2xl inner-panel max-w-md border border-fae-fruit/20">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                                             <p class="text-xs font-mono t-text-secondary">
                                                 <strong class="t-accent-editorial">Direct WhatsApp Executive Desk:</strong>
                                                 <a href="https://wa.me/254710720949?text=Hello%20Mercy%20Tryphen%2C%20I%20would%20like%20to%20inquire%20about%20a%20systems%20architecture%20commission." target="_blank" class="underline hover:text-fae-fruit ml-1 text-emerald-400 font-semibold">+254 710 720 949</a>
                                             </p>
                                         </div>
 
-                                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-10">
-                                            <a href="#/commission" class="inline-flex justify-center items-center gap-2.5 px-7 py-4 rounded-full btn-luminous text-sm sm:text-base tracking-wide">
+                                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                                            <a href="#/commission" class="inline-flex justify-center items-center gap-2.5 px-7 py-3.5 sm:py-4 rounded-full btn-luminous text-sm sm:text-base tracking-wide shadow-lg">
                                                 <span>Commission a System</span>
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                             </a>
-                                            <a href="#/work" class="inline-flex justify-center items-center gap-2.5 px-7 py-4 rounded-full btn-ghost-twilight font-medium text-sm sm:text-base tracking-wide">
+                                            <a href="#/work" class="inline-flex justify-center items-center gap-2.5 px-7 py-3.5 sm:py-4 rounded-full btn-ghost-twilight font-medium text-sm sm:text-base tracking-wide">
                                                 <span>Explore Architecture</span>
                                                 <svg class="w-4 h-4 t-accent-warm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                                             </a>
@@ -4577,177 +4580,6 @@ COMMIT;`
                                         </div>
                                     </div>
 
-                                    <!-- Right: Bespoke Fluid Alcohol-Ink Twilight Nebula & Celestial Astrolabe (Properly Scaled on Mobile) -->
-                                    <div class="hidden lg:flex lg:col-span-5 items-center justify-center relative w-full max-w-none mx-auto my-0 select-none">
-                                        <div class="relative w-full max-w-[520px] lg:max-w-[575px] aspect-square flex items-center justify-center select-none">
-                                            <div class="absolute inset-[12%] rounded-full blur-[72px] pointer-events-none" style="background: radial-gradient(circle, rgba(217,115,82,0.34) 0%, rgba(158,30,91,0.28) 42%, rgba(104,80,173,0.18) 70%, transparent 88%);"></div>
-
-                                            <svg viewBox="0 0 600 600" class="w-full h-full overflow-visible drop-shadow-[0_28px_48px_rgba(10,2,16,0.52)]" role="img" aria-label="Twilight fluid alcohol-ink waves, Harvest Moon orb, celestial astrolabe rings with Nairobi coordinates, and four-pointed stars">
-                                                <defs>
-                                                    <linearGradient id="inkOpalCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                        <stop offset="0%" stop-color="#6850AD" stop-opacity="0.88"/>
-                                                        <stop offset="48%" stop-color="#9E1E5B" stop-opacity="0.84"/>
-                                                        <stop offset="100%" stop-color="#6B0733" stop-opacity="0.92"/>
-                                                    </linearGradient>
-                                                    <linearGradient id="inkCrimsonFae" x1="10%" y1="90%" x2="90%" y2="10%">
-                                                        <stop offset="0%" stop-color="#2D1036" stop-opacity="0.85"/>
-                                                        <stop offset="35%" stop-color="#6B0733" stop-opacity="0.90"/>
-                                                        <stop offset="72%" stop-color="#D97352" stop-opacity="0.86"/>
-                                                        <stop offset="100%" stop-color="#F4B956" stop-opacity="0.92"/>
-                                                    </linearGradient>
-                                                    <linearGradient id="inkSilkGold" x1="0%" y1="100%" x2="100%" y2="0%">
-                                                        <stop offset="0%" stop-color="#6850AD" stop-opacity="0.65"/>
-                                                        <stop offset="42%" stop-color="#9E1E5B" stop-opacity="0.72"/>
-                                                        <stop offset="78%" stop-color="#D97352" stop-opacity="0.82"/>
-                                                        <stop offset="100%" stop-color="#F4B956" stop-opacity="0.95"/>
-                                                    </linearGradient>
-                                                    <linearGradient id="inkVeilViolet" x1="100%" y1="0%" x2="0%" y2="100%">
-                                                        <stop offset="0%" stop-color="#6850AD" stop-opacity="0.75"/>
-                                                        <stop offset="55%" stop-color="#2D1036" stop-opacity="0.82"/>
-                                                        <stop offset="100%" stop-color="#6B0733" stop-opacity="0.70"/>
-                                                    </linearGradient>
-                                                    <!-- Glass Orb Master Refraction Gradients -->
-                                                    <radialGradient id="glassSphereBodyGrad" cx="35%" cy="30%" r="72%">
-                                                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.88"/>
-                                                        <stop offset="14%" stop-color="#FFF6E0" stop-opacity="0.45"/>
-                                                        <stop offset="36%" stop-color="#F4B956" stop-opacity="0.20"/>
-                                                        <stop offset="68%" stop-color="#8C1D40" stop-opacity="0.28"/>
-                                                        <stop offset="86%" stop-color="#E9A23B" stop-opacity="0.70"/>
-                                                        <stop offset="97%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                                                        <stop offset="100%" stop-color="#F4B956" stop-opacity="0.65"/>
-                                                    </radialGradient>
-                                                    <radialGradient id="glassCausticFocusGrad" cx="64%" cy="72%" r="48%">
-                                                        <stop offset="0%" stop-color="#FFEBB8" stop-opacity="0.85"/>
-                                                        <stop offset="35%" stop-color="#F4B956" stop-opacity="0.55"/>
-                                                        <stop offset="70%" stop-color="#D97352" stop-opacity="0.22"/>
-                                                        <stop offset="100%" stop-color="#6B0733" stop-opacity="0"/>
-                                                    </radialGradient>
-                                                    <linearGradient id="glassPrimaryGlare" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.98"/>
-                                                        <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0.75"/>
-                                                        <stop offset="85%" stop-color="#FFFFFF" stop-opacity="0.08"/>
-                                                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
-                                                    </linearGradient>
-                                                    <linearGradient id="glassRimFresnel" x1="0%" y1="100%" x2="100%" y2="0%">
-                                                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                                                        <stop offset="30%" stop-color="#F4B956" stop-opacity="0.65"/>
-                                                        <stop offset="70%" stop-color="#E9A23B" stop-opacity="0.25"/>
-                                                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.85"/>
-                                                    </linearGradient>
-                                                    <linearGradient id="glassBottomCaustic" x1="0%" y1="0%" x2="0%" y2="100%">
-                                                        <stop offset="0%" stop-color="#F4B956" stop-opacity="0"/>
-                                                        <stop offset="65%" stop-color="#FFE4A0" stop-opacity="0.75"/>
-                                                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                                                    </linearGradient>
-                                                    <radialGradient id="harvestMoonGrad" cx="38%" cy="34%" r="68%">
-                                                        <stop offset="0%" stop-color="#FFF2D6"/>
-                                                        <stop offset="28%" stop-color="#F4B956"/>
-                                                        <stop offset="68%" stop-color="#D97352"/>
-                                                        <stop offset="100%" stop-color="#6B0733"/>
-                                                    </radialGradient>
-                                                    <radialGradient id="moonHaloGrad" cx="50%" cy="50%" r="50%">
-                                                        <stop offset="0%" stop-color="#F4B956" stop-opacity="0.68"/>
-                                                        <stop offset="45%" stop-color="#D97352" stop-opacity="0.32"/>
-                                                        <stop offset="100%" stop-color="#6B0733" stop-opacity="0"/>
-                                                    </radialGradient>
-                                                    <clipPath id="nebulaVesselClip"><circle cx="300" cy="300" r="196"/></clipPath>
-                                                    <filter id="inkSoftBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
-                                                    <filter id="starGlow" x="-40%" y="-40%" width="180%" height="180%">
-                                                        <feGaussianBlur stdDeviation="2.8" result="blur"/>
-                                                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                                    </filter>
-                                                    <path id="topCoordArc" d="M 62,300 A 238,238 0 1,1 538,300" fill="none"/>
-                                                    <path id="bottomCoordArc" d="M 538,300 A 238,238 0 1,1 62,300" fill="none"/>
-                                                </defs>
-
-                                                <!-- Layer 0: Astrolabe Rings -->
-                                                <g id="parallaxAstrolabe" class="parallax-layer">
-                                                    <circle cx="300" cy="300" r="272" fill="none" stroke="var(--ring-stroke-soft)" stroke-width="1" stroke-dasharray="3 8" class="ring-orbit-slow"/>
-                                                    <circle cx="300" cy="300" r="244" fill="none" stroke="var(--ring-stroke)" stroke-width="0.95"/>
-                                                    <circle cx="300" cy="300" r="212" fill="none" stroke="var(--ring-stroke-soft)" stroke-width="0.8" stroke-dasharray="16 10" class="ring-orbit-reverse"/>
-                                                    <ellipse cx="300" cy="300" rx="258" ry="96" transform="rotate(-28 300 300)" fill="none" stroke="var(--ring-stroke)" stroke-width="0.7" opacity="0.65"/>
-                                                    <ellipse cx="300" cy="300" rx="258" ry="96" transform="rotate(28 300 300)" fill="none" stroke="var(--ring-stroke-soft)" stroke-width="0.65" opacity="0.55"/>
-                                                    <g stroke="var(--ring-stroke)" stroke-width="1.1">
-                                                        <line x1="300" y1="16" x2="300" y2="34"/>
-                                                        <line x1="300" y1="566" x2="300" y2="584"/>
-                                                        <line x1="16" y1="300" x2="34" y2="300"/>
-                                                        <line x1="566" y1="300" x2="584" y2="300"/>
-                                                    </g>
-                                                    <text font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="3" fill="var(--accent-warm)" opacity="0.92">
-                                                        <textPath href="#topCoordArc" startOffset="50%" text-anchor="middle">1.2921° S, 36.8219° E // NAIROBI</textPath>
-                                                    </text>
-                                                    <text font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="3.5" fill="var(--accent-opal)" opacity="0.88">
-                                                        <textPath href="#bottomCoordArc" startOffset="50%" text-anchor="middle">SYS.ARCH // SAVANNAH ATELIER</textPath>
-                                                    </text>
-                                                </g>
-
-                                                <!-- Layer 1: Fluid Alcohol-Ink Waves -->
-                                                <g id="parallaxInk" class="parallax-layer">
-                                                    <circle cx="300" cy="300" r="196" fill="#180620" stroke="rgba(244,185,86,0.35)" stroke-width="1.2"/>
-                                                    <g clip-path="url(#nebulaVesselClip)">
-                                                        <g class="silk-breathe">
-                                                            <ellipse cx="220" cy="210" rx="165" ry="125" fill="#6850AD" opacity="0.45" filter="url(#inkSoftBlur)"/>
-                                                            <ellipse cx="380" cy="390" rx="175" ry="135" fill="#6B0733" opacity="0.62" filter="url(#inkSoftBlur)"/>
-                                                            <ellipse cx="330" cy="240" rx="120" ry="110" fill="#D97352" opacity="0.30" filter="url(#inkSoftBlur)"/>
-                                                            <path d="M 70,220 C 155,120 265,260 365,175 C 445,105 510,165 545,255 L 545,420 C 445,320 330,455 215,365 C 145,310 100,350 70,310 Z" fill="url(#inkOpalCrimson)" opacity="0.84"/>
-                                                            <path d="M 65,360 C 160,265 250,395 365,305 C 445,242 495,295 545,235 L 545,515 L 65,515 Z" fill="url(#inkCrimsonFae)" opacity="0.82"/>
-                                                            <path d="M 85,392 C 185,315 268,422 378,332 C 455,270 502,315 538,268" fill="none" stroke="#F4B956" stroke-width="2.4" stroke-opacity="0.72" filter="url(#starGlow)"/>
-                                                            <path d="M 75,155 C 175,245 275,115 395,185 C 460,222 505,175 535,145 L 535,80 L 75,80 Z" fill="url(#inkVeilViolet)" opacity="0.76"/>
-                                                            <path d="M 95,285 C 195,215 285,335 405,248 C 465,204 500,235 530,210" fill="none" stroke="url(#inkSilkGold)" stroke-width="5.5" stroke-linecap="round" opacity="0.78"/>
-                                                            <path d="M 110,438 C 215,375 305,455 425,380 C 475,348 505,370 530,350" fill="none" stroke="#F4B956" stroke-width="1.5" stroke-opacity="0.55"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-
-                                                <!-- Layer 2: Luminous Refractive Glass Orb & Celestial Reticle -->
-                                                <g id="parallaxMoon" class="parallax-layer">
-                                                    <!-- Ambient Luminous Halo behind glass -->
-                                                    <circle cx="300" cy="238" r="88" fill="url(#moonHaloGrad)" opacity="0.45" class="moon-pulse"/>
-
-                                                    <!-- Soft Cast Glass Shadow underneath inside nebula -->
-                                                    <ellipse cx="302" cy="282" rx="34" ry="10" fill="#110517" opacity="0.55" filter="url(#inkSoftBlur)"/>
-
-                                                    <!-- Layer A: Internal Caustic Core (Light focusing through the lens) -->
-                                                    <circle cx="300" cy="238" r="46" fill="url(#glassCausticFocusGrad)"/>
-
-                                                    <!-- Layer B: Translucent Glass Sphere Body with Fresnel Edge Rim -->
-                                                    <circle cx="300" cy="238" r="46" fill="url(#glassSphereBodyGrad)" stroke="url(#glassRimFresnel)" stroke-width="1.2"/>
-
-                                                    <!-- Layer C: Concentric Internal Refraction Ring (Double-wall crystal lens) -->
-                                                    <circle cx="300" cy="238" r="42" fill="none" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="0.8" stroke-dasharray="75 14"/>
-                                                    <circle cx="300" cy="238" r="38" fill="none" stroke="#F4B956" stroke-opacity="0.18" stroke-width="0.6"/>
-
-                                                    <!-- Layer D: Lower Internal Caustic Crescent (Light pooling at the base of the glass) -->
-                                                    <path d="M 272,254 C 286,276 314,276 328,254 C 320,268 280,268 272,254 Z" fill="url(#glassBottomCaustic)" opacity="0.85"/>
-
-                                                    <!-- Layer E: Laser-Etched Astrolabe Reticle (Optical Core Coordinates) -->
-                                                    <g stroke="#F4B956" stroke-opacity="0.45" stroke-width="0.75">
-                                                        <line x1="300" y1="198" x2="300" y2="210"/>
-                                                        <line x1="300" y1="266" x2="300" y2="278"/>
-                                                        <line x1="260" y1="238" x2="272" y2="238"/>
-                                                        <line x1="328" y1="238" x2="340" y2="238"/>
-                                                        <circle cx="300" cy="238" r="3" fill="none" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="0.75"/>
-                                                    </g>
-
-                                                    <!-- Layer F: Primary High-Gloss Specular Glare (Curved 3D light reflection) -->
-                                                    <ellipse cx="284" cy="216" rx="16" ry="8.5" transform="rotate(-32 284 216)" fill="url(#glassPrimaryGlare)" opacity="0.95"/>
-
-                                                    <!-- Layer G: Micro Star Point Highlight (Extreme Glint) -->
-                                                    <circle cx="273" cy="207" r="2.2" fill="#FFFFFF" opacity="0.98"/>
-                                                    <circle cx="273" cy="207" r="5" fill="#FFFFFF" opacity="0.35"/>
-
-                                                    <!-- Layer H: Opposite Grazing Rim Glare (Bottom-right rim reflection) -->
-                                                    <path d="M 324,258 A 44,44 0 0,0 342,228" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
-                                                    <g filter="url(#starGlow)">
-                                                        <path class="star-twinkle-1" d="M 442,144 C 444,158 450,164 464,166 C 450,168 444,174 442,188 C 440,174 434,168 420,166 C 434,164 440,158 442,144 Z" fill="#F4B956"/>
-                                                        <path class="star-twinkle-2" d="M 156,408 C 157.5,418 162,422.5 172,424 C 162,425.5 157.5,430 156,440 C 154.5,430 150,425.5 140,424 C 150,422.5 154.5,418 156,408 Z" fill="#D97352"/>
-                                                        <path class="star-twinkle-3" d="M 164,176 C 165,183 168,186 175,187 C 168,188 165,191 164,198 C 163,191 160,188 153,187 C 160,186 163,183 164,176 Z" fill="#FAF4F7"/>
-                                                        <path class="star-twinkle-1" d="M 432,418 C 433,424 436,427 442,428 C 436,429 433,432 432,438 C 431,432 428,429 422,428 C 428,427 431,424 432,418 Z" fill="#F4B956"/>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </section>
