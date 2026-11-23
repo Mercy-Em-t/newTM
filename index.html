@@ -1318,8 +1318,8 @@
             </header>
 
             <!-- Scrollable Modal Body Container with Luxury Scrollbar -->
-            <div id="modalScrollContainer" class="flex-1 overflow-y-auto luxury-scrollbar p-5 sm:p-8 md:p-10 relative">
-                <div id="modalBody"></div>
+            <div id="modalScrollContainer" class="flex-1 overflow-y-auto luxury-scrollbar relative">
+                <div id="modalBody" class="p-5 sm:p-8 md:p-10"></div>
             </div>
 
             <!-- Floating Table of Contents Popover (Quick jump) -->
@@ -3085,6 +3085,7 @@ COMMIT;`
             let currentModalSections = [];
 
             function openModal(html, options = {}) {
+                modalBody.className = options.flush ? '' : 'p-5 sm:p-8 md:p-10';
                 modalBody.innerHTML = html;
                 modalBackdrop.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
@@ -3139,6 +3140,7 @@ COMMIT;`
 
             function closeModal() {
                 modalBackdrop.classList.add('hidden');
+                modalBody.className = 'p-5 sm:p-8 md:p-10';
                 modalBody.innerHTML = '';
                 document.body.style.overflow = '';
                 if (modalTocPopover) modalTocPopover.classList.add('hidden');
@@ -3761,27 +3763,28 @@ COMMIT;`
                 `).join('');
 
                 openModal(`
-                    <article id="editorialReaderContainer" class="space-y-7 pr-2 sm:pr-4 font-reading-md">
-                        <!-- Top Sticky Reader Bar (Raised flush to modal container top to eliminate scroll bleed) -->
-                        <div class="sticky top-0 z-20 -mt-5 sm:-mt-8 md:-mt-10 pt-4 sm:pt-6 md:pt-6 pb-3 sm:pb-3.5 -mx-5 sm:-mx-8 md:-mx-10 px-5 sm:px-8 md:px-10 border-b t-border-subtle flex items-center justify-between gap-3 shadow-md" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full theme-badge shrink-0">
+                    <article id="editorialReaderContainer" class="font-reading-md">
+                        <!-- Top Sticky Reader Bar (Flush with top edge of scroll container, zero bleed) -->
+                        <div class="sticky top-0 z-20 w-full px-4 sm:px-8 py-2.5 sm:py-3 border-b t-border-subtle flex items-center justify-between gap-2 sm:gap-3 shadow-md" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="font-mono text-[9.5px] sm:text-[10px] uppercase tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full theme-badge shrink-0">
                                     ${pub.volume}
                                 </span>
-                                <span class="font-mono text-xs t-text-muted truncate">&middot; ${pub.readTime}</span>
+                                <span class="font-mono text-[11px] sm:text-xs t-text-muted truncate">&middot; ${pub.readTime}</span>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
                                 <button type="button" onclick="window.print()" class="w-8 h-8 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-precious-gold flex items-center justify-center transition-all hover:scale-105 shrink-0" title="Print or Save as PDF" aria-label="Print or Save as PDF">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                                 </button>
-                                <button type="button" id="copyCitationBtn" class="px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial transition-colors shrink-0">
-                                    Cite Monograph
+                                <button type="button" id="copyCitationBtn" class="px-2.5 sm:px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial transition-colors shrink-0">
+                                    <span>Cite</span><span class="hidden sm:inline">&nbsp;Monograph</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Editorial Masthead -->
-                        <header class="space-y-3 pt-2">
+                        <!-- Padded Monograph Content Container -->
+                        <div class="p-5 sm:p-8 md:p-10 space-y-7">
+                            <header class="space-y-3 pt-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-[11px] uppercase tracking-[0.22em] t-accent-warm">${pub.category}</span>
                                 <span class="font-mono text-xs t-accent-warm whitespace-nowrap shrink-0">${pub.ref}</span>
@@ -3832,8 +3835,10 @@ COMMIT;`
                             </div>
                             <span class="font-mono text-xs t-text-muted">Savannah Atelier Monograph Series</span>
                         </footer>
+                        </div>
                     </article>
                 `, {
+                    flush: true,
                     title: pub.title,
                     subtitle: `${pub.volume} · ${pub.readTime}`,
                     badge: 'MONOGRAPH'
