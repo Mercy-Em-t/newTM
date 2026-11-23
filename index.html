@@ -1324,22 +1324,23 @@
                 <nav id="modalTocList" class="space-y-1 text-xs font-mono"></nav>
             </div>
 
-            <!-- Anchored Executive Action Footer (Always Pinned, Never Jumps with Scroll or Drawers!) -->
-            <footer id="modalActionBar" class="sticky bottom-0 z-30 shrink-0 px-4 sm:px-8 py-3.5 border-t t-border-subtle flex flex-wrap items-center justify-between gap-3" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
-                <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-                    <button type="button" id="dockedCommissionBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-full btn-luminous text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg">
+            <!-- Anchored Executive Action Footer (Always Pinned in Continuous Scroll mode) -->
+            <footer id="modalActionBar" class="sticky bottom-0 z-30 shrink-0 px-4 sm:px-8 py-3 border-t t-border-subtle flex items-center justify-between gap-3" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                    <button type="button" id="dockedCommissionBtn" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full btn-luminous text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md">
                         <span>Commission Architecture</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </button>
-                    <a id="dockedWhatsAppBtn" href="#" target="_blank" class="w-full sm:w-auto px-4 py-2.5 rounded-full inner-panel hover:border-fae-fruit text-xs font-mono uppercase tracking-wider t-text-primary inline-flex items-center justify-center gap-2 transition-colors">
+                    <a id="dockedWhatsAppBtn" href="#" target="_blank" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full inner-panel hover:border-fae-fruit text-xs font-mono uppercase tracking-wider t-text-primary inline-flex items-center justify-center gap-1.5 transition-colors">
                         <svg class="w-3.5 h-3.5 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
-                        <span>WhatsApp Inquiry</span>
+                        <span class="hidden sm:inline">WhatsApp Inquiry</span>
+                        <span class="sm:hidden">WhatsApp</span>
                     </a>
                 </div>
-                <div id="dockedSecondaryActions" class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-                    <button type="button" id="dockedTourBtn" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full inner-panel border border-precious-gold/50 hover:border-precious-gold text-xs font-mono text-precious-gold font-bold transition-all shadow-md">
+                <div id="dockedSecondaryActions" class="flex items-center gap-2">
+                    <button type="button" id="dockedTourBtn" class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full inner-panel border border-precious-gold/50 hover:border-precious-gold text-xs font-mono text-precious-gold font-medium transition-all shadow-sm">
                         <span class="animate-pulse">✦</span>
-                        <span id="dockedTourBtnText">Start Virtual Tour</span>
+                        <span id="dockedTourBtnText">Virtual Tour</span>
                     </button>
                     <a id="dockedRawExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden text-[11px] font-mono t-text-muted hover:text-fae-fruit underline transition-colors" title="External URL">
                         External ↗
@@ -1347,21 +1348,23 @@
                 </div>
             </footer>
 
-            
-
             <!-- Sticky Multipage Footer Navigation (Visible in Pages Mode) -->
-            <footer id="modalMultipageFooter" class="hidden sticky bottom-0 z-30 shrink-0 px-6 py-3.5 border-t t-border-subtle flex items-center justify-between gap-4" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
-                <button type="button" id="modalPrevPageBtn" onclick="navigateReaderPage(-1)" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-primary transition-all disabled:opacity-30 disabled:pointer-events-none">
+            <footer id="modalMultipageFooter" class="hidden sticky bottom-0 z-30 shrink-0 px-4 sm:px-8 py-2.5 border-t t-border-subtle flex items-center justify-between gap-3" style="background: var(--nav-bg); backdrop-filter: blur(24px);">
+                <button type="button" id="modalPrevPageBtn" onclick="navigateReaderPage(-1)" class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-primary transition-all disabled:opacity-30 disabled:pointer-events-none shrink-0" title="Previous Architectural Section">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    <span>Previous</span>
+                    <span class="hidden xs:inline">Previous</span>
                 </button>
                 
-                <div class="flex items-center gap-3">
-                    <div id="modalPageDots" class="flex items-center gap-1.5"></div>
-                    <span id="modalPageCounter" class="font-mono text-xs text-precious-gold font-bold">Page 1 of 4</span>
+                <!-- Center: Small "PAGE X OF Y" stacked atop Section Title -->
+                <div class="flex flex-col items-center justify-center text-center min-w-0 px-2 max-w-[55%] sm:max-w-md">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span id="modalPageCounterBadge" class="font-mono text-[10px] uppercase tracking-[0.2em] t-accent-warm font-semibold">PAGE 1 OF 4</span>
+                        <div id="modalPageDots" class="flex items-center gap-1"></div>
+                    </div>
+                    <span id="modalPageTitle" class="font-serif text-xs sm:text-sm t-text-primary font-medium truncate max-w-full">Problem &amp; Operational Constraints</span>
                 </div>
 
-                <button type="button" id="modalNextPageBtn" onclick="navigateReaderPage(1)" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-primary transition-all">
+                <button type="button" id="modalNextPageBtn" onclick="navigateReaderPage(1)" class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-primary transition-all shrink-0" title="Next Architectural Section">
                     <span>Next</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -3127,6 +3130,8 @@ COMMIT;`
                 currentReaderMode = mode;
                 const scrollBtn = document.getElementById('modalModeScrollBtn');
                 const pagesBtn = document.getElementById('modalModePagesBtn');
+                const modalActionBarEl = document.getElementById('modalActionBar');
+                const docControls = document.getElementById('modalDocControls');
 
                 if (mode === 'pages') {
                     if (scrollBtn) {
@@ -3138,6 +3143,8 @@ COMMIT;`
                         pagesBtn.classList.remove('t-text-muted');
                     }
                     if (modalMultipageFooter) modalMultipageFooter.classList.remove('hidden');
+                    if (modalActionBarEl) modalActionBarEl.classList.add('hidden');
+                    if (docControls) docControls.classList.add('hidden');
                     showReaderPage(currentReaderPage || 1);
                 } else {
                     if (pagesBtn) {
@@ -3149,6 +3156,8 @@ COMMIT;`
                         scrollBtn.classList.remove('t-text-muted');
                     }
                     if (modalMultipageFooter) modalMultipageFooter.classList.add('hidden');
+                    if (modalActionBarEl) modalActionBarEl.classList.remove('hidden');
+                    if (docControls) docControls.classList.remove('hidden');
                     // In continuous scroll mode, show all section drawers
                     document.querySelectorAll('.case-section-drawer').forEach((el) => {
                         el.classList.remove('reader-page-hidden');
@@ -3228,14 +3237,20 @@ COMMIT;`
                     }
                 });
 
-                // Update Multipage Footer UI
-                if (modalPageCounter) {
-                    const sec = currentModalSections[pageIdx - 1];
-                    modalPageCounter.textContent = `Page ${pageIdx} of ${total} · ${sec ? sec.title : ''}`;
+                // Update Multipage Footer UI (Small "PAGE X OF Y" stacked atop Section Title)
+                const pageBadge = document.getElementById('modalPageCounterBadge');
+                const pageTitle = document.getElementById('modalPageTitle');
+                const sec = currentModalSections[pageIdx - 1];
+
+                if (pageBadge) {
+                    pageBadge.textContent = `PAGE ${pageIdx} OF ${total}`;
+                }
+                if (pageTitle) {
+                    pageTitle.textContent = sec ? sec.title : '';
                 }
                 if (modalPageDots) {
                     modalPageDots.innerHTML = Array.from({ length: total }).map((_, i) => `
-                        <button type="button" onclick="showReaderPage(${i + 1})" class="w-2.5 h-2.5 rounded-full transition-all ${i + 1 === pageIdx ? 'bg-precious-gold scale-125 ring-2 ring-precious-gold/40' : 'bg-white/20 hover:bg-white/40'}" title="Go to Page ${i + 1}"></button>
+                        <button type="button" onclick="showReaderPage(${i + 1})" class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all ${i + 1 === pageIdx ? 'bg-precious-gold scale-125 ring-2 ring-precious-gold/40' : 'bg-white/20 hover:bg-white/40'}" title="Go to Page ${i + 1}"></button>
                     `).join('');
                 }
                 if (modalPrevPageBtn) {
@@ -3243,9 +3258,11 @@ COMMIT;`
                 }
                 if (modalNextPageBtn) {
                     if (pageIdx === total) {
+                        modalNextPageBtn.className = "inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl btn-luminous text-xs font-mono transition-all shrink-0 shadow-md";
                         modalNextPageBtn.innerHTML = `<span>Commission &rarr;</span>`;
                         modalNextPageBtn.onclick = () => { closeModal(); window.location.hash = '#/commission'; };
                     } else {
+                        modalNextPageBtn.className = "inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-text-primary transition-all shrink-0";
                         modalNextPageBtn.innerHTML = `<span>Next</span><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
                         modalNextPageBtn.onclick = () => navigateReaderPage(1);
                     }
@@ -3309,22 +3326,22 @@ COMMIT;`
                         <header class="border-b t-border-subtle pb-6">
                             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                                 <div class="inline-flex items-center gap-2">
-                                    <span class="font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-1 rounded-full theme-badge">
+                                    <span class="font-mono text-[9.5px] uppercase tracking-[0.2em] px-2.5 py-0.5 rounded-full theme-badge">
                                         ${p.categoryLabel} // CASE STUDY
                                     </span>
                                     <span class="font-mono text-xs t-text-muted">REF: ${p.id.toUpperCase()}</span>
                                 </div>
                                 <span class="font-mono text-xs t-accent-warm">Savannah Atelier · Nairobi</span>
                             </div>
-                            <h1 id="modalTitle" class="font-serif text-3xl sm:text-5xl font-light t-text-primary leading-[1.08] tracking-tight">
+                            <h1 id="modalTitle" class="font-serif text-2xl sm:text-3xl md:text-4xl font-light t-text-primary leading-[1.14] tracking-tight mt-1">
                                 ${p.title}
                             </h1>
-                            <p class="font-serif italic text-base sm:text-xl t-accent-editorial leading-relaxed mt-2">
+                            <p class="font-serif italic text-sm sm:text-base t-accent-editorial leading-relaxed mt-1.5">
                                 ${p.subtitle}
                             </p>
 
-                            <!-- Document Controls Bar: Drawer Expand/Collapse -->
-                            <div class="mt-5 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                            <!-- Document Controls Bar: Drawer Expand/Collapse (Only in Continuous Scroll Mode) -->
+                            <div id="modalDocControls" class="mt-4 pt-3.5 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                                 <div class="flex items-center gap-2 t-text-muted">
                                     <span class="text-precious-gold font-bold">SPECIFICATION OUTLINE</span>
                                     <span>&middot;</span>
@@ -3432,11 +3449,19 @@ COMMIT;`
                                     <svg class="case-chevron w-4 h-4 t-text-muted transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </div>
                             </button>
-                            <div class="case-content p-5 pt-2 border-t border-white/5 space-y-3">
+                            <div class="case-content p-5 pt-2 border-t border-white/5 space-y-4">
                                 <div class="glass-card rounded-2xl p-5 border border-emerald-500/30 bg-emerald-500/5">
                                     <p class="text-sm sm:text-base t-text-primary leading-relaxed font-medium">
                                         ${p.outcomes}
                                     </p>
+                                </div>
+                                <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
+                                    <span class="text-xs font-mono t-text-muted">Target Q1 2027 Commissioning Slots</span>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="closeModal(); window.location.hash = '#/commission';" class="px-4 py-2 rounded-full btn-luminous text-xs font-mono uppercase tracking-wider shadow-md">
+                                            <span>Commission Architecture &rarr;</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </section>
