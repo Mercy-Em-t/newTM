@@ -1327,12 +1327,8 @@
                     </a>
                 </div>
                 <div id="dockedSecondaryActions" class="flex items-center gap-2 shrink-0">
-                    <button type="button" id="dockedTourBtn" class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full inner-panel border border-precious-gold/50 hover:border-precious-gold text-xs font-mono text-precious-gold font-medium transition-all shadow-sm shrink-0 whitespace-nowrap">
-                        <span class="animate-pulse">✦</span>
-                        <span id="dockedTourBtnText">Virtual Tour</span>
-                    </button>
-                    <a id="dockedRawExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-2.5 py-1.5 rounded-full inner-panel border border-precious-gold/20 hover:border-precious-gold text-[10px] sm:text-[11px] font-mono text-precious-gold transition-all shrink-0 whitespace-nowrap inline-flex items-center gap-1" title="External Platform Preview">
-                        <span class="hidden sm:inline">Live Demo</span>
+                    <a id="dockedRawExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-3.5 py-2 rounded-full inner-panel border border-precious-gold/30 hover:border-precious-gold text-xs font-mono text-precious-gold transition-all shrink-0 whitespace-nowrap inline-flex items-center gap-1.5" title="External Platform Preview">
+                        <span>Live Demo</span>
                         <span>↗</span>
                     </a>
                 </div>
@@ -3324,9 +3320,6 @@ COMMIT;`
                 const p = PORTFOLIO_PROJECTS.find((item) => item.id === projectId);
                 if (!p) return;
 
-                // State tracking for Virtual Tour mode
-                let isVirtualTourActive = false;
-
                 // Build Custom ASCII diagrams for key projects
                 let customDiagram = '';
                 if (p.id === 'tennissuite') {
@@ -3496,103 +3489,19 @@ COMMIT;`
                             </div>
                         </section>
                     </div>
-
-                    <!-- Interactive Virtual Tour & Telemetry Simulation Console (Hidden until toggled) -->
-                    <div id="caseStudyTourView" class="hidden space-y-6 pr-1 sm:pr-2">
-                        <header class="border-b t-border-subtle pb-6">
-                            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-                                <span class="font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-1 rounded-full bg-precious-gold/20 text-precious-gold border border-precious-gold/30">
-                                    LIVE ARCHITECTURE SIMULATION &middot; IN-APP TOUR
-                                </span>
-                                <span class="font-mono text-xs text-precious-gold flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                                    Simulation Runtime Ready
-                                </span>
-                            </div>
-                            <h1 class="font-serif text-3xl sm:text-4xl font-light t-text-primary leading-tight">
-                                Virtual Architecture Walkthrough: <span class="t-accent-editorial italic">${p.title}</span>
-                            </h1>
-                            <p class="text-sm sm:text-base t-text-secondary leading-relaxed mt-2 font-light">
-                                Welcome to the Savannah Atelier in-app architecture sandbox. Explore the domain topology, inspect live node contracts, and trigger an automated concurrency burst test without leaving the atelier.
-                            </p>
-                        </header>
-
-                        <!-- Interactive Architecture Topology Pipeline -->
-                        <div class="rounded-2xl inner-panel p-5 border t-border-subtle space-y-4">
-                            <div class="flex items-center justify-between">
-                                <span class="font-mono text-xs uppercase tracking-wider text-precious-gold font-bold">Domain Nodes · Click Node to Inspect Invariant</span>
-                                <span class="font-mono text-[11px] t-text-muted">4 Operational Stages</span>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs font-mono">
-                                <button type="button" onclick="inspectTourNode('ingress', '${p.id}')" class="p-3.5 rounded-xl border border-white/10 hover:border-precious-gold bg-black/30 hover:bg-white/5 transition-all text-left group">
-                                    <span class="text-[10px] text-fae-fruit font-bold block mb-1">STAGE 01</span>
-                                    <span class="t-text-primary group-hover:text-precious-gold font-semibold block truncate">Client Webhook</span>
-                                    <span class="text-[10px] t-text-muted block mt-1">SHA-256 Idempotency</span>
-                                </button>
-                                <button type="button" onclick="inspectTourNode('gate', '${p.id}')" class="p-3.5 rounded-xl border border-white/10 hover:border-precious-gold bg-black/30 hover:bg-white/5 transition-all text-left group">
-                                    <span class="text-[10px] text-precious-gold font-bold block mb-1">STAGE 02</span>
-                                    <span class="t-text-primary group-hover:text-precious-gold font-semibold block truncate">Redis Rate Gate</span>
-                                    <span class="text-[10px] t-text-muted block mt-1">Leaky Bucket &middot; 50rps</span>
-                                </button>
-                                <button type="button" onclick="inspectTourNode('lock', '${p.id}')" class="p-3.5 rounded-xl border border-white/10 hover:border-precious-gold bg-black/30 hover:bg-white/5 transition-all text-left group">
-                                    <span class="text-[10px] text-opal font-bold block mb-1">STAGE 03</span>
-                                    <span class="t-text-primary group-hover:text-precious-gold font-semibold block truncate">PostgreSQL Engine</span>
-                                    <span class="text-[10px] t-text-muted block mt-1">ACID NOWAIT Row Lock</span>
-                                </button>
-                                <button type="button" onclick="inspectTourNode('commit', '${p.id}')" class="p-3.5 rounded-xl border border-white/10 hover:border-precious-gold bg-black/30 hover:bg-white/5 transition-all text-left group">
-                                    <span class="text-[10px] text-precious-gold font-bold block mb-1">STAGE 04</span>
-                                    <span class="t-text-primary group-hover:text-precious-gold font-semibold block truncate">Outbox Dispatch</span>
-                                    <span class="text-[10px] t-text-muted block mt-1">Sub-10ms Cutover</span>
-                                </button>
-                            </div>
-
-                            <!-- Live Node Inspector Card -->
-                            <div id="tourNodeInspector" class="p-4 rounded-xl bg-black/40 border border-white/10 text-xs font-mono space-y-2">
-                                <div class="flex items-center justify-between text-precious-gold">
-                                    <span class="font-bold">INSPECTED NODE: Client Webhook (SHA-256 Idempotent Layer)</span>
-                                    <span class="text-[10px] px-2 py-0.5 rounded bg-fae-fruit/20 text-fae-fruit">Invariant Active</span>
-                                </div>
-                                <p class="t-text-secondary leading-relaxed font-sans text-xs">
-                                    Every incoming HTTP/WhatsApp payload calculates an HMAC SHA-256 idempotency signature cached for 120 seconds. Identical payloads received during cellular retries return instantaneous cached confirmations without touching the database row lock.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Live Concurrency Simulation Runner Sandbox -->
-                        <div class="rounded-2xl inner-panel p-5 border border-precious-gold/30 bg-black/30 space-y-4">
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <div>
-                                    <h3 class="font-mono text-xs uppercase tracking-wider text-precious-gold font-bold">Automated Invariant Stress Simulation</h3>
-                                    <p class="font-serif text-xs t-text-secondary mt-0.5">Simulate 50 simultaneous concurrent checkout claims contending on 1 available inventory SKU</p>
-                                </div>
-                                <button type="button" id="runSimulationBtn" onclick="runTourSimulation('${p.id}')" class="px-5 py-2.5 rounded-xl btn-luminous text-xs font-mono font-bold flex items-center gap-2 shadow-lg">
-                                    <span>▶ Run Concurrency Test</span>
-                                </button>
-                            </div>
-
-                            <!-- Terminal Console Output Stream -->
-                            <div class="rounded-xl bg-black/90 p-4 border border-white/10 font-mono text-[11px] leading-relaxed overflow-x-auto text-emerald-400 max-h-56 overflow-y-auto luxury-scrollbar">
-                                <div id="tourConsoleStream" class="space-y-1">
-                                    <span class="text-zinc-500">// Ready. Click "Run Concurrency Test" to execute the deterministic invariant benchmark.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 `;
 
                 // Open modal with spec content
                 openModal(specHtml, {
-                    title: p.title,
-                    subtitle: p.subtitle,
-                    badge: p.categoryLabel.toUpperCase(),
+                    title: 'Architecture Specification',
+                    subtitle: 'Savannah Atelier \u00B7 Case Study',
+                    badge: 'CASE STUDY',
                     sections: sectionsMeta
                 });
 
                 // Wire up Docked Action Bar
                 const dockedCommBtn = document.getElementById('dockedCommissionBtn');
                 const dockedWABtn = document.getElementById('dockedWhatsAppBtn');
-                const dockedTourBtn = document.getElementById('dockedTourBtn');
-                const dockedTourBtnText = document.getElementById('dockedTourBtnText');
                 const dockedRawExternalLink = document.getElementById('dockedRawExternalLink');
 
                 if (dockedCommBtn) {
@@ -3616,111 +3525,7 @@ COMMIT;`
                 } else if (dockedRawExternalLink) {
                     dockedRawExternalLink.classList.add('hidden');
                 }
-
-                // Toggle Virtual Tour Mode
-                if (dockedTourBtn) {
-                    dockedTourBtn.onclick = () => {
-                        isVirtualTourActive = !isVirtualTourActive;
-                        const specView = document.getElementById('caseStudySpecView');
-                        const tourView = document.getElementById('caseStudyTourView');
-                        const modalScrollContainer = document.getElementById('modalScrollContainer');
-
-                        if (isVirtualTourActive) {
-                            if (specView) specView.classList.add('hidden');
-                            if (tourView) tourView.classList.remove('hidden');
-                            if (dockedTourBtnText) dockedTourBtnText.textContent = 'Case Study ↶';
-                            if (modalScrollContainer) modalScrollContainer.scrollTop = 0;
-                            showToast('Interactive Virtual Tour Active · Test Architecture Sandbox');
-                        } else {
-                            if (tourView) tourView.classList.add('hidden');
-                            if (specView) specView.classList.remove('hidden');
-                            if (dockedTourBtnText) dockedTourBtnText.textContent = 'Virtual Tour';
-                            if (modalScrollContainer) modalScrollContainer.scrollTop = 0;
-                        }
-                    };
-                }
             }
-
-            // In-Modal Virtual Tour Interactive Node Inspector Helper
-            window.inspectTourNode = function(nodeKey, projectId) {
-                const inspector = document.getElementById('tourNodeInspector');
-                if (!inspector) return;
-
-                const nodeData = {
-                    ingress: {
-                        title: 'STAGE 01: Client Webhook (SHA-256 Idempotency Layer)',
-                        badge: 'Idempotency Guarantee',
-                        desc: 'Every incoming HTTP/WhatsApp payload calculates an HMAC SHA-256 idempotency signature cached for 120 seconds. Identical payloads received during cellular retries return instantaneous cached confirmations without touching the database row lock.'
-                    },
-                    gate: {
-                        title: 'STAGE 02: Redis Rate Gate (Token Bucket Governor)',
-                        badge: 'Traffic Shaping',
-                        desc: 'Ingests bursts up to 250 req/sec into a deterministic token bucket, smoothing the intake to 50 req/sec to prevent connection saturation on the PostgreSQL pool.'
-                    },
-                    lock: {
-                        title: 'STAGE 03: PostgreSQL Engine (Pessimistic Row-Level Lock)',
-                        badge: 'Zero Overselling Invariant',
-                        desc: 'Executes "SELECT * FROM inventory WHERE sku = $1 FOR UPDATE NOWAIT;". The winning transaction locks the row immediately; all concurrent contenders fail fast with 409 Conflict within 4ms instead of blocking worker threads.'
-                    },
-                    commit: {
-                        title: 'STAGE 04: Outbox Event Dispatcher (Deterministic Cutover)',
-                        badge: 'ACID Boundary',
-                        desc: 'Commits state changes atomically with the audit log within a single transaction boundary. Dispatches real-time WhatsApp order confirmation to the customer in < 850ms.'
-                    }
-                };
-
-                const data = nodeData[nodeKey] || nodeData.ingress;
-                inspector.innerHTML = `
-                    <div class="flex items-center justify-between text-precious-gold">
-                        <span class="font-bold">${data.title}</span>
-                        <span class="text-[10px] px-2 py-0.5 rounded bg-fae-fruit/20 text-fae-fruit font-mono">${data.badge}</span>
-                    </div>
-                    <p class="t-text-secondary leading-relaxed font-sans text-xs mt-1.5">
-                        ${data.desc}
-                    </p>
-                `;
-            };
-
-            // In-Modal Virtual Tour Live Concurrency Simulation Runner
-            window.runTourSimulation = function(projectId) {
-                const stream = document.getElementById('tourConsoleStream');
-                const btn = document.getElementById('runSimulationBtn');
-                if (!stream) return;
-
-                if (btn) {
-                    btn.disabled = true;
-                    btn.classList.add('opacity-50', 'pointer-events-none');
-                }
-
-                stream.innerHTML = '<span class="text-zinc-500">// Initializing concurrency test: 50 requests inbound...</span>';
-
-                const logLines = [
-                    { t: 150, text: '<span class="text-amber-400">[00:00.002]</span> Ingress: 50 simultaneous HTTP requests received from 12 edge cell towers.' },
-                    { t: 350, text: '<span class="text-amber-400">[00:00.005]</span> SHA-256 Idempotency Cache: 6 cellular duplicates identified & instantly deduplicated.' },
-                    { t: 600, text: '<span class="text-cyan-400">[00:00.009]</span> Redis Rate Gate: 44 discrete transactions admitted to PostgreSQL connection pool.' },
-                    { t: 900, text: '<span class="text-purple-400">[00:00.012]</span> Transaction #89401 acquired PostgreSQL Row Lock (FOR UPDATE NOWAIT) on SKU-704.' },
-                    { t: 1200, text: '<span class="text-emerald-400">[00:00.015]</span> Stock decremented 1 -> 0. Invariant stock >= 0 verified. Transaction #89401 COMMITTED.' },
-                    { t: 1500, text: '<span class="text-rose-400">[00:00.018]</span> Contenders #89402..#89444 caught 55P03 lock_not_available. Graceful 409 Conflict returned.' },
-                    { t: 1800, text: '<span class="text-emerald-300 font-bold">[00:00.022]</span> SIMULATION COMPLETE: Double-Allocations = 0. Peak Latency = 8.2ms. Zero Defect Guarantee PROVEN.' }
-                ];
-
-                logLines.forEach((item) => {
-                    setTimeout(() => {
-                        const div = document.createElement('div');
-                        div.innerHTML = item.text;
-                        stream.appendChild(div);
-                        stream.scrollTop = stream.scrollHeight;
-                    }, item.t);
-                });
-
-                setTimeout(() => {
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.classList.remove('opacity-50', 'pointer-events-none');
-                    }
-                    showToast('Concurrency Verification Complete · 0 Defects Measured');
-                }, 2000);
-            };
 
             window.openCaseStudyModal = openCaseStudyModal;
 
@@ -8348,8 +8153,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
         <!-- Top Drag Handle & Controls -->
         <div id="miniPlayerDragHandle" class="px-3.5 py-2.5 bg-black/75 border-b t-border-subtle flex items-center justify-between cursor-grab active:cursor-grabbing backdrop-blur-md">
             <div class="flex items-center gap-2 min-w-0 pr-2">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
-                <span class="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold shrink-0">PiP Mini</span>
+                <svg class="w-3.5 h-3.5 text-precious-gold shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 <span id="miniPlayerTitle" class="t-text-primary text-[11px] font-mono font-medium truncate">The Anatomy of an Engineer</span>
             </div>
             <div class="flex items-center gap-1 shrink-0">
