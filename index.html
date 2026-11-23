@@ -348,16 +348,18 @@
         /* =====================================================================
          * EDITORIAL READING ENGINE STYLES (STRIPE PRESS / MONOGRAPH STYLE)
          * ===================================================================== */
-        .drop-cap::first-letter {
-            font-family: "Cormorant Garamond", Georgia, serif;
-            float: left;
-            font-size: 3.75rem;
-            line-height: 0.8;
-            margin-right: 0.75rem;
-            margin-top: 0.2rem;
-            color: var(--accent-editorial);
-            font-weight: 600;
-            text-shadow: 0 0 25px rgba(244, 185, 86, 0.35);
+        @media (min-width: 640px) {
+            .drop-cap::first-letter {
+                font-family: "Cormorant Garamond", Georgia, serif;
+                float: left;
+                font-size: 3.75rem;
+                line-height: 0.8;
+                margin-right: 0.75rem;
+                margin-top: 0.2rem;
+                color: var(--accent-editorial);
+                font-weight: 600;
+                text-shadow: 0 0 25px rgba(244, 185, 86, 0.35);
+            }
         }
         .editorial-pullquote {
             position: relative;
@@ -3351,7 +3353,7 @@ COMMIT;`
                         <header class="border-b t-border-subtle pb-6">
                             <div class="mb-3">
                                 <span class="font-mono text-[9.5px] uppercase tracking-[0.2em] px-3 py-1 rounded-full theme-badge inline-block font-semibold">
-                                    ${p.categoryLabel} // CASE STUDY
+                                    ${p.categoryLabel.toUpperCase()}
                                 </span>
                             </div>
                             <h1 id="modalTitle" class="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold t-text-primary leading-[1.08] tracking-tight">
@@ -3370,7 +3372,7 @@ COMMIT;`
                                 <div class="flex items-center gap-3 min-w-0">
                                     <span class="w-2.5 h-2.5 rounded-full bg-fae-fruit shrink-0"></span>
                                     <div class="flex flex-col min-w-0">
-                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">01 // Problem &amp; Operational Constraints</h2>
+                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">01 &middot; Problem &amp; Operational Constraints</h2>
                                         <span class="font-serif text-xs t-text-secondary truncate mt-0.5">High-velocity contention, overselling &amp; mobile network latency</span>
                                     </div>
                                 </div>
@@ -3379,7 +3381,7 @@ COMMIT;`
                                 </div>
                             </button>
                             <div class="case-content p-5 pt-2 border-t border-white/5 space-y-3">
-                                <p class="drop-cap text-base sm:text-lg t-text-primary leading-relaxed font-light">
+                                <p class="drop-cap text-sm sm:text-base md:text-lg t-text-primary leading-relaxed font-light">
                                     ${p.problem}
                                 </p>
                             </div>
@@ -3391,7 +3393,7 @@ COMMIT;`
                                 <div class="flex items-center gap-3 min-w-0">
                                     <span class="w-2.5 h-2.5 rounded-full bg-precious-gold shrink-0"></span>
                                     <div class="flex flex-col min-w-0">
-                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">02 // Systems Architecture &amp; Core Engine</h2>
+                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">02 &middot; Systems Architecture &amp; Core Engine</h2>
                                         <span class="font-serif text-xs t-text-secondary truncate mt-0.5">ACID transactions, pessimistic locking &amp; state machines</span>
                                     </div>
                                 </div>
@@ -3419,7 +3421,7 @@ COMMIT;`
                                 <div class="flex items-center gap-3 min-w-0">
                                     <span class="w-2.5 h-2.5 rounded-full bg-opal shrink-0"></span>
                                     <div class="flex flex-col min-w-0">
-                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">03 // Architectural Trade-Offs &amp; Decisions</h2>
+                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] t-accent-warm font-semibold">03 &middot; Architectural Trade-Offs &amp; Decisions</h2>
                                         <span class="font-serif text-xs t-text-secondary truncate mt-0.5">ADR rationale &middot; Strict correctness vs ad-hoc retries</span>
                                     </div>
                                 </div>
@@ -3445,7 +3447,7 @@ COMMIT;`
                                 <div class="flex items-center gap-3 min-w-0">
                                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
                                     <div class="flex flex-col min-w-0">
-                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-emerald-400 font-semibold">04 // Measured Production Outcomes</h2>
+                                        <h2 class="font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-emerald-400 font-semibold">04 &middot; Measured Production Outcomes</h2>
                                         <span class="font-serif text-xs t-text-secondary truncate mt-0.5">Verified production stability &amp; throughput metrics</span>
                                     </div>
                                 </div>
@@ -3554,7 +3556,7 @@ COMMIT;`
                 openModal(specHtml, {
                     title: p.title,
                     subtitle: p.subtitle,
-                    badge: `${p.categoryLabel.toUpperCase()} // CASE STUDY`,
+                    badge: p.categoryLabel.toUpperCase(),
                     sections: sectionsMeta
                 });
 
