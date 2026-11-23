@@ -4248,20 +4248,24 @@ COMMIT;`
                 const episodes = item.episodes || [{ episodeNumber: 1, title: item.title, duration: item.duration, youtubeVideoId: item.youtubeVideoId, synopsis: item.description }];
                 const currentEp = episodes[activeStudioEpisodeIndex] || episodes[0];
                 const relatedVideos = STUDIO_SERIES.filter((s) => s.id !== item.id).slice(0, 3);
+                const cleanRuntime = (item.duration || '').split('·')[0].trim();
+                const totalEps = episodes.length;
 
                 openModal(`
                     <div class="space-y-6 pr-1 sm:pr-4">
                         <!-- Header Bar -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
-                                <div class="flex items-center gap-2 mb-1.5">
-                                    <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-0.5 rounded-full theme-badge">${item.tag}</span>
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-0.5 rounded-full theme-badge">
+                                        ${item.seriesNumber ? `${item.seriesNumber} &middot; ` : ''}${item.categoryLabel || 'Studio Series'}
+                                    </span>
                                     <span class="font-mono text-xs t-accent-editorial">&bull;</span>
-                                    <span class="font-mono text-xs t-accent-warm font-semibold">${item.duration}</span>
+                                    <span class="font-mono text-xs font-semibold t-accent-warm">${cleanRuntime} Total Runtime</span>
                                 </div>
-                                <h3 id="modalTitle" class="font-serif text-2xl sm:text-3xl lg:text-4xl t-text-primary leading-tight">${item.title}</h3>
+                                <h3 id="modalTitle" class="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold t-text-primary leading-tight tracking-tight">${item.title}</h3>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
+                            <div class="flex items-center gap-2 shrink-0 pt-1">
                                 <button type="button" onclick="minimizeToMiniPlayer()" class="px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold text-xs font-mono t-accent-editorial flex items-center gap-1.5 transition-all shadow-sm" title="Minimize to draggable floating Picture-in-Picture mini-player">
                                     <svg class="w-3.5 h-3.5 text-precious-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M14 9h6v6"/><circle cx="16" cy="11" r="1"/>
@@ -4279,17 +4283,14 @@ COMMIT;`
                         </div>
 
                         <!-- Series / Playlist Info Bar -->
-                        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl inner-panel border t-border-subtle text-xs font-mono">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold uppercase text-[10px] flex items-center gap-1">
-                                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M19 15v4H5v-4h14m1-2H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1M19 8v4H5V8h14m1-2H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1M19 1v4H5V1h14m1-2H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V0a1 1 0 0 0-1-1z"/></svg>
-                                    <span>YouTube Series Playlist</span>
-                                </span>
-                                <span class="t-text-primary font-semibold">Episode <span id="activeEpNumDisplay">${currentEp.episodeNumber}</span> of ${episodes.length}</span>
+                        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl inner-panel border t-border-subtle text-xs font-mono">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                <span class="t-text-primary font-medium">Currently Playing: <span class="font-semibold text-precious-gold">Episode <span id="activeEpNumDisplay">${currentEp.episodeNumber}</span> of ${totalEps}</span></span>
                                 <span class="t-text-muted">&bull; <span id="activeEpDurationDisplay">${currentEp.duration}</span></span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="https://www.youtube.com/playlist?list=${item.playlistId || 'PL_savannah_series'}" target="_blank" rel="noopener noreferrer" class="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 text-[11px]">
+                                <a href="https://www.youtube.com/playlist?list=${item.playlistId || 'PL_savannah_series'}" target="_blank" rel="noopener noreferrer" class="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1.5 text-xs transition-colors">
                                     <span>Watch Full Playlist on YouTube</span>
                                     <span>&nearr;</span>
                                 </a>
@@ -5716,17 +5717,8 @@ COMMIT;`
                                 <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full blur-[110px] pointer-events-none" style="background: var(--aura-crimson);" aria-hidden="true"></div>
                                 <div class="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                                     <div class="space-y-4 max-w-2xl">
-                                        <div class="flex flex-wrap items-center gap-2.5">
-                                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full theme-badge">
-                                                <span class="w-2 h-2 rounded-full bg-fae-fruit animate-pulse"></span>
-                                                <span class="font-mono text-[11px] uppercase tracking-[0.2em]">@MercyVerse-all1000lifetimes</span>
-                                            </div>
-                                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full theme-badge">
-                                                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-                                                <span class="font-mono text-[11px] uppercase tracking-[0.2em]">Tryphen Emurugat Labs</span>
-                                            </div>
-                                        </div>
-                                        <h1 class="font-serif text-4xl sm:text-6xl font-light t-text-primary leading-tight">
+                                        <span class="font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] t-accent-warm font-semibold opacity-85 block">Studio &amp; Broadcast Archive</span>
+                                        <h1 class="font-serif text-4xl sm:text-6xl font-semibold t-text-primary leading-tight">
                                             Visual Essays &amp; <span class="italic t-accent-editorial">Studio Breakdowns</span>
                                         </h1>
                                         <p class="font-mono text-xs sm:text-sm uppercase tracking-[0.16em] t-accent-warm">
@@ -5738,7 +5730,7 @@ COMMIT;`
                                     </div>
                                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
                                         <a href="https://www.youtube.com/@TryphenEmurrugatLabs" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full btn-ghost-twilight text-xs font-mono">
-                                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                                             <span>Labs Channel &nearr;</span>
                                         </a>
                                         <a href="https://www.youtube.com/@MercyVerse-all1000lifetimes" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full btn-luminous text-xs font-medium">
