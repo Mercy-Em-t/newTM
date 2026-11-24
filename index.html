@@ -4661,18 +4661,18 @@ COMMIT;`
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     ${featuredProjects.map((p) => `
-                                        <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
+                                        <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
                                             <div>
-                                                <div class="flex items-center justify-between gap-2 mb-4">
-                                                    <span class="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 rounded-full theme-badge">${p.categoryLabel}</span>
+                                                <div class="flex items-center justify-between gap-2 mb-3.5">
+                                                    <span class="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full theme-badge font-semibold">${p.categoryLabel}</span>
                                                     <span class="t-accent-warm group-hover:translate-x-1 transition-transform">&rarr;</span>
                                                 </div>
-                                                <h3 class="font-serif text-2xl sm:text-3xl t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h3>
-                                                <p class="font-mono text-[11px] t-accent-warm mb-3">${p.subtitle}</p>
-                                                <p class="text-sm t-text-secondary leading-relaxed mb-5">${p.summary}</p>
+                                                <h3 class="font-serif text-[1.6rem] sm:text-3xl font-semibold leading-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h3>
+                                                <p class="font-mono text-[9.5px] sm:text-[10.5px] t-accent-warm mb-2.5 leading-snug">${p.subtitle}</p>
+                                                <p class="text-xs sm:text-sm t-text-secondary leading-relaxed mb-5 line-clamp-3 sm:line-clamp-none">${p.summary}</p>
                                             </div>
                                             <div class="pt-4 border-t t-border-subtle flex flex-wrap gap-1.5">
-                                                ${p.stack.slice(0, 3).map((t) => `<span class="font-mono text-[10px] px-2 py-1 rounded-md inner-panel t-text-secondary">${t}</span>`).join('')}
+                                                ${p.stack.slice(0, 3).map((t) => `<span class="font-mono text-[9.5px] sm:text-[10px] px-2 py-0.5 rounded-md inner-panel t-text-secondary">${t}</span>`).join('')}
                                             </div>
                                         </article>
                                     `).join('')}
@@ -5033,18 +5033,18 @@ COMMIT;`
                         <div class="max-w-7xl mx-auto">
                             <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
                                 <div>
-                                    <span class="font-mono text-xs uppercase tracking-[0.24em] t-accent-warm block mb-2.5">Commissioned Works</span>
-                                    <h1 class="font-serif text-4xl sm:text-6xl font-light t-text-primary">
+                                    <span class="font-mono text-[10px] sm:text-xs uppercase tracking-[0.24em] t-accent-warm block mb-2">Commissioned Works</span>
+                                    <h1 class="font-serif text-[1.75rem] xs:text-3xl sm:text-5xl lg:text-6xl font-semibold whitespace-nowrap tracking-tight t-text-primary">
                                         Portfolio &amp; <span class="italic t-accent-editorial">Architecture</span>
                                     </h1>
-                                    <p class="text-sm sm:text-base t-text-secondary max-w-2xl mt-3">
+                                    <p class="text-xs sm:text-sm md:text-base t-text-secondary leading-relaxed max-w-2xl mt-2.5">
                                         Inspect six commissioned systems across distributed backends, multi-tenant platforms, and conversational commerce. Select any project to examine constraints, engineering trade-offs, and production outcomes.
                                     </p>
                                 </div>
 
-                                <div class="flex flex-wrap gap-2" role="group" aria-label="Filter Projects">
+                                <div class="flex flex-wrap gap-1.5 sm:gap-2" role="group" aria-label="Filter Projects">
                                     ${categories.map((c) => `
-                                        <button type="button" data-work-filter="${c.key}" class="work-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${currentWorkFilter === c.key ? 'btn-luminous' : 'btn-ghost-twilight'}">
+                                        <button type="button" data-work-filter="${c.key}" class="work-filter-btn px-3 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition-all ${currentWorkFilter === c.key ? 'btn-luminous' : 'btn-ghost-twilight'}">
                                             ${c.label}
                                         </button>
                                     `).join('')}
@@ -5063,18 +5063,18 @@ COMMIT;`
                         : PORTFOLIO_PROJECTS.filter((p) => p.category === currentWorkFilter);
 
                     grid.innerHTML = list.map((p) => `
-                        <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
+                        <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-4">
-                                    <span class="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 rounded-full theme-badge">${p.categoryLabel}</span>
+                                <div class="flex items-center justify-between gap-2 mb-3.5">
+                                    <span class="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full theme-badge font-semibold">${p.categoryLabel}</span>
                                     <span class="t-accent-warm group-hover:translate-x-1 transition-transform">&rarr;</span>
                                 </div>
-                                <h2 class="font-serif text-2xl sm:text-3xl t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h2>
-                                <p class="font-mono text-[11px] t-accent-warm mb-3">${p.subtitle}</p>
-                                <p class="text-sm t-text-secondary leading-relaxed mb-6">${p.summary}</p>
+                                <h2 class="font-serif text-[1.6rem] sm:text-3xl font-semibold leading-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h2>
+                                <p class="font-mono text-[9.5px] sm:text-[10.5px] t-accent-warm mb-2.5 leading-snug">${p.subtitle}</p>
+                                <p class="text-xs sm:text-sm t-text-secondary leading-relaxed mb-5 line-clamp-3 sm:line-clamp-none">${p.summary}</p>
                             </div>
                             <div class="pt-4 border-t t-border-subtle flex flex-wrap gap-1.5">
-                                ${p.stack.slice(0, 4).map((tech) => `<span class="font-mono text-[10px] px-2 py-1 rounded-md inner-panel t-text-secondary">${tech}</span>`).join('')}
+                                ${p.stack.slice(0, 4).map((tech) => `<span class="font-mono text-[9.5px] sm:text-[10px] px-2 py-0.5 rounded-md inner-panel t-text-secondary">${tech}</span>`).join('')}
                             </div>
                         </article>
                     `).join('');
