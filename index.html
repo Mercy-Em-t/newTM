@@ -21,7 +21,7 @@
     <!-- Google Fonts: Cormorant Garamond, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -4663,11 +4663,11 @@ COMMIT;`
                                     ${featuredProjects.map((p) => `
                                         <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
                                             <div>
-                                                <div class="flex items-center justify-between gap-2 mb-3.5">
-                                                    <span class="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full theme-badge font-semibold">${p.categoryLabel}</span>
+                                                <div class="flex items-center justify-between gap-2 mb-3">
+                                                    <span class="font-mono text-[7.5px] sm:text-[8px] uppercase tracking-[0.16em] px-2 py-0.5 rounded-full theme-badge font-medium shrink-0">${p.categoryLabel}</span>
                                                     <span class="t-accent-warm group-hover:translate-x-1 transition-transform">&rarr;</span>
                                                 </div>
-                                                <h3 class="font-serif text-[1.6rem] sm:text-3xl font-semibold leading-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h3>
+                                                <h3 class="font-serif text-[1.85rem] sm:text-3xl lg:text-[2rem] font-bold leading-[1.12] tracking-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h3>
                                                 <p class="font-mono text-[9.5px] sm:text-[10.5px] t-accent-warm mb-2.5 leading-snug">${p.subtitle}</p>
                                                 <p class="text-xs sm:text-sm t-text-secondary leading-relaxed mb-5 line-clamp-3 sm:line-clamp-none">${p.summary}</p>
                                             </div>
@@ -5065,11 +5065,11 @@ COMMIT;`
                     grid.innerHTML = list.map((p) => `
                         <article data-case-id="${p.id}" tabindex="0" role="button" class="case-study-trigger glass-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer group focus:outline-none focus:ring-2 focus:ring-fae-fruit">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-3.5">
-                                    <span class="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full theme-badge font-semibold">${p.categoryLabel}</span>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <span class="font-mono text-[7.5px] sm:text-[8px] uppercase tracking-[0.16em] px-2 py-0.5 rounded-full theme-badge font-medium shrink-0">${p.categoryLabel}</span>
                                     <span class="t-accent-warm group-hover:translate-x-1 transition-transform">&rarr;</span>
                                 </div>
-                                <h2 class="font-serif text-[1.6rem] sm:text-3xl font-semibold leading-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h2>
+                                <h2 class="font-serif text-[1.85rem] sm:text-3xl lg:text-[2rem] font-bold leading-[1.12] tracking-tight t-text-primary group-hover:t-accent-editorial transition-colors mb-1.5">${p.title}</h2>
                                 <p class="font-mono text-[9.5px] sm:text-[10.5px] t-accent-warm mb-2.5 leading-snug">${p.subtitle}</p>
                                 <p class="text-xs sm:text-sm t-text-secondary leading-relaxed mb-5 line-clamp-3 sm:line-clamp-none">${p.summary}</p>
                             </div>
