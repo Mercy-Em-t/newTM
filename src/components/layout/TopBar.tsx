@@ -96,23 +96,24 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenCmdK }) => {
 
           {/* Right Mobile Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Spotlight Search (md+) */}
+            {/* Spotlight Search Icon */}
             <button
               onClick={onOpenCmdK}
               type="button"
-              className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full inner-panel border t-border-subtle hover:border-precious-gold transition-all text-xs font-mono t-text-muted hover:t-text-primary"
-              title="Search (⌘K)"
+              className="p-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-precious-gold transition-colors shrink-0 flex items-center justify-center"
+              title="Search Atelier (⌘K)"
+              aria-label="Search"
             >
-              <Search className="w-3.5 h-3.5 text-precious-gold" />
-              <kbd className="px-1.5 py-0.5 rounded bg-black/40 border border-white/10 text-[10px] text-precious-gold font-bold">⌘K</kbd>
+              <Search className="w-4 h-4" />
             </button>
 
             {/* Quick 1-Tap Theme Toggle Icon */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-precious-gold transition-colors shrink-0"
+              className="p-2 rounded-xl inner-panel border t-border-subtle hover:border-precious-gold text-precious-gold transition-colors shrink-0 flex items-center justify-center"
               title="Toggle Theme (Dark / Light)"
+              aria-label="Toggle Theme"
             >
               {theme === 'thorn' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
