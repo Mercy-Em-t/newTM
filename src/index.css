@@ -1,0 +1,635 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+ * THEME 1: THORN CROWN (DEFAULT — VELVETY OBSIDIAN PLUM TWILIGHT)
+ * ===================================================================== */
+:root,
+[data-theme="thorn"] {
+    color-scheme: dark;
+    --bg-base: #110517;
+    --bg-elevated: #1A0822;
+    --surface-card: linear-gradient(155deg, rgba(45, 16, 54, 0.64) 0%, rgba(26, 8, 34, 0.84) 100%);
+    --surface-inner: rgba(17, 5, 23, 0.74);
+    --surface-input: rgba(17, 5, 23, 0.86);
+    --nav-bg: rgba(17, 5, 23, 0.82);
+    --modal-bg: #1B0924;
+    --footer-bg: rgba(13, 3, 18, 0.94);
+
+    --text-primary: #FAF4F7;
+    --text-secondary: #CBBCD4;
+    --text-muted: #9684A8;
+
+    --precious-gold: #F4B956;
+    --accent-editorial: #F4B956;
+    --accent-warm: #D97352;
+    --accent-opal: #A894E6;
+    --accent-crimson: #C93A6E;
+
+    --border-subtle: rgba(104, 80, 173, 0.28);
+    --border-warm: rgba(217, 115, 82, 0.28);
+    --border-hover: rgba(244, 185, 86, 0.56);
+
+    --badge-bg: rgba(45, 16, 54, 0.84);
+    --badge-text: #F4B956;
+    --grid-line: rgba(104, 80, 173, 0.08);
+    --ring-stroke: rgba(244, 185, 86, 0.30);
+    --ring-stroke-soft: rgba(104, 80, 173, 0.36);
+
+    --aura-opal: rgba(104, 80, 173, 0.22);
+    --aura-crimson: rgba(107, 7, 51, 0.34);
+    --aura-fae: rgba(217, 115, 82, 0.16);
+    --aura-blush: rgba(158, 30, 91, 0.25);
+
+    --card-shadow: 0 24px 54px -22px rgba(5, 1, 8, 0.9);
+    --card-hover-shadow: 0 28px 60px -18px rgba(5, 1, 8, 0.95), 0 0 36px -14px rgba(217, 115, 82, 0.30);
+    --cta-glow: 0 12px 32px -8px rgba(217, 115, 82, 0.52);
+
+    --scrollbar-track: #110517;
+    --scrollbar-thumb: rgba(104, 80, 173, 0.40);
+    --scrollbar-thumb-hover: #D97352;
+}
+
+/* =====================================================================
+ * THEME 2: OPAL DAWN (SOFT ALABASTER-BLUSH WITH WASHED AMARANTH SPLOTCHES)
+ * ===================================================================== */
+[data-theme="dawn"] {
+    color-scheme: light;
+    --bg-base: #FAF4F7;
+    --bg-elevated: #F8EDF4;
+    --surface-card: linear-gradient(155deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 246, 250, 0.94) 48%, rgba(252, 235, 244, 0.88) 100%);
+    --surface-inner: rgba(254, 244, 249, 0.92);
+    --surface-input: rgba(255, 255, 255, 0.98);
+    --nav-bg: rgba(254, 245, 249, 0.90);
+    --modal-bg: #FFFFFF;
+    --footer-bg: #F7EBF3;
+
+    --text-primary: #1C0522;
+    --text-secondary: #3B2044;
+    --text-muted: #583F64;
+
+    --precious-gold: #8C184E; /* Deep royal amaranth / fae fruit pink for crisp editorial legibility */
+    --accent-editorial: #8C184E;
+    --accent-warm: #B84E2C;
+    --accent-opal: #553D99;
+    --accent-crimson: #9E1E5B;
+
+    --border-subtle: rgba(158, 30, 91, 0.16);
+    --border-warm: rgba(158, 30, 91, 0.22);
+    --border-hover: rgba(194, 59, 117, 0.48);
+
+    --badge-bg: rgba(158, 30, 91, 0.08);
+    --badge-text: #8C184E;
+    --grid-line: rgba(158, 30, 91, 0.045);
+    --ring-stroke: rgba(140, 24, 78, 0.24);
+    --ring-stroke-soft: rgba(104, 80, 173, 0.20);
+
+    /* Washed-away deep pink watercolor splotch auras */
+    --aura-opal: radial-gradient(circle, rgba(104, 80, 173, 0.16) 0%, rgba(248, 232, 248, 0.12) 50%, transparent 75%);
+    --aura-crimson: radial-gradient(circle, rgba(194, 59, 117, 0.24) 0%, rgba(247, 185, 214, 0.16) 45%, rgba(255, 240, 248, 0.08) 70%, transparent 85%);
+    --aura-fae: radial-gradient(circle, rgba(217, 70, 128, 0.22) 0%, rgba(253, 205, 225, 0.15) 50%, transparent 80%);
+    --aura-blush: radial-gradient(circle, rgba(158, 30, 91, 0.20) 0%, rgba(248, 195, 220, 0.14) 48%, transparent 78%);
+
+    --card-shadow: 0 20px 48px -22px rgba(77, 16, 60, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    --card-hover-shadow: 0 26px 56px -20px rgba(77, 16, 60, 0.16), 0 0 32px -12px rgba(194, 59, 117, 0.25);
+    --cta-glow: 0 10px 26px -8px rgba(158, 30, 91, 0.38);
+
+    --scrollbar-track: #FAF4F7;
+    --scrollbar-thumb: rgba(88, 63, 100, 0.20);
+    --scrollbar-thumb-hover: #B84E2C;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    overflow-x: clip;
+    transition: background-color 0.45s ease, color 0.35s ease;
+}
+
+.theme-bg-gradient {
+    background: radial-gradient(circle at 78% 16%, var(--bg-elevated) 0%, var(--bg-base) 64%);
+    transition: background 0.45s ease;
+}
+
+.architectural-grid {
+    background-image:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+}
+
+/* Ambient Nebula & Astrolabe Animations */
+@keyframes floatAura {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(24px, -22px) scale(1.06); }
+}
+@keyframes silkBreathe {
+    0%, 100% { transform: scale(1) translateY(0px); }
+    50% { transform: scale(1.028) translateY(-6px); }
+}
+@keyframes moonPulse {
+    0%, 100% { transform: scale(1); opacity: 0.94; }
+    50% { transform: scale(1.04); opacity: 1; }
+}
+@keyframes slowOrbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0.45; transform: scale(0.92); }
+    50% { opacity: 1; transform: scale(1.08); }
+}
+
+.aura-slow { animation: floatAura 19s ease-in-out infinite; }
+.aura-reverse { animation: floatAura 24s ease-in-out infinite reverse; }
+.silk-breathe { transform-origin: 300px 300px; animation: silkBreathe 10s ease-in-out infinite; }
+.moon-pulse { transform-origin: 300px 238px; animation: moonPulse 7s ease-in-out infinite; }
+.ring-orbit-slow { transform-origin: 300px 300px; animation: slowOrbit 95s linear infinite; }
+.ring-orbit-reverse { transform-origin: 300px 300px; animation: slowOrbit 125s linear infinite reverse; }
+.star-twinkle-1 { transform-box: fill-box; transform-origin: center; animation: starTwinkle 4.8s ease-in-out infinite; }
+.star-twinkle-2 { transform-box: fill-box; transform-origin: center; animation: starTwinkle 6.2s ease-in-out infinite 1.4s; }
+.star-twinkle-3 { transform-box: fill-box; transform-origin: center; animation: starTwinkle 5.5s ease-in-out infinite 2.5s; }
+
+/* Theme-Aware Utility Classes */
+.t-text-primary { color: var(--text-primary); }
+.t-text-secondary { color: var(--text-secondary); }
+.t-text-muted { color: var(--text-muted); }
+.t-accent-editorial { color: var(--accent-editorial); }
+.t-accent-warm { color: var(--accent-warm); }
+.t-accent-opal { color: var(--accent-opal); }
+.t-border-subtle { border-color: var(--border-subtle); }
+
+.glass-nav {
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.glass-card {
+    background: var(--surface-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease, background 0.4s ease;
+}
+
+.glass-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.inner-panel {
+    background: var(--surface-inner);
+    border: 1px solid var(--border-subtle);
+    transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+.theme-badge {
+    background: var(--badge-bg);
+    border: 1px solid var(--border-warm);
+    color: var(--badge-text);
+}
+
+.theme-input {
+    background: var(--surface-input);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    transition: border-color 0.25s ease, background-color 0.35s ease;
+}
+
+.theme-input::placeholder { color: var(--text-muted); }
+.theme-input:focus {
+    outline: none;
+    border-color: #D97352;
+}
+
+/* Brand Typographic Wordmark */
+.brand-first {
+    color: #F8F2F5;
+    font-weight: 700;
+}
+[data-theme="dawn"] .brand-first {
+    color: #25061C;
+    font-weight: 700;
+}
+
+.brand-last {
+    color: #B4A5BC;
+    font-weight: 400;
+}
+[data-theme="dawn"] .brand-last {
+    color: #6E4F63;
+    font-weight: 400;
+}
+
+.brand-sub {
+    color: #D16E4F;
+}
+[data-theme="dawn"] .brand-sub {
+    color: #B84E2C;
+}
+
+/* Luminous Primary CTA (Theme Adaptive: Gold in Thorn, Deep Amaranth-Plum in Dawn) */
+.btn-luminous {
+    background: linear-gradient(135deg, #D97352 0%, #F4B956 100%);
+    color: #1A0822;
+    font-weight: 600;
+    box-shadow: var(--cta-glow);
+    transition: transform 0.25s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.btn-luminous:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 16px 36px -8px rgba(244, 185, 86, 0.55);
+}
+
+[data-theme="dawn"] .btn-luminous {
+    background: linear-gradient(135deg, #8C184E 0%, #B84E2C 100%);
+    color: #FAF4F7 !important;
+    box-shadow: 0 10px 24px -6px rgba(140, 24, 78, 0.40);
+}
+
+[data-theme="dawn"] .btn-luminous:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 14px 30px -6px rgba(140, 24, 78, 0.55);
+}
+
+.btn-ghost-twilight {
+    background: var(--surface-inner);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-ghost-twilight:hover {
+    border-color: #D97352;
+    color: var(--accent-editorial);
+}
+
+.modal-surface {
+    background: var(--modal-bg);
+    border: 1px solid var(--border-warm);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.footer-surface {
+    background: var(--footer-bg);
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* Active Nav Link Indicator */
+.nav-link-active {
+    color: var(--accent-editorial) !important;
+    position: relative;
+}
+.nav-link-active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #D97352, #F4B956);
+}
+
+/* =====================================================================
+ * LIGHT MODE (DAWN) TYPOGRAPHY CONTRAST & AMARANTH PINK REFINEMENTS
+ * ===================================================================== */
+[data-theme="dawn"] .text-precious-gold,
+[data-theme="dawn"] [class*="text-precious-gold"] {
+    color: var(--precious-gold) !important; /* Resolves to #8C184E deep amaranth in Dawn */
+}
+
+[data-theme="dawn"] .border-precious-gold {
+    border-color: rgba(158, 30, 91, 0.40) !important;
+}
+
+[data-theme="dawn"] .border-precious-gold\/30 {
+    border-color: rgba(158, 30, 91, 0.25) !important;
+}
+
+[data-theme="dawn"] .border-precious-gold\/20 {
+    border-color: rgba(158, 30, 91, 0.18) !important;
+}
+
+[data-theme="dawn"] .bg-precious-gold\/10,
+[data-theme="dawn"] .bg-precious-gold\/15,
+[data-theme="dawn"] .bg-precious-gold\/20 {
+    background-color: rgba(158, 30, 91, 0.10) !important;
+}
+
+[data-theme="dawn"] .text-harvest-gold,
+[data-theme="dawn"] .text-amber-400,
+[data-theme="dawn"] .text-amber-300,
+[data-theme="dawn"] .text-yellow-400 {
+    color: var(--accent-warm) !important; /* Rich terracotta / russet #B84E2C */
+}
+
+/* Clean up pure white backgrounds in Dawn cards to show delicate pink blush touch */
+[data-theme="dawn"] .glass-card {
+    background: var(--surface-card);
+    border-color: var(--border-subtle);
+}
+
+[data-theme="dawn"] .inner-panel {
+    background: var(--surface-inner);
+    border-color: var(--border-subtle);
+}
+
+/* Ensure hairline light weights in Dawn mode are boosted to crisp, solid rasterization */
+[data-theme="dawn"] .font-light {
+    font-weight: 400 !important;
+}
+
+[data-theme="dawn"] .t-text-secondary {
+    color: var(--text-secondary);
+    font-weight: 450;
+}
+
+/* Select Dropdown Arrow */
+select.custom-select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23D97352'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.05rem;
+    padding-right: 2.75rem !important;
+}
+
+/* SPA Route View Transition */
+@keyframes viewFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.view-enter {
+    animation: viewFadeIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Custom Scrollbar */
+html {
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+    border: 2px solid var(--scrollbar-track);
+    transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+.luxury-scrollbar,
+.custom-scrollbar {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    scrollbar-width: thin;
+}
+.luxury-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+.luxury-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.luxury-scrollbar::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+}
+.luxury-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Reading Engine */
+.drop-cap::first-letter {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    float: left;
+    font-size: 2.25rem;
+    line-height: 0.88;
+    margin-right: 0.5rem;
+    margin-top: 0.12rem;
+    color: var(--accent-editorial);
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(244, 185, 86, 0.3);
+}
+@media (min-width: 640px) {
+    .drop-cap::first-letter {
+        font-size: 3.75rem;
+        line-height: 0.8;
+        margin-right: 0.75rem;
+        margin-top: 0.2rem;
+        text-shadow: 0 0 25px rgba(244, 185, 86, 0.35);
+    }
+}
+.editorial-pullquote {
+    position: relative;
+    border-left: 3px solid var(--accent-editorial);
+    background: rgba(45, 16, 54, 0.5);
+    padding: 1.5rem 1.85rem;
+    margin: 2rem 0;
+    border-radius: 0 1rem 1rem 0;
+}
+[data-theme="dawn"] .editorial-pullquote {
+    background: rgba(242, 233, 245, 0.75);
+    border-left-color: #9E1E5B;
+}
+.blueprint-box {
+    background: #0d0212;
+    border: 1px solid rgba(104, 80, 173, 0.35);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.825rem;
+    color: #FAF4F7;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+[data-theme="dawn"] .blueprint-box {
+    background: #14051c;
+    border-color: rgba(104, 80, 173, 0.35);
+    color: #FAF4F7;
+}
+.marginalia-note {
+    background: rgba(217, 115, 82, 0.08);
+    border: 1px dashed rgba(217, 115, 82, 0.4);
+    border-radius: 0.85rem;
+    padding: 1.1rem 1.35rem;
+    margin: 1.75rem 0;
+    font-size: 0.85rem;
+    line-height: 1.65;
+}
+.font-reading-md {
+    font-size: 1rem;
+    line-height: 1.78;
+}
+.font-reading-lg {
+    font-size: 1.125rem;
+    line-height: 1.85;
+}
+
+        /* =====================================================================
+         * EXECUTIVE WHITEPAPER PRINT & PDF EXPORT STYLES
+         * ===================================================================== */
+        @media print {
+            /* 1. Global Page Reset & Paper Geometry */
+            @page {
+                size: A4 portrait;
+                margin: 1.6cm 1.4cm 1.6cm 1.4cm;
+            }
+            *, *::before, *::after {
+                background: transparent !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            html, body {
+                background: #ffffff !important;
+                color: #0b020e !important;
+                font-size: 10.5pt !important;
+                line-height: 1.55 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            /* 2. Eliminate All Sticky / Fixed Navigation Chrome & Floating Overlays */
+            header,
+            header.glass-nav,
+            #desktopSidebar,
+            aside,
+            nav,
+            footer,
+            #cmdKBackdrop,
+            #cmdKTriggerBtn,
+            #toastNotification,
+            .toast-notification,
+            .theme-toggle,
+            .bottom-dock,
+            #mobileMenu,
+            #mobileMenuBtn,
+            #modalStickyHeader,
+            #modalActionBar,
+            #modalMultipageFooter,
+            #modalTocPopover,
+            button,
+            .sidebar-toggle-icon,
+            .btn-luminous,
+            .btn-ghost-twilight,
+            .no-print {
+                display: none !important;
+            }
+
+            /* 3. Full-Width Main Layout (Remove Sidebar Left Padding) */
+            main#appView {
+                padding-left: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            /* 4. Strictly Prevent Card Slicing & Section Fragmentation Across Pages */
+            .glass-card,
+            .inner-panel,
+            .protocol-card,
+            .case-section-drawer,
+            .editorial-pullquote,
+            .marginalia-note,
+            .blueprint-box,
+            pre,
+            code,
+            table,
+            tr,
+            figure,
+            img,
+            svg,
+            .grid > div {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Prevent Headings from Being Left Stranded at Bottom of Page */
+            h1, h2, h3, h4, h5, h6 {
+                color: #0b020e !important;
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+
+            /* 5. High-Contrast Monograph Typography */
+            p, span, li, dt, dd, td, th {
+                color: #18181b !important;
+            }
+            .t-accent-editorial, .t-accent-warm, .text-precious-gold {
+                color: #6B0733 !important;
+                font-weight: 700 !important;
+            }
+            .t-text-primary {
+                color: #09090b !important;
+                font-weight: 600 !important;
+            }
+            .t-text-secondary, .t-text-muted {
+                color: #3f3f46 !important;
+            }
+
+            /* 6. Clean Paper Borders & Surfaces */
+            .inner-panel, .glass-card, .border, .t-border-subtle {
+                border: 1px solid #d4d4d8 !important;
+                background: #fafafa !important;
+                border-radius: 8px !important;
+            }
+
+            .blueprint-box, pre {
+                background: #f4f4f5 !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 6px !important;
+                padding: 10px !important;
+                font-size: 8.5pt !important;
+                color: #0f172a !important;
+            }
+
+            /* 7. Monograph Reader & Modal Print Formatting */
+            #modalBackdrop {
+                position: static !important;
+                display: block !important;
+                padding: 0 !important;
+                background: transparent !important;
+                overflow: visible !important;
+            }
+            #modalContainer {
+                max-width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+            }
+            #modalScrollContainer {
+                overflow: visible !important;
+                padding: 0 !important;
+            }
+            .case-content {
+                display: block !important;
+            }
+        }
+
+
