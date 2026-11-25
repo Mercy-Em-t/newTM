@@ -51,16 +51,16 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenCmdK }) => {
               aria-label="Tryphen Emurugat Home"
             >
               <BrandLogo size="sm" />
-              <span className="t-accent-warm/70 font-mono text-xs px-0.5 select-none">/</span>
-              <span className="font-serif text-xs sm:text-sm t-text-primary italic font-medium tracking-wide truncate max-w-sm">
+              <span className="t-accent-warm font-mono text-xs px-1 select-none font-bold">/</span>
+              <span className="font-serif text-xs sm:text-sm t-text-primary font-medium tracking-wide truncate max-w-sm">
                 {routeTitles[currentRoute]}
               </span>
             </button>
           ) : (
             <div className="flex items-center gap-2 font-mono text-xs">
               <span className="uppercase tracking-[0.2em] t-accent-warm font-bold">Savannah Atelier</span>
-              <span className="t-accent-warm/70 font-mono select-none">/</span>
-              <span className="font-serif text-sm t-text-primary italic font-medium">
+              <span className="t-accent-warm font-mono select-none font-bold">/</span>
+              <span className="font-serif text-sm t-text-primary font-medium tracking-wide">
                 {routeTitles[currentRoute]}
               </span>
             </div>

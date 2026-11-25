@@ -1,0 +1,3204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>APEX VAULT — Interactive 3D Vehicle Showcase</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js r128 via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GLTFLoader & DRACOLoader for Real 3D Models -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+
+  <!-- Google Fonts: Anton (Poster Display), Space Grotesk (UI), Inter (Body), JetBrains Mono (Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-from: #2d134a;
+      --bg-to: #5e358c;
+      --accent: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.45);
+      --text-poster: rgba(255, 255, 255, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background-color: #09090b;
+      color: #ffffff;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .font-poster {
+      font-family: 'Anton', sans-serif;
+      letter-spacing: 0.02em;
+      line-height: 0.86;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .font-mono-tech {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Dynamic Poster Gradient Stage */
+    #app-stage {
+      background: radial-gradient(circle at 50% 35%, var(--bg-to) 0%, var(--bg-from) 78%, #07070a 100%);
+      transition: background 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Subtle noise grain overlay for editorial poster texture */
+    .poster-grain {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Massive Background Typography with vertical fade */
+    .poster-wordmark {
+      color: var(--text-poster);
+      -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.05) 100%);
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.05) 100%);
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+    }
+
+    /* 3D Canvas Container Transitions (Full vs Compact Mini-Preview) */
+    #stage-viewport {
+      transition: height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Pull-up Specs Sheet */
+    #specs-sheet {
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.4s ease;
+      will-change: transform;
+    }
+
+    /* Custom Scrollbar for Specs Sheet & Modals */
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+    }
+
+    /* Slate / Marble Dark Texture for Key-Fob Garage Modal */
+    .marble-bg {
+      background-color: #111318;
+      background-image:
+        radial-gradient(at 18% 22%, rgba(255, 255, 255, 0.06) 0px, transparent 50%),
+        radial-gradient(at 82% 76%, rgba(255, 255, 255, 0.05) 0px, transparent 48%),
+        linear-gradient(125deg, rgba(255, 255, 255, 0.025) 0%, transparent 40%, rgba(255, 255, 255, 0.03) 65%, transparent 100%);
+    }
+
+    /* Hotspot Pin Pulse Animation */
+    @keyframes pulseRing {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
+      70% { transform: translate(-50%, -50%) scale(1.75); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1.75); opacity: 0; }
+    }
+    .hotspot-pulse::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+      border: 1.5px solid var(--accent);
+      animation: pulseRing 1.9s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      pointer-events: none;
+    }
+
+    /* Key Fob Hover / Tap Polish */
+    .fob-card {
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .fob-card:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+    .fob-card:active {
+      transform: scale(0.97);
+    }
+
+    /* Subtle carbon fiber weave pattern for key fobs */
+    .carbon-weave {
+      background-color: #18181b;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%),
+        linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 4px 4px;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white antialiased">
+
+  <!-- =================================================================== -->
+  <!-- MAIN APP CONTAINER (Full-bleed dynamic poster stage)                -->
+  <!-- =================================================================== -->
+  <div id="app-stage" class="relative w-full h-[100dvh] overflow-hidden flex flex-col">
+    <!-- Editorial Grain Overlay -->
+    <div class="pointer-events-none absolute inset-0 poster-grain opacity-60 z-0"></div>
+
+    <!-- ================================================================= -->
+    <!-- FIXED GLASSMORPHIC TOP HEADER                                     -->
+    <!-- ================================================================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-4 pt-3 pb-2.5 sm:px-6">
+      <div class="max-w-5xl mx-auto flex items-center justify-between bg-black/35 backdrop-blur-xl border border-white/15 rounded-2xl px-3.5 py-2 shadow-2xl">
+        <!-- Brand Wordmark -->
+        <button id="brand-home-btn" class="flex items-center gap-2.5 text-left group focus:outline-none">
+          <div class="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 2L3 20h4.5l4.5-9.5L16.5 20H21L12 2z" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div>
+            <div class="font-display font-bold tracking-[0.16em] text-xs sm:text-sm leading-none text-white">APEX VAULT</div>
+            <div class="font-mono-tech text-[9px] tracking-[0.2em] text-white/55 mt-0.5">3D SHOWROOM</div>
+          </div>
+        </button>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- Load Real 3D Model (.GLB) Button -->
+          <input id="glb-file-picker" type="file" accept=".glb,.gltf" class="hidden" />
+          <button id="load-glb-btn" type="button" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/35 active:scale-95 border border-purple-400/30 text-xs font-display font-semibold tracking-wider uppercase transition text-purple-200" title="Load or drop any .glb / .gltf 3D car model">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span class="hidden xs:inline sm:inline">Load</span>
+            <span>.GLB</span>
+          </button>
+
+          <!-- Garage (Key-Fob Grid Modal) -->
+          <button id="open-garage-btn" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/15 text-xs font-display font-semibold tracking-wider uppercase transition">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="6" y="2" width="12" height="20" rx="4" />
+              <circle cx="12" cy="8" r="1.5" fill="currentColor" />
+              <path d="M9.5 14h5M10.5 17h3" stroke-linecap="round" />
+            </svg>
+            <span>Garage</span>
+          </button>
+
+          <!-- Inquire (Contact Form Modal) -->
+          <button id="open-inquire-btn" class="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 active:scale-95 text-xs font-display font-bold tracking-wider uppercase shadow-lg transition">
+            <span>Inquire</span>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- 3D HERO STAGE VIEWPORT (Compacts to top 32% when Specs Open)      -->
+    <!-- ================================================================= -->
+    <main id="stage-viewport" class="relative w-full h-full flex-shrink-0 overflow-hidden">
+      <!-- Top Editorial Badge & Model Strip (under header) -->
+      <div id="hero-meta" class="absolute top-20 left-0 right-0 z-10 px-5 sm:px-8 pointer-events-none transition-all duration-500">
+        <div class="max-w-5xl mx-auto flex items-start justify-between">
+          <div>
+            <div id="car-badge" class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/15 font-mono-tech text-[10px] sm:text-xs tracking-[0.18em] uppercase text-white/90">
+              SKYLINE GT-R R34
+            </div>
+            <h1 id="car-subtitle" class="font-display font-bold text-lg sm:text-2xl tracking-tight text-white mt-1.5 drop-shadow">
+              Nissan Skyline GT-R R34
+            </h1>
+          </div>
+
+          <!-- 360° Turntable Angle Readout -->
+          <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/35 backdrop-blur-md border border-white/15 font-mono-tech text-[10px] text-white/85">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="angle-readout">035°</span>
+              <span class="text-white/40">360°</span>
+            </div>
+            <span id="car-year-chip" class="font-mono-tech text-[10px] tracking-widest text-white/55">1999 // JDM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MASSIVE STACKED POSTER TYPOGRAPHY (Behind 3D WebGL Canvas) -->
+      <div id="poster-typography-wrap" class="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-2 overflow-hidden transition-all duration-500">
+        <div id="poster-bg-text" class="poster-wordmark font-poster uppercase text-center whitespace-nowrap select-none text-[27vw] sm:text-[22vw] md:text-[18vw] leading-none -mt-14 sm:-mt-10">
+          NISSAN
+        </div>
+      </div>
+
+      <!-- INTERACTIVE THREE.JS WEBGL CANVAS (Transparent background) -->
+      <div id="canvas-container" class="absolute inset-0 z-20 cursor-grab active:cursor-grabbing touch-none">
+        <canvas id="three-canvas" class="w-full h-full block"></canvas>
+      </div>
+
+      <!-- INTERACTIVE 3D EXPLODED VIEW HOTSPOT PINS LAYER -->
+      <div id="hotspots-layer" class="pointer-events-none absolute inset-0 z-30 overflow-hidden transition-opacity duration-300 opacity-0">
+        <!-- Dynamically positioned buttons injected by JS -->
+      </div>
+
+      <!-- FLOATING COMPONENT INSPECTOR CARD (Appears when tapping a part) -->
+      <div id="part-inspector" class="hidden absolute left-4 right-4 sm:left-auto sm:right-6 bottom-36 sm:bottom-32 sm:w-80 z-40 bg-zinc-950/88 backdrop-blur-2xl border border-white/20 rounded-2xl p-4 shadow-2xl transition-all duration-300">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div id="inspector-tag" class="font-mono-tech text-[10px] tracking-[0.2em] uppercase text-purple-300">COMPONENT TELEMETRY</div>
+            <h3 id="inspector-title" class="font-display font-bold text-base text-white mt-0.5">Engine Assembly</h3>
+          </div>
+          <button id="close-inspector-btn" class="w-7 h-7 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 transition" aria-label="Close Inspector">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <p id="inspector-desc" class="text-xs text-white/75 leading-relaxed mt-2.5">
+          Detailed engineering specifications appear here.
+        </p>
+        <div id="inspector-specs" class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/10">
+          <!-- Two key specs injected here -->
+        </div>
+      </div>
+
+      <!-- REAL 3D MODEL LOADER PROGRESS BADGE -->
+      <div id="model-loader-badge" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-2.5 px-6 py-4 rounded-2xl bg-zinc-950/90 backdrop-blur-2xl border border-white/20 shadow-2xl transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-4 h-4 border-2 border-white/20 border-t-purple-400 rounded-full animate-spin"></div>
+          <span id="model-loader-text" class="font-mono-tech text-xs tracking-wider uppercase text-white font-semibold">Loading Real 3D Asset...</span>
+        </div>
+        <div class="w-44 h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div id="model-loader-bar" class="w-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-150"></div>
+        </div>
+        <div id="model-loader-pct" class="font-mono-tech text-[10px] text-white/50 tracking-widest">0%</div>
+      </div>
+
+      <!-- DRAG & DROP OVERLAY -->
+      <div id="drop-overlay" class="pointer-events-none hidden absolute inset-0 z-50 bg-black/75 backdrop-blur-md border-4 border-dashed border-purple-400/80 rounded-3xl m-3 flex flex-col items-center justify-center gap-3.5 transition-all">
+        <div class="w-16 h-16 rounded-3xl bg-purple-500/20 border border-purple-300/40 flex items-center justify-center text-purple-200 shadow-2xl animate-bounce">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <div class="text-center">
+          <div class="font-display font-bold text-lg sm:text-xl text-white tracking-tight">Drop Real 3D Car (.GLB / .GLTF) Here</div>
+          <p class="font-mono-tech text-xs text-purple-200/70 mt-1">Instant turntable loading · PBR studio lighting · Auto-scale</p>
+        </div>
+      </div>
+
+      <!-- ACTIVE 3D ASSET PILL (Top Right overlay) -->
+      <div id="active-model-pill" class="absolute top-28 sm:top-24 right-4 sm:right-8 z-30 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/20 font-mono-tech text-[10px] tracking-wider uppercase text-white/90 shadow-lg">
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+        <span id="active-model-name">REAL 3D ACTIVE</span>
+      </div>
+
+      <!-- TOAST NOTIFICATION -->
+      <div id="toast-pill" class="pointer-events-none hidden fixed top-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-900/95 text-white text-xs font-mono-tech border border-white/20 shadow-2xl backdrop-blur-xl transition-all">
+        <span id="toast-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span id="toast-msg">Notification</span>
+      </div>
+
+      <!-- FLOATING STAGE CONTROLS PILL (Auto-Rotate, Explode View, Prev/Next) -->
+      <div id="stage-controls" class="absolute bottom-20 left-0 right-0 z-30 px-4 flex flex-col items-center gap-2 transition-all duration-500">
+        <!-- Subtle Swipe Hint -->
+        <div id="swipe-hint" class="flex items-center gap-1.5 text-[10px] font-mono-tech tracking-[0.18em] uppercase text-white/60 transition-opacity duration-500">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 12H3m0 0l3-3m-3 3l3 3M17 12h4m0 0l-3-3m3 3l-3 3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>Drag to Spin 360°</span>
+        </div>
+
+        <!-- Controls Pill -->
+        <div class="flex items-center gap-1.5 bg-black/45 backdrop-blur-xl border border-white/15 rounded-2xl p-1.5 shadow-2xl">
+          <!-- Prev Car -->
+          <button id="prev-car-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 active:scale-95 flex items-center justify-center text-white transition" title="Previous Vehicle" aria-label="Previous Vehicle">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+
+          <!-- Auto-Rotate Toggle -->
+          <button id="auto-rotate-btn" class="flex items-center gap-1.5 px-3.5 h-10 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-transparent text-xs font-display font-semibold tracking-wider uppercase text-white transition">
+            <svg id="auto-rotate-icon" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21 12a9 9 0 11-2.64-6.36" stroke-linecap="round" />
+              <path d="M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>Auto-Spin</span>
+          </button>
+
+          <!-- Explode View Toggle -->
+          <button id="explode-btn" class="flex items-center gap-1.5 px-3.5 h-10 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-transparent text-xs font-display font-semibold tracking-wider uppercase text-white transition">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>Explode</span>
+          </button>
+
+          <!-- Next Car -->
+          <button id="next-car-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 active:scale-95 flex items-center justify-center text-white transition" title="Next Vehicle" aria-label="Next Vehicle">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mini-Preview Return Hint (Visible only when Specs Sheet is open) -->
+      <button id="restore-stage-pill" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 z-30 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[10px] font-mono-tech tracking-widest uppercase text-white/90 hover:bg-black/75 transition">
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Expand 3D Stage</span>
+      </button>
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- PULL-UP EDITORIAL DETAILS & SPECS SHEET (Bottom Drawer)           -->
+    <!-- ================================================================= -->
+    <section id="specs-sheet" class="fixed left-0 right-0 bottom-0 z-35 h-[70dvh] bg-zinc-950/92 backdrop-blur-2xl border-t border-white/15 rounded-t-[28px] shadow-[0_-20px_60px_rgba(0,0,0,0.65)] flex flex-col translate-y-[calc(100%-64px)]">
+      <!-- Draggable / Tappable Handle Bar -->
+      <div id="specs-handle" class="flex-shrink-0 px-5 pt-3 pb-3.5 cursor-pointer select-none border-b border-white/10">
+        <div class="w-12 h-1.5 rounded-full bg-white/25 mx-auto mb-2.5"></div>
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span id="handle-dot" class="w-2 h-2 rounded-full bg-purple-400"></span>
+            <span id="handle-label" class="font-mono-tech text-[11px] tracking-[0.2em] uppercase text-white/85">
+              Scroll Up for Specs &amp; Telemetry
+            </span>
+          </div>
+          <svg id="handle-chevron" class="w-4 h-4 text-white/70 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Scrollable Editorial Content -->
+      <div id="specs-scroll-body" class="flex-1 overflow-y-auto custom-scroll px-5 sm:px-8 py-6">
+        <div class="max-w-4xl mx-auto space-y-6 pb-10">
+
+          <!-- Editorial Header + Streetwear Stamp -->
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/10 pb-5">
+            <div>
+              <div id="spec-tagline" class="font-mono-tech text-[11px] tracking-[0.22em] uppercase text-purple-300">
+                PURE PERFORMANCE. NO COMPROMISES.
+              </div>
+              <h2 id="spec-full-title" class="font-poster text-4xl sm:text-5xl tracking-wide uppercase text-white mt-1">
+                NISSAN SKYLINE GT-R R34
+              </h2>
+            </div>
+
+            <!-- Streetwear Kanji / Heritage Stamp + Barcode -->
+            <div class="flex items-center gap-3.5 bg-white/5 border border-white/10 rounded-2xl px-3.5 py-2.5 self-start sm:self-auto">
+              <div id="spec-stamp" class="font-display font-bold text-2xl leading-none text-white/90 px-2 border-r border-white/15">
+                街
+              </div>
+              <div>
+                <!-- Crisp SVG Barcode -->
+                <svg class="w-28 h-6 text-white/85" viewBox="0 0 120 24" fill="currentColor">
+                  <rect x="0" y="0" width="3" height="24"/><rect x="5" y="0" width="1.5" height="24"/>
+                  <rect x="9" y="0" width="4" height="24"/><rect x="16" y="0" width="2" height="24"/>
+                  <rect x="20" y="0" width="1" height="24"/><rect x="24" y="0" width="5" height="24"/>
+                  <rect x="32" y="0" width="2" height="24"/><rect x="37" y="0" width="3.5" height="24"/>
+                  <rect x="43" y="0" width="1.5" height="24"/><rect x="47" y="0" width="4" height="24"/>
+                  <rect x="54" y="0" width="2" height="24"/><rect x="59" y="0" width="1.5" height="24"/>
+                  <rect x="63" y="0" width="5" height="24"/><rect x="71" y="0" width="2" height="24"/>
+                  <rect x="76" y="0" width="3" height="24"/><rect x="82" y="0" width="1.5" height="24"/>
+                  <rect x="86" y="0" width="4" height="24"/><rect x="93" y="0" width="2" height="24"/>
+                  <rect x="98" y="0" width="5" height="24"/><rect x="106" y="0" width="1.5" height="24"/>
+                  <rect x="110" y="0" width="3" height="24"/><rect x="116" y="0" width="4" height="24"/>
+                </svg>
+                <div id="spec-vin" class="font-mono-tech text-[9px] tracking-wider text-white/55 mt-1">
+                  VIN: BNR34-000001 // 1999
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5-Column Performance Stats Strip -->
+          <div id="stats-strip" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            <!-- Dynamically populated by JS -->
+          </div>
+
+          <!-- Editorial Performance Writeup -->
+          <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 sm:p-5">
+            <div class="font-mono-tech text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2">ENGINEERING DOSSIER</div>
+            <p id="spec-writeup" class="text-sm text-white/80 leading-relaxed">
+              Editorial description goes here.
+            </p>
+          </div>
+
+          <!-- Interactive Component Quick-Inspect Grid -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <div class="font-mono-tech text-[10px] tracking-[0.2em] uppercase text-white/50">INTERACTIVE 3D DISSECTION</div>
+                <h3 class="font-display font-bold text-base text-white">Tap a Component to Explode &amp; Inspect</h3>
+              </div>
+              <span class="font-mono-tech text-[10px] px-2.5 py-1 rounded-full bg-white/10 text-white/75">6 MODULES</span>
+            </div>
+            <div id="component-quick-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <!-- 6 interactive quick-inspect cards injected by JS -->
+            </div>
+          </div>
+
+          <!-- Bottom Action Bar inside Specs Sheet -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button id="specs-inquire-btn" class="flex-1 py-3.5 px-5 rounded-2xl bg-white text-zinc-950 font-display font-bold text-xs tracking-[0.16em] uppercase hover:bg-zinc-200 active:scale-[0.99] transition">
+              Reserve / Inquire About This Vehicle
+            </button>
+            <button id="specs-garage-btn" class="py-3.5 px-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-display font-semibold text-xs tracking-[0.16em] uppercase active:scale-[0.99] transition">
+              Switch Key Fob
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL 1: KEY-FOB GARAGE SELECTOR (Luxury Dark Marble Grid)          -->
+  <!-- =================================================================== -->
+  <div id="garage-modal" class="hidden fixed inset-0 z-50 marble-bg flex flex-col">
+    <!-- Modal Header -->
+    <div class="flex-shrink-0 px-5 pt-5 pb-4 border-b border-white/10">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <div>
+          <div class="font-mono-tech text-[10px] tracking-[0.24em] uppercase text-white/50">APEX VAULT COLLECTION</div>
+          <h2 class="font-display font-bold text-xl sm:text-2xl text-white mt-0.5">Select Your Key Fob</h2>
+        </div>
+        <button id="close-garage-btn" class="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white transition" aria-label="Close Garage">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Key Fob Grid -->
+    <div class="flex-1 overflow-y-auto custom-scroll px-5 py-6">
+      <div id="key-fob-grid" class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 pb-8">
+        <!-- 6 Custom SVG Luxury Key Fobs injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL 2: VEHICLE INQUIRY / DATA COLLECTION FORM                     -->
+  <!-- =================================================================== -->
+  <div id="inquire-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-zinc-950/95 border border-white/15 rounded-3xl p-6 shadow-2xl relative max-h-[90dvh] overflow-y-auto custom-scroll">
+      <!-- Close Button -->
+      <button id="close-inquire-btn" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 transition" aria-label="Close Inquiry Form">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <!-- Form State -->
+      <div id="inquiry-form-view">
+        <div class="font-mono-tech text-[10px] tracking-[0.22em] uppercase text-white/50">CONCIERGE DESK</div>
+        <h2 class="font-display font-bold text-2xl text-white mt-0.5">Vehicle Inquiry</h2>
+        <p class="text-xs text-white/60 mt-1">Request a private viewing, telemetry sheet, or custom sourcing.</p>
+
+        <form id="inquiry-form" class="mt-5 space-y-3.5">
+          <!-- Selected Vehicle (Pre-filled, Read-only styling) -->
+          <div>
+            <label class="block font-mono-tech text-[10px] tracking-widest uppercase text-white/60 mb-1.5">Selected Vehicle</label>
+            <input id="form-vehicle" type="text" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm font-display font-semibold text-white focus:outline-none" />
+          </div>
+
+          <!-- Full Name -->
+          <div>
+            <label for="form-name" class="block font-mono-tech text-[10px] tracking-widest uppercase text-white/60 mb-1.5">Full Name *</label>
+            <input id="form-name" type="text" required placeholder="Alex Mercer" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition" />
+          </div>
+
+          <!-- Email / Phone -->
+          <div>
+            <label for="form-contact" class="block font-mono-tech text-[10px] tracking-widest uppercase text-white/60 mb-1.5">Email or Phone *</label>
+            <input id="form-contact" type="text" required placeholder="alex@apexvault.io" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition" />
+          </div>
+
+          <!-- Inquiry Type -->
+          <div>
+            <label for="form-type" class="block font-mono-tech text-[10px] tracking-widest uppercase text-white/60 mb-1.5">Inquiry Type</label>
+            <select id="form-type" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:outline-none focus:border-white/50 transition">
+              <option value="Test Drive">Private Test Drive</option>
+              <option value="Custom Spec">Custom Spec &amp; Allocation</option>
+              <option value="Vehicle Sourcing">Collector Vehicle Sourcing</option>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label for="form-message" class="block font-mono-tech text-[10px] tracking-widest uppercase text-white/60 mb-1.5">Message / Notes</label>
+            <textarea id="form-message" rows="3" placeholder="Tell us your preferred timing or build preferences..." class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 rounded-2xl bg-white text-zinc-950 font-display font-bold text-xs tracking-[0.18em] uppercase hover:bg-zinc-200 active:scale-[0.99] transition shadow-xl mt-2">
+            Submit Concierge Request
+          </button>
+        </form>
+      </div>
+
+      <!-- Confirmation State -->
+      <div id="inquiry-success-view" class="hidden text-center py-6">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="font-mono-tech text-[10px] tracking-[0.22em] uppercase text-emerald-400">TRANSMISSION CONFIRMED</div>
+        <h3 class="font-display font-bold text-2xl text-white mt-1">Request Logged</h3>
+        <p id="success-summary" class="text-xs text-white/70 mt-2 leading-relaxed">
+          Our specialist team has received your inquiry.
+        </p>
+
+        <div class="mt-5 p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
+          <div class="text-left">
+            <div class="font-mono-tech text-[9px] uppercase text-white/45">CONCIERGE REF</div>
+            <div id="ref-code-text" class="font-mono-tech text-sm font-bold text-white tracking-wider">APX-8492</div>
+          </div>
+          <button id="copy-ref-btn" type="button" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] font-mono-tech uppercase text-white transition">
+            Copy
+          </button>
+        </div>
+
+        <button id="done-inquire-btn" type="button" class="w-full mt-5 py-3 rounded-2xl bg-white text-zinc-950 font-display font-bold text-xs tracking-[0.18em] uppercase hover:bg-zinc-200 transition">
+          Return to Showroom
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- APPLICATION LOGIC & THREE.JS 3D PROCEDURAL VEHICLE ENGINE           -->
+  <!-- =================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ----------------------------------------------------------------- */
+      /* 1. VEHICLE DATABASE (6 Editorial Showcase Cars)                   */
+      /* ----------------------------------------------------------------- */
+      const VEHICLES = [
+        {
+          id: 'r34',
+          brand: 'NISSAN',
+          name: 'Nissan Skyline GT-R R34',
+          modelUrl: null,
+          modelName: 'Nissan Skyline GT-R R34',
+          posterText: 'NISSAN',
+          badge: 'SKYLINE GT-R R34',
+          yearChip: '1999 // BNR34',
+          stamp: '街',
+          vin: 'VIN: BNR34-000001 // PROD: 1999',
+          tagline: 'UNDERGROUND KULTURE. JDM ICON.',
+          bgFrom: '#2d134a',
+          bgTo: '#5e358c',
+          accent: '#c084fc',
+          paintHex: 0x5c238f,
+          caliperHex: 0xd4af37,
+          rimHex: 0x9ca3af,
+          engineLayout: 'front',
+          writeup:
+            'The R34 GT-R is powered by the legendary RB26DETT 2.6L twin-turbocharged inline-six, officially rated at 280 PS (276 HP) yet engineered for far greater output. Paired with Nissan’s ATTESA E-TS Pro all-wheel-drive system and Super HICAS four-wheel steering, it delivers unmatched street agility and motorsport pedigree.',
+          stats: [
+            { label: 'ENGINE', value: '2.6L I6 TT', sub: 'RB26DETT' },
+            { label: 'POWER', value: '280 PS', sub: '276 HP' },
+            { label: 'TOP SPEED', value: '250 km/h', sub: '155 MPH' },
+            { label: '0-100 KM/H', value: '4.9 s', sub: '6-Speed MT' },
+            { label: 'DRIVETRAIN', value: 'AWD', sub: 'ATTESA E-TS' }
+          ],
+          parts: {
+            body: {
+              title: 'Midnight Purple II Shell',
+              desc: 'Sculpted BNR34 steel unibody with flared JDM fenders, aluminum hood, and iconic quad circular Skyline taillights.',
+              s1Label: 'FINISH', s1Val: 'Midnight Purple II',
+              s2Label: 'DRAG COEFF', s2Val: '0.34 Cd'
+            },
+            engine: {
+              title: 'RB26DETT 2.6L Twin-Turbo',
+              desc: 'Cast-iron inline-6 block with dual ceramic ball-bearing turbochargers, six individual throttle bodies, and front-mount intercooler.',
+              s1Label: 'REDLINE', s1Val: '8,000 RPM',
+              s2Label: 'TORQUE', s2Val: '392 Nm'
+            },
+            wheels: {
+              title: 'Forged 6-Spoke & Brembos',
+              desc: '18-inch lightweight forged alloy rims paired with gold 4-piston Brembo ventilated disc brakes.',
+              s1Label: 'SIZE', s1Val: '245/40 ZR18',
+              s2Label: 'CALIPERS', s2Val: '4-Pot Gold Brembo'
+            },
+            interior: {
+              title: 'Driver-Focused Cockpit & MFD',
+              desc: 'High-bolster sport bucket seats, 3-spoke steering wheel, and the iconic center Multi-Function Display for real-time boost telemetry.',
+              s1Label: 'SEATING', s1Val: 'GT-R Sport Buckets',
+              s2Label: 'TELEMETRY', s2Val: '5.8" LCD MFD'
+            },
+            chassis: {
+              title: 'ATTESA E-TS Pro & HICAS',
+              desc: 'Active torque-splitting AWD floorpan with carbon rear under-diffuser and electronically controlled 4-wheel steering.',
+              s1Label: 'CHASSIS', s1Val: 'BNR34 Unibody',
+              s2Label: 'WEIGHT', s2Val: '1,560 kg'
+            },
+            aero: {
+              title: 'Adjustable Pedestal Wing',
+              desc: 'Signature dual-plane rear wing with adjustable aluminum blade and aggressive front intercooler splitter.',
+              s1Label: 'WING', s1Val: '2-Stage Adjustable',
+              s2Label: 'DIFFUSER', s2Val: 'Carbon Venturi'
+            }
+          }
+        },
+        {
+          id: 'gt3rs',
+          brand: 'PORSCHE',
+          name: 'Porsche 911 GT3 RS (992)',
+          modelUrl: './models/porsche_gt3_rs/scene.gltf',
+          modelName: 'Porsche 911 GT3 RS (992)',
+          posterText: '911 GT3 RS',
+          badge: 'PORSCHE',
+          yearChip: '2024 // 992',
+          stamp: 'RS',
+          vin: 'VIN: WP0ZZZ99ZPS270001 // 2024',
+          tagline: 'PURE PERFORMANCE. NO COMPROMISES.',
+          bgFrom: '#5c303f',
+          bgTo: '#9e6576',
+          accent: '#f9a8d4',
+          paintHex: 0xa66378,
+          caliperHex: 0xeab308,
+          rimHex: 0x18181b,
+          engineLayout: 'rear',
+          writeup:
+            'The Porsche 911 GT3 RS (992) is a track-focused masterpiece built for drivers who demand pure motorsport precision. With a screaming 4.0L naturally aspirated flat-six revving to 9,000 RPM and active DRS aerodynamics, it delivers extraordinary downforce and razor-sharp control.',
+          stats: [
+            { label: 'ENGINE', value: '4.0L Flat-6', sub: 'Naturally Aspirated' },
+            { label: 'POWER', value: '525 HP', sub: 'Max Output' },
+            { label: 'REDLINE', value: '9,000 RPM', sub: 'Track Tuned' },
+            { label: 'TOP SPEED', value: '296 km/h', sub: '184 MPH' },
+            { label: '0-100 KM/H', value: '3.2 s', sub: '7-Speed PDK' }
+          ],
+          parts: {
+            body: {
+              title: 'CFRP Lightweight Bodywork',
+              desc: 'Extensive carbon-fiber reinforced plastic doors, roof, and louvered front fenders engineered to evacuate wheel-arch pressure.',
+              s1Label: 'FINISH', s1Val: 'Frozen Berry Metallic',
+              s2Label: 'WEIGHT', s2Val: '1,450 kg'
+            },
+            engine: {
+              title: '4.0L NA Flat-Six (Rear)',
+              desc: 'Rear-mounted high-revving boxer engine with motorsport camshafts, individual throttle bodies, and dry-sump lubrication.',
+              s1Label: 'REDLINE', s1Val: '9,000 RPM',
+              s2Label: 'OUTPUT', s2Val: '525 PS / 465 Nm'
+            },
+            wheels: {
+              title: 'Center-Lock Forged & PCCB',
+              desc: 'Staggered 20"/21" satin-black center-lock forged alloys housing massive yellow Porsche Ceramic Composite Brakes.',
+              s1Label: 'MOUNT', s1Val: 'Center-Lock Alloy',
+              s2Label: 'BRAKES', s2Val: '410mm Ceramic'
+            },
+            interior: {
+              title: 'Weissach Carbon Cockpit',
+              desc: 'Full carbon bucket seats, Race-Tex steering wheel with four rotary chassis dials, and bolted rear roll cage.',
+              s1Label: 'CAGE', s1Val: 'CFRP Roll Cage',
+              s2Label: 'CONTROLS', s2Val: '4 Rotary Dials'
+            },
+            chassis: {
+              title: 'Double-Wishbone Race Chassis',
+              desc: 'Aerodynamically profiled teardrop suspension links with electronically adjustable rebound and compression damping.',
+              s1Label: 'LAYOUT', s1Val: 'Rear-Engine RWD',
+              s2Label: 'STEERING', s2Val: 'Rear-Axle Steer'
+            },
+            aero: {
+              title: 'Active DRS Swan-Neck Wing',
+              desc: 'Towering motorsport swan-neck rear wing with hydraulic Drag Reduction System generating up to 860 kg of downforce.',
+              s1Label: 'DOWNFORCE', s1Val: '860 kg @ 285 km/h',
+              s2Label: 'FEATURE', s2Val: 'Active DRS'
+            }
+          }
+        },
+        {
+          id: 'm4',
+          brand: 'BMW',
+          name: 'BMW M4 Competition',
+          modelUrl: './models/bmw_m4.glb',
+          modelName: 'BMW M4 Competition',
+          posterText: 'M4',
+          badge: 'BMW COMPETITION',
+          yearChip: '2024 // G82',
+          stamp: '///M',
+          vin: 'VIN: WBS43AZ000CK88401 // 2024',
+          tagline: 'THE ICON OF PERFORMANCE.',
+          bgFrom: '#0b1b38',
+          bgTo: '#1c4a9c',
+          accent: '#60a5fa',
+          paintHex: 0x123e8f,
+          caliperHex: 0xdc2626,
+          rimHex: 0x111114,
+          engineLayout: 'front',
+          writeup:
+            'The BMW M4 Competition Coupe fuses race-inspired S58 twin-turbo engineering with aggressive sculpted presence. Delivering 503 HP and 650 Nm of relentless torque to the rear wheels, it is built for drivers who never follow.',
+          stats: [
+            { label: 'TOP SPEED', value: '290 km/h', sub: '180 MPH' },
+            { label: 'ENGINE', value: '3.0L I6', sub: 'TwinPower Turbo' },
+            { label: 'POWER', value: '503 HP', sub: '@ 6,250 RPM' },
+            { label: 'TORQUE', value: '650 Nm', sub: '@ 2,750 RPM' },
+            { label: 'DRIVETRAIN', value: 'RWD', sub: 'M Steptronic' }
+          ],
+          parts: {
+            body: {
+              title: 'G82 Sculpted Coupe & Carbon Roof',
+              desc: 'Frameless vertical kidney grille for maximum cooling, flared aluminum arches, and a low-CG carbon-fiber roof panel.',
+              s1Label: 'FINISH', s1Val: 'Portimao Blue',
+              s2Label: 'ROOF', s2Val: 'CFRP Exposed'
+            },
+            engine: {
+              title: 'S58 3.0L Twin-Turbo Inline-6',
+              desc: 'Forged crankshaft, 3D-printed cylinder head core, and twin mono-scroll turbochargers engineered for track endurance.',
+              s1Label: 'OUTPUT', s1Val: '503 HP / 650 Nm',
+              s2Label: '0-100 KM/H', s2Val: '3.5 Seconds'
+            },
+            wheels: {
+              title: 'M Forged Double-Spoke 826M',
+              desc: 'Staggered 19"/20" jet-black forged alloys with high-gloss red 6-piston M Compound brake calipers.',
+              s1Label: 'RIMS', s1Val: 'Style 826M Forged',
+              s2Label: 'CALIPERS', s2Val: 'Red M Compound'
+            },
+            interior: {
+              title: 'M Carbon Bucket Cabin',
+              desc: 'Illuminated M Carbon bucket seats, M1/M2 red steering wheel presets, and M Drift Analyzer telemetry.',
+              s1Label: 'SEATS', s1Val: 'M Carbon Buckets',
+              s2Label: 'MODE', s2Val: '10-Stage M Traction'
+            },
+            chassis: {
+              title: 'Active M Differential & Bracing',
+              desc: 'Underfloor aluminum shear panels, rear axle subframe mounts, and quad titanium-tipped M exhaust.',
+              s1Label: 'DIFF', s1Val: 'Active M LSD',
+              s2Label: 'EXHAUST', s2Val: 'Quad Valved'
+            },
+            aero: {
+              title: 'M Carbon Exterior Package',
+              desc: 'Carbon-fiber rear lip spoiler, sculpted front air curtains, and aggressive rear venturi diffuser.',
+              s1Label: 'SPLITTER', s1Val: 'Carbon Air Ducts',
+              s2Label: 'SPOILER', s2Val: 'Gurney Lip'
+            }
+          }
+        },
+        {
+          id: 'e30',
+          brand: 'BMW',
+          name: 'BMW M3 E30 Custom',
+          modelUrl: null,
+          modelName: 'BMW M3 E30 Custom',
+          posterText: 'E30',
+          badge: 'BMW M3 E30 // 1986-1991',
+          yearChip: '1988 // CLASSIC',
+          stamp: 'E30',
+          vin: 'VIN: WBSAK0309J2196842 // 1988',
+          tagline: 'ICONIC. TIMELESS. UNSTOPPABLE.',
+          bgFrom: '#071c13',
+          bgTo: '#144d35',
+          accent: '#34d399',
+          paintHex: 0x0f5132,
+          caliperHex: 0xef4444,
+          rimHex: 0xd4d4d8,
+          engineLayout: 'front',
+          writeup:
+            'More than a car—the BMW M3 E30 is a homologation motorsport legend. Born for DTM touring car dominance and built for pure analog engagement, this custom emerald build pairs razor-sharp 1,200 kg agility with timeless 1980s box-flare stance.',
+          stats: [
+            { label: 'ENGINE', value: '2.3L S14', sub: 'Custom Inline' },
+            { label: 'POWER', value: '200 HP', sub: '@ 6,750 RPM' },
+            { label: 'GEARBOX', value: '5-Speed', sub: 'Dogleg Manual' },
+            { label: 'DRIVETRAIN', value: 'RWD', sub: 'Mechanical LSD' },
+            { label: 'WEIGHT', value: '1,200 kg', sub: 'Featherweight' }
+          ],
+          parts: {
+            body: {
+              title: 'Box-Flare Homologation Shell',
+              desc: 'Iconic flared steel fenders, raised C-pillar decklid for high-speed stability, and classic quad round headlights.',
+              s1Label: 'FINISH', s1Val: 'British Racing Green',
+              s2Label: 'ERA', s2Val: '1986 - 1991'
+            },
+            engine: {
+              title: 'BMW M Power S14 Custom',
+              desc: 'High-revving naturally aspirated motorsport engine with individual throttle bodies and crisp metallic induction roar.',
+              s1Label: 'POWER', s1Val: '200 HP @ 6,750',
+              s2Label: 'INDUCTION', s2Val: 'Individual ITBs'
+            },
+            wheels: {
+              title: 'Deep-Dish BBS Mesh Alloys',
+              desc: 'Period-correct 3-piece polished-lip mesh wheels wrapped in sticky semi-slick rubber for aggressive stance.',
+              s1Label: 'STYLE', s1Val: '3-Piece Mesh',
+              s2Label: 'FITMENT', s2Val: 'Flush Box-Flare'
+            },
+            interior: {
+              title: 'Recaro Tartan Sport Interior',
+              desc: 'Classic plaid Recaro sport bucket seats, 3-spoke suede steering wheel, and analog orange-lit VDO gauges.',
+              s1Label: 'SEATS', s1Val: 'Recaro Tartan',
+              s2Label: 'SHIFT', s2Val: 'Dogleg 5-MT'
+            },
+            chassis: {
+              title: 'Coilover Track-Tuned Floorpan',
+              desc: 'Featherweight 1,200 kg unibody fortified with adjustable coilovers, mechanical limited-slip diff, and twin-tip exhaust.',
+              s1Label: 'WEIGHT', s1Val: '1,200 kg',
+              s2Label: 'DIFF', s2Val: '25% Mechanical LSD'
+            },
+            aero: {
+              title: 'DTM Evo Wing & Chin Spoiler',
+              desc: 'Classic squared-off M3 rear wing and deep front Evolution chin splitter reducing front-end lift.',
+              s1Label: 'FRONT', s1Val: 'Evo Chin Lip',
+              s2Label: 'REAR', s2Val: 'Box Deck Spoiler'
+            }
+          }
+        },
+        {
+          id: 'challenger',
+          brand: 'DODGE',
+          name: '1970 Dodge Challenger R/T',
+          modelUrl: null,
+          modelName: '1970 Dodge Challenger R/T',
+          posterText: 'DODGE',
+          badge: 'STREET LEGENDS // 1970',
+          yearChip: '1970 // HEMI',
+          stamp: '伝説',
+          vin: 'VIN: DGE70-1970 // PROD: 1970',
+          tagline: 'CLASSIC MUSCLE. PURE ATTITUDE.',
+          bgFrom: '#26103d',
+          bgTo: '#5b2c91',
+          accent: '#a855f7',
+          paintHex: 0x511f8a,
+          caliperHex: 0xf97316,
+          rimHex: 0xe5e7eb,
+          engineLayout: 'front',
+          writeup:
+            'Born in an era of no rules and all power. The 1970 Dodge Challenger R/T in Plum Crazy Purple packs a thundering 426 HEMI V8, aggressive recessed quad lamps, and unmistakable American muscle presence that still commands every boulevard.',
+          stats: [
+            { label: 'ENGINE', value: '7.0L V8', sub: '426 HEMI' },
+            { label: 'POWER', value: '425 HP', sub: 'Gross Rated' },
+            { label: 'TORQUE', value: '664 Nm', sub: '490 lb-ft' },
+            { label: '0-100 KM/H', value: '5.1 s', sub: 'Pistol-Grip 4-MT' },
+            { label: 'DRIVETRAIN', value: 'RWD', sub: 'Sure-Grip Diff' }
+          ],
+          parts: {
+            body: {
+              title: 'Plum Crazy E-Body Fastback',
+              desc: 'Long-hood, short-deck 1970 E-Body steel silhouette with chrome bumpers, recessed quad headlights, and full-width tail lamp.',
+              s1Label: 'FINISH', s1Val: 'Plum Crazy Purple',
+              s2Label: 'HOOD', s2Val: 'Shaker Cold-Air'
+            },
+            engine: {
+              title: '426 HEMI 7.0L V8',
+              desc: 'Hemispherical combustion chambers, dual 4-barrel Carter carburetors, and a functional Shaker hood scoop bolted to the intake.',
+              s1Label: 'DISPLACEMENT', s1Val: '426 cu in (7.0L)',
+              s2Label: 'TORQUE', s2Val: '664 Nm'
+            },
+            wheels: {
+              title: 'Rallye Deep-Dish & White-Letter',
+              desc: '15-inch chrome-ringed muscle wheels wrapped in fat white-letter BFGoodrich Radial T/A rubber.',
+              s1Label: 'TIRES', s1Val: 'White-Letter Muscle',
+              s2Label: 'STYLE', s2Val: '5-Spoke Magnum'
+            },
+            interior: {
+              title: 'Hurst Pistol-Grip Cockpit',
+              desc: 'Vinyl high-back bucket seats, deep woodgrain rallye dash cluster, and the legendary Hurst Pistol-Grip shifter.',
+              s1Label: 'SHIFTER', s1Val: 'Hurst Pistol-Grip',
+              s2Label: 'DASH', s2Val: 'Rallye Instrument'
+            },
+            chassis: {
+              title: 'Heavy-Duty Torsion-Bar Chassis',
+              desc: 'Reinforced E-Body subframe with rear leaf springs, Dana 60 axle, and thundering dual chrome exhaust tips.',
+              s1Label: 'AXLE', s1Val: 'Dana 60 Sure-Grip',
+              s2Label: 'EXHAUST', s2Val: 'Dual Straight-Cut'
+            },
+            aero: {
+              title: 'Shaker Scoop & Go-Wing',
+              desc: 'Functional hood-mounted ram-air Shaker scoop paired with a classic matte-black rear decklid spoiler.',
+              s1Label: 'INTAKE', s1Val: 'Ram-Air Shaker',
+              s2Label: 'REAR', s2Val: 'R/T Ducktail'
+            }
+          }
+        },
+        {
+          id: 'gt500',
+          brand: 'SHELBY',
+          name: 'Shelby GT500 Track Spec',
+          modelUrl: './models/mustang_shelby.glb',
+          modelName: 'Shelby GT500 Track Spec',
+          posterText: 'GT500',
+          badge: 'SHELBY',
+          yearChip: '2022 // COBRA',
+          stamp: '🐍',
+          vin: 'VIN: 1FA6P8SJ5L5500500 // 2022',
+          tagline: 'BORN FROM LEGEND. BUILT FOR VICTORY.',
+          bgFrom: '#4a1702',
+          bgTo: '#c94606',
+          accent: '#fb923c',
+          paintHex: 0xea580c,
+          caliperHex: 0xff6b00,
+          rimHex: 0x18181b,
+          engineLayout: 'front',
+          writeup:
+            'Engineered for the track and unleashed without compromise. The Shelby GT500 combines a hand-built 5.2L supercharged Predator V8 producing a ferocious 760 HP with carbon-fiber track aero and lightning-quick dual-clutch shifts.',
+          stats: [
+            { label: 'MAX POWER', value: '760 HP', sub: 'Supercharged' },
+            { label: '0-100 KM/H', value: '3.1 s', sub: '7-Speed DCT' },
+            { label: 'TOP SPEED', value: '320 km/h', sub: '199 MPH' },
+            { label: 'ENGINE', value: '5.2L V8', sub: 'Predator SC' },
+            { label: 'DRIVETRAIN', value: 'RWD', sub: 'Torsen LSD' }
+          ],
+          parts: {
+            body: {
+              title: 'Wide-Body Racing Orange Shell',
+              desc: 'Twin white Shelby racing stripes, louvered hood extractor vent, and massive open-mouth grille feeding six heat exchangers.',
+              s1Label: 'FINISH', s1Val: 'Twister Orange',
+              s2Label: 'STRIPES', s2Val: 'Over-the-Top White'
+            },
+            engine: {
+              title: '5.2L Supercharged Predator V8',
+              desc: 'Hand-assembled aluminum V8 crowned with a 2.65L inverted Roots-type supercharger screaming out 760 horsepower.',
+              s1Label: 'SUPERCHARGER', s1Val: '2.65L Roots SC',
+              s2Label: 'TORQUE', s2Val: '847 Nm'
+            },
+            wheels: {
+              title: 'Exposed Carbon-Fiber Wheels',
+              desc: 'Ultra-lightweight 20-inch carbon wheels clamping massive 16.5-inch two-piece rotors with 6-piston Brembo calipers.',
+              s1Label: 'MATERIAL', s1Val: 'Full Carbon Fiber',
+              s2Label: 'ROTORS', s2Val: '420mm 6-Pot'
+            },
+            interior: {
+              title: 'Track-Ready Cobra Cockpit',
+              desc: 'Recaro racing buckets, Alcantara flat-bottom wheel, carbon instrument panel, and rear-seat-delete roll cage.',
+              s1Label: 'CAGE', s1Val: 'Track Roll Hoop',
+              s2Label: 'SHIFT', s2Val: 'Tremec 7-DCT'
+            },
+            chassis: {
+              title: 'MagneRide Track Floorpan',
+              desc: 'Active MagneRide damping, carbon-fiber driveshaft, and quad 5-inch active-valve thunder exhaust.',
+              s1Label: 'DAMPERS', s1Val: 'MagneRide Track',
+              s2Label: 'DRIVESHAFT', s2Val: 'Carbon Fiber'
+            },
+            aero: {
+              title: 'GT4 Carbon Track Wing',
+              desc: 'Adjustable exposed-carbon GT4 rear wing paired with dive-plane front wickers and functional belly pan diffuser.',
+              s1Label: 'WING', s1Val: 'Carbon GT4 Spec',
+              s2Label: 'FRONT', s2Val: 'Wicker Splitter'
+            }
+          }
+        },
+        {
+          id: 'ferrari',
+          brand: 'FERRARI',
+          name: 'Ferrari 488 Pista / F8',
+          modelUrl: './models/ferrari.glb',
+          modelName: 'Ferrari 488 Pista',
+          posterText: 'FERRARI',
+          badge: 'SCUDERIA CORSE',
+          yearChip: '2023 // MARANELLO',
+          stamp: '🐎',
+          vin: 'VIN: ZFF82NJA8K0248888 // 2023',
+          tagline: 'ESSENCE OF RACING. SCUDERIA BLOODLINE.',
+          bgFrom: '#4a0808',
+          bgTo: '#b91c1c',
+          accent: '#f87171',
+          paintHex: 0xd90429,
+          caliperHex: 0xfacc15,
+          rimHex: 0x27272a,
+          engineLayout: 'rear',
+          writeup:
+            'Directly derived from the 488 Challenge and GTE race cars, the Ferrari 488 Pista packs the most powerful V8 in Maranello history. With Formula 1 S-Duct aero and screaming twin-turbo response, it transforms race track telemetry into pure visceral emotion.',
+          stats: [
+            { label: 'POWER', value: '710 HP', sub: '@ 8,000 RPM' },
+            { label: 'ENGINE', value: '3.9L Twin-Turbo V8', sub: 'F154 CD' },
+            { label: '0-100 KM/H', value: '2.85 s', sub: 'F1 Dual-Clutch' },
+            { label: 'TOP SPEED', value: '340 km/h', sub: '211 MPH' },
+            { label: 'DOWNFORCE', value: '+20%', sub: 'F1 S-Duct Aero' }
+          ],
+          parts: {
+            body: {
+              title: 'Sculpted Rosso Corsa Shell',
+              desc: 'Race-honed carbon fiber front bumper with F1-derived S-Duct channel and sculpted side air scoops.',
+              s1Label: 'FINISH', s1Val: 'Rosso Corsa Metallic',
+              s2Label: 'AERO DUCT', s2Val: 'Patented S-Duct'
+            },
+            engine: {
+              title: '3.9L Twin-Turbo V8 (Mid-Rear)',
+              desc: 'Special lightweight titanium connecting rods, Inconel exhaust manifolds, and carbon-fiber intake plenums.',
+              s1Label: 'OUTPUT', s1Val: '710 HP / 770 Nm',
+              s2Label: 'WEIGHT REDUCTION', s2Val: '-18 kg in Engine'
+            },
+            wheels: {
+              title: 'Single-Piece Carbon Rims & CCM',
+              desc: 'Ultra-lightweight 20-inch carbon-fiber wheels housing Brembo Carbon Ceramic Material (CCM) brakes with yellow calipers.',
+              s1Label: 'RIMS', s1Val: 'Single-Piece Carbon',
+              s2Label: 'BRAKES', s2Val: 'Brembo CCM 398mm'
+            },
+            interior: {
+              title: 'Alcantara & Carbon Cockpit',
+              desc: 'Weight-shedding carbon tub, Sparco four-point racing harnesses, and steering-wheel-mounted LED shift lights.',
+              s1Label: 'SEATS', s1Val: 'Carbon Racing Buckets',
+              s2Label: 'SHIFT LIGHTS', s2Val: 'F1 LED Steering'
+            },
+            chassis: {
+              title: 'Ferrari Dynamic Enhancer (FDE)',
+              desc: 'Side Slip Control (SSC 6.0), E-Diff3 electronic differential, and magnetorheological suspension damping.',
+              s1Label: 'CHASSIS', s1Val: 'Extruded Aluminum & Carbon',
+              s2Label: 'DIFF', s2Val: 'E-Diff3 Vectoring'
+            },
+            aero: {
+              title: 'Dolphin-Tail Spoiler & Active Diffuser',
+              desc: 'Suspended rear spoiler with blown aerodynamic profile and dual rear active diffuser flaps.',
+              s1Label: 'REAR SPOILER', s1Val: 'Blown Profile',
+              s2Label: 'FLAPS', s2Val: 'Active Aero Diffusers'
+            }
+          }
+        },
+        {
+          id: 'aventador',
+          brand: 'LAMBORGHINI',
+          name: 'Lamborghini Aventador SV',
+          modelUrl: './models/lamborghini_aventador.glb',
+          modelName: 'Lamborghini Aventador SV',
+          posterText: 'AVENTADOR',
+          badge: 'SUPERVELOCE // V12',
+          yearChip: '2023 // LP 750-4',
+          stamp: '🐂',
+          vin: 'VIN: ZHWEC4ZD3LLA01212 // 2023',
+          tagline: 'SUPERVELOCE. NATURALLY ASPIRATED FURY.',
+          bgFrom: '#3f2c00',
+          bgTo: '#d97706',
+          accent: '#fde047',
+          paintHex: 0xf59e0b,
+          caliperHex: 0x000000,
+          rimHex: 0x18181b,
+          engineLayout: 'rear',
+          writeup:
+            'Uncompromising, raw, and thunderous. The Lamborghini Aventador SuperVeloce is propelled by a screaming 6.5-liter naturally aspirated V12 that redlines past 8,500 RPM. With carbon monocoque construction and permanent Haldex AWD, it is the zenith of Sant’Agata Bolognese bravado.',
+          stats: [
+            { label: 'POWER', value: '750 HP', sub: '@ 8,400 RPM' },
+            { label: 'ENGINE', value: '6.5L V12 NA', sub: '60° Naturally Aspirated' },
+            { label: '0-100 KM/H', value: '2.8 s', sub: 'ISR 7-Speed' },
+            { label: 'TOP SPEED', value: '350 km/h', sub: '217 MPH' },
+            { label: 'CHASSIS', value: 'Carbon Tub', sub: 'Full Monocoque' }
+          ],
+          parts: {
+            body: {
+              title: 'Giallo Orion Carbon Monocoque',
+              desc: 'Carbon fiber passenger cell with aluminum front/rear subframes and signature scissor doors.',
+              s1Label: 'FINISH', s1Val: 'Giallo Orion Pearl',
+              s2Label: 'DOORS', s2Val: 'Iconic Scissor Doors'
+            },
+            engine: {
+              title: '6.5L 60° Naturally Aspirated V12',
+              desc: 'Dry sump lubrication, variable valve timing, and a quad-exit sport exhaust producing an ear-shattering howl.',
+              s1Label: 'REDLINE', s1Val: '8,500 RPM',
+              s2Label: 'TORQUE', s2Val: '690 Nm'
+            },
+            wheels: {
+              title: 'Dianthus High-Gloss Black Forged',
+              desc: '20"/21" Dianthus center-lock forged alloys wrapped in Pirelli P Zero Corsa rubber with carbon ceramic discs.',
+              s1Label: 'FITMENT', s1Val: '20" Front / 21" Rear',
+              s2Label: 'LOCK', s2Val: 'Motorsport Center-Lock'
+            },
+            interior: {
+              title: 'Carbon Skin Y-Themed Cockpit',
+              desc: 'Aero-grade carbon bucket seats, military jet inspired start-stop flip cover, and interactive TFT race cluster.',
+              s1Label: 'FABRIC', s1Val: 'Lamborghini CarbonSkin',
+              s2Label: 'START BUTTON', s2Val: 'Jet Fighter Flip Switch'
+            },
+            chassis: {
+              title: 'Pushrod Magneto-Rheological Suspension',
+              desc: 'Formula 1 style horizontal pushrod dampers with electronic damping control and dynamic steering.',
+              s1Label: 'SUSPENSION', s1Val: 'Pushrod MR',
+              s2Label: 'DRIVE', s2Val: 'Permanent Haldex IV AWD'
+            },
+            aero: {
+              title: '3-Position Manual Carbon Wing',
+              desc: 'Large fixed carbon-fiber motorsport wing manually adjustable to 3 angles for maximum track downforce.',
+              s1Label: 'WING ADJUST', s1Val: 'High / Mid / Low Drag',
+              s2Label: 'DIFFUSER', s2Val: 'Full-Width Carbon Tunnels'
+            }
+          }
+        },
+        {
+          id: 'datsun',
+          brand: 'DATSUN',
+          name: 'Datsun 240Z Devil Z Custom',
+          modelUrl: null,
+          modelName: 'Datsun 240Z Devil Z',
+          posterText: 'DATSUN',
+          badge: 'FAIRLADY Z // S30',
+          yearChip: '1973 // CUSTOM',
+          stamp: '悪魔',
+          vin: 'VIN: S30-100240Z // 1973',
+          tagline: 'MIDNIGHT LEGEND. THE DEVIL Z.',
+          bgFrom: '#1c1917',
+          bgTo: '#78350f',
+          accent: '#fbbf24',
+          paintHex: 0xd97706,
+          caliperHex: 0xef4444,
+          rimHex: 0xd4d4d8,
+          engineLayout: 'front',
+          writeup:
+            'A legendary Tokyo highway conqueror. The custom S30 Fairlady 240Z is bored and stroked to an L28 3.1L inline-six fed by triple Mikuni carburetors, bolted G-nose aero, and retro deep-dish Watanabe wheels.',
+          stats: [
+            { label: 'ENGINE', value: '3.1L L28 I6', sub: 'Triple Mikuni ITBs' },
+            { label: 'POWER', value: '320 HP', sub: 'Tuned NA' },
+            { label: 'WEIGHT', value: '980 kg', sub: 'Ultra Lightweight' },
+            { label: 'TOP SPEED', value: '260 km/h', sub: '162 MPH' },
+            { label: 'TRANSMISSION', value: '5-Speed MT', sub: 'Close-Ratio' }
+          ],
+          parts: {
+            body: {
+              title: 'G-Nose Aero & Bolt-On Flares',
+              desc: 'Iconic elongated G-nose front bumper, headlamp aero scoops, and rivet-mounted custom overfenders.',
+              s1Label: 'FINISH', s1Val: 'Midnight Ochre Gold',
+              s2Label: 'BODYKIT', s2Val: 'Works G-Nose S30'
+            },
+            engine: {
+              title: 'L28 Bored & Stroked 3.1L I6',
+              desc: 'Forged pistons, high-lift camshafts, triple 44mm Mikuni side-draft carburetors, and equal-length tubular headers.',
+              s1Label: 'INDUCTION', s1Val: 'Triple Mikuni 44mm',
+              s2Label: 'EXHAUST', s2Val: 'Dual Vertical Upswept'
+            },
+            wheels: {
+              title: 'Deep-Dish RS Watanabe 8-Spoke',
+              desc: 'Staggered gunmetal Watanabe 8-spoke alloys wrapped in sticky vintage racing tires with negative camber.',
+              s1Label: 'WHEELS', s1Val: 'RS Watanabe 8-Spoke',
+              s2Label: 'STANCE', s2Val: 'Aggressive Camber'
+            },
+            interior: {
+              title: 'Retro S30 Cockpit & Woodgrain',
+              desc: 'Vintage low-back bucket seats, classic wood-rim 3-spoke steering wheel, and angled triple dashboard gauges.',
+              s1Label: 'STEERING', s1Val: 'Classic Datsun Wood-Rim',
+              s2Label: 'GAUGES', s2Val: 'Angled Triple Center Pod'
+            },
+            chassis: {
+              title: 'Reinforced Lightweight Unibody',
+              desc: 'Sub-1,000 kg featherweight chassis fortified with front strut tower bar, adjustable coilovers, and rear LSD.',
+              s1Label: 'CURB WEIGHT', s1Val: '980 kg',
+              s2Label: 'DIFF', s2Val: '2-Way R200 LSD'
+            },
+            aero: {
+              title: 'Classic Ducktail & Chin Lip',
+              desc: 'Subtle rear trunk ducktail spoiler and front air dam designed for high-speed highway stability.',
+              s1Label: 'SPOILER', s1Val: 'Works Ducktail',
+              s2Label: 'AIR DAM', s2Val: 'Chin Splitter'
+            }
+          }
+        }
+      ];
+
+      /* ----------------------------------------------------------------- */
+      /* 2. GLOBAL APPLICATION STATE                                       */
+      /* ----------------------------------------------------------------- */
+      const state = {
+        currentIndex: 0,
+        autoRotate: false,
+        exploded: false,
+        specsOpen: false,
+        selectedPart: null,
+        targetRotY: 0.62,
+        currentRotY: 0.62,
+        rotVelocity: 0,
+        explodeProgress: 0, // 0 = assembled, 1 = fully exploded
+        hasInteracted: false
+      };
+
+      /* ----------------------------------------------------------------- */
+      /* 3. DOM REFERENCES                                                 */
+      /* ----------------------------------------------------------------- */
+      const dom = {
+        appStage: document.getElementById('app-stage'),
+        stageViewport: document.getElementById('stage-viewport'),
+        canvasContainer: document.getElementById('canvas-container'),
+        canvas: document.getElementById('three-canvas'),
+        hotspotsLayer: document.getElementById('hotspots-layer'),
+        heroMeta: document.getElementById('hero-meta'),
+        carBadge: document.getElementById('car-badge'),
+        carSubtitle: document.getElementById('car-subtitle'),
+        carYearChip: document.getElementById('car-year-chip'),
+        posterBgText: document.getElementById('poster-bg-text'),
+        posterWrap: document.getElementById('poster-typography-wrap'),
+        angleReadout: document.getElementById('angle-readout'),
+        swipeHint: document.getElementById('swipe-hint'),
+        stageControls: document.getElementById('stage-controls'),
+        restoreStagePill: document.getElementById('restore-stage-pill'),
+
+        // Buttons
+        brandHomeBtn: document.getElementById('brand-home-btn'),
+        prevCarBtn: document.getElementById('prev-car-btn'),
+        nextCarBtn: document.getElementById('next-car-btn'),
+        autoRotateBtn: document.getElementById('auto-rotate-btn'),
+        autoRotateIcon: document.getElementById('auto-rotate-icon'),
+        explodeBtn: document.getElementById('explode-btn'),
+
+        // Inspector
+        partInspector: document.getElementById('part-inspector'),
+        inspectorTag: document.getElementById('inspector-tag'),
+        inspectorTitle: document.getElementById('inspector-title'),
+        inspectorDesc: document.getElementById('inspector-desc'),
+        inspectorSpecs: document.getElementById('inspector-specs'),
+        closeInspectorBtn: document.getElementById('close-inspector-btn'),
+
+        // Specs Sheet
+        specsSheet: document.getElementById('specs-sheet'),
+        specsHandle: document.getElementById('specs-handle'),
+        handleLabel: document.getElementById('handle-label'),
+        handleChevron: document.getElementById('handle-chevron'),
+        handleDot: document.getElementById('handle-dot'),
+        specsScrollBody: document.getElementById('specs-scroll-body'),
+        specTagline: document.getElementById('spec-tagline'),
+        specFullTitle: document.getElementById('spec-full-title'),
+        specStamp: document.getElementById('spec-stamp'),
+        specVin: document.getElementById('spec-vin'),
+        statsStrip: document.getElementById('stats-strip'),
+        specWriteup: document.getElementById('spec-writeup'),
+        componentQuickGrid: document.getElementById('component-quick-grid'),
+        specsInquireBtn: document.getElementById('specs-inquire-btn'),
+        specsGarageBtn: document.getElementById('specs-garage-btn'),
+
+        // Modals
+        openGarageBtn: document.getElementById('open-garage-btn'),
+        closeGarageBtn: document.getElementById('close-garage-btn'),
+        garageModal: document.getElementById('garage-modal'),
+        keyFobGrid: document.getElementById('key-fob-grid'),
+
+        openInquireBtn: document.getElementById('open-inquire-btn'),
+        closeInquireBtn: document.getElementById('close-inquire-btn'),
+        inquireModal: document.getElementById('inquire-modal'),
+        inquiryFormView: document.getElementById('inquiry-form-view'),
+        inquirySuccessView: document.getElementById('inquiry-success-view'),
+        inquiryForm: document.getElementById('inquiry-form'),
+        formVehicle: document.getElementById('form-vehicle'),
+        formName: document.getElementById('form-name'),
+        formContact: document.getElementById('form-contact'),
+        formType: document.getElementById('form-type'),
+        formMessage: document.getElementById('form-message'),
+        successSummary: document.getElementById('success-summary'),
+        refCodeText: document.getElementById('ref-code-text'),
+        copyRefBtn: document.getElementById('copy-ref-btn'),
+        doneInquireBtn: document.getElementById('done-inquire-btn'),
+
+        // Real 3D Model Loader & Toast
+        loadGlbBtn: document.getElementById('load-glb-btn'),
+        glbFilePicker: document.getElementById('glb-file-picker'),
+        modelLoaderBadge: document.getElementById('model-loader-badge'),
+        modelLoaderText: document.getElementById('model-loader-text'),
+        modelLoaderBar: document.getElementById('model-loader-bar'),
+        modelLoaderPct: document.getElementById('model-loader-pct'),
+        dropOverlay: document.getElementById('drop-overlay'),
+        activeModelPill: document.getElementById('active-model-pill'),
+        activeModelName: document.getElementById('active-model-name'),
+        toastPill: document.getElementById('toast-pill'),
+        toastDot: document.getElementById('toast-dot'),
+        toastMsg: document.getElementById('toast-msg')
+      };
+
+      /* ----------------------------------------------------------------- */
+      /* 4. THREE.JS SCENE, CAMERA, RENDERER & STUDIO LIGHTING             */
+      /* ----------------------------------------------------------------- */
+      let scene, camera, renderer, carRoot, accentLight, rimLight, groundDisc;
+      let gltfLoader = null, dracoLoader = null;
+      let partGroups = {}; // { body, engine, wheels, interior, chassis, aero }
+      let loadedExplodeMeshes = []; // Real GLTF/GLB sub-part explode tracking
+      let wheelCorners = []; // Individual 4 wheel sub-groups for radial explosion
+      let hotspotButtons = {}; // { partId: HTMLElement }
+      const raycaster = new THREE.Raycaster();
+      const pointerNDC = new THREE.Vector2();
+
+      function initThree() {
+        scene = new THREE.Scene();
+
+        const width = dom.canvasContainer.clientWidth || window.innerWidth;
+        const height = dom.canvasContainer.clientHeight || window.innerHeight;
+
+        camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+        camera.position.set(0, 1.55, 6.4);
+        camera.lookAt(0, 0.35, 0);
+
+        renderer = new THREE.WebGLRenderer({
+          canvas: dom.canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance'
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(width, height, false);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.18;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        // Studio Lighting Rig
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x1e1b2e, 0.85);
+        scene.add(hemiLight);
+
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.45);
+        keyLight.position.set(5, 8, 6);
+        scene.add(keyLight);
+
+        const fillLight = new THREE.DirectionalLight(0xdbeafe, 0.65);
+        fillLight.position.set(-6, 4, 3);
+        scene.add(fillLight);
+
+        rimLight = new THREE.DirectionalLight(0xc084fc, 1.1);
+        rimLight.position.set(0, 4, -7);
+        scene.add(rimLight);
+
+        accentLight = new THREE.PointLight(0xc084fc, 1.2, 14);
+        accentLight.position.set(0, 2.5, 2.5);
+        scene.add(accentLight);
+
+        // Root turntable container
+        carRoot = new THREE.Group();
+        scene.add(carRoot);
+
+        // Ground shadow & subtle reflection disc (procedural canvas texture)
+        groundDisc = createGroundShadowDisc();
+        groundDisc.position.y = -0.02;
+        scene.add(groundDisc);
+
+        // Initialize Three.js GLTF & DRACO Loaders for real 3D models
+        if (window.THREE && window.THREE.GLTFLoader) {
+          gltfLoader = new THREE.GLTFLoader();
+          if (window.THREE.DRACOLoader) {
+            dracoLoader = new THREE.DRACOLoader();
+            dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
+            gltfLoader.setDRACOLoader(dracoLoader);
+          }
+        }
+
+        // Build initial car
+        loadVehicle(0, false);
+      }
+
+      /**
+       * Creates a soft radial-gradient ground shadow + subtle studio turntable ring
+       */
+      function createGroundShadowDisc() {
+        const size = 512;
+        const cvs = document.createElement('canvas');
+        cvs.width = size;
+        cvs.height = size;
+        const ctx = cvs.getContext('2d');
+
+        // Soft ambient occlusion shadow beneath car
+        const grad = ctx.createRadialGradient(size / 2, size / 2, 20, size / 2, size / 2, size / 2);
+        grad.addColorStop(0, 'rgba(0, 0, 0, 0.72)');
+        grad.addColorStop(0.5, 'rgba(0, 0, 0, 0.36)');
+        grad.addColorStop(0.78, 'rgba(0, 0, 0, 0.08)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, size, size);
+
+        // Subtle turntable ring
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size * 0.43, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const tex = new THREE.CanvasTexture(cvs);
+        const mat = new THREE.MeshBasicMaterial({
+          map: tex,
+          transparent: true,
+          depthWrite: false
+        });
+        const geo = new THREE.PlaneGeometry(6.2, 6.2);
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.rotation.x = -Math.PI / 2;
+        return mesh;
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 5. PROCEDURAL 6-MODULE 3D CAR BUILDER                             */
+      /* ----------------------------------------------------------------- */
+      function tagPart(group, partId) {
+        group.userData.partId = partId;
+        group.traverse((child) => {
+          if (child.isMesh) {
+            child.userData.partId = partId;
+          }
+        });
+      }
+
+      function buildProceduralCar(car) {
+        // Clear previous car geometry safely
+        while (carRoot.children.length > 0) {
+          const obj = carRoot.children[0];
+          carRoot.remove(obj);
+        }
+        partGroups = {};
+        wheelCorners = [];
+        loadedExplodeMeshes = [];
+
+        const isBoxy = car.id === 'e30' || car.id === 'r34';
+        const isMuscle = car.id === 'challenger';
+        const isPorsche = car.id === 'gt3rs';
+        const isGT500 = car.id === 'gt500';
+        const isM4 = car.id === 'm4';
+
+        // Shared Materials
+        const paintMat = new THREE.MeshPhysicalMaterial({
+          color: car.paintHex,
+          metalness: 0.58,
+          roughness: 0.18,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.07
+        });
+
+        const carbonMat = new THREE.MeshStandardMaterial({
+          color: 0x16161a,
+          metalness: 0.35,
+          roughness: 0.42
+        });
+
+        const darkMetalMat = new THREE.MeshStandardMaterial({
+          color: 0x27272a,
+          metalness: 0.8,
+          roughness: 0.3
+        });
+
+        const chromeMat = new THREE.MeshStandardMaterial({
+          color: 0xe4e4e7,
+          metalness: 0.95,
+          roughness: 0.12
+        });
+
+        const glassMat = new THREE.MeshPhysicalMaterial({
+          color: 0x090d16,
+          metalness: 0.15,
+          roughness: 0.06,
+          transmission: 0.45,
+          transparent: true,
+          opacity: 0.82
+        });
+
+        const headlightMat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          emissive: 0xe0f2fe,
+          emissiveIntensity: 1.8,
+          roughness: 0.1
+        });
+
+        const taillightMat = new THREE.MeshStandardMaterial({
+          color: 0xff1e2d,
+          emissive: 0xff1122,
+          emissiveIntensity: 1.7,
+          roughness: 0.15
+        });
+
+        const tireMat = new THREE.MeshStandardMaterial({
+          color: 0x121214,
+          roughness: 0.85,
+          metalness: 0.05
+        });
+
+        const rimMat = new THREE.MeshStandardMaterial({
+          color: car.rimHex,
+          metalness: 0.88,
+          roughness: 0.22
+        });
+
+        const caliperMat = new THREE.MeshStandardMaterial({
+          color: car.caliperHex,
+          metalness: 0.4,
+          roughness: 0.3
+        });
+
+        // Dimensions tailored per car archetype
+        const length = isMuscle ? 4.35 : isBoxy ? 4.05 : 4.18;
+        const width = isPorsche || isGT500 ? 1.88 : isMuscle ? 1.84 : 1.78;
+        const bodyHeight = isPorsche ? 0.46 : isBoxy ? 0.56 : 0.52;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 1: CHASSIS & DRIVETRAIN                                   */
+        /* --------------------------------------------------------------- */
+        const chassisGroup = new THREE.Group();
+        const floorpan = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.86, 0.1, length * 0.86),
+          carbonMat
+        );
+        floorpan.position.y = 0.28;
+        chassisGroup.add(floorpan);
+
+        // Front & Rear Axles
+        const axleGeo = new THREE.CylinderGeometry(0.045, 0.045, width * 0.92, 12);
+        axleGeo.rotateZ(Math.PI / 2);
+        const frontAxle = new THREE.Mesh(axleGeo, darkMetalMat);
+        frontAxle.position.set(0, 0.35, 1.28);
+        const rearAxle = new THREE.Mesh(axleGeo, darkMetalMat);
+        rearAxle.position.set(0, 0.35, -1.28);
+        chassisGroup.add(frontAxle, rearAxle);
+
+        // Central Driveshaft
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.04, 0.04, 2.55, 10),
+          chromeMat
+        );
+        shaft.rotation.x = Math.PI / 2;
+        shaft.position.set(0, 0.34, 0);
+        chassisGroup.add(shaft);
+
+        // Exhaust System (Dual or Quad Chrome Tips)
+        const exhaustPositions = isM4 || isGT500 ? [-0.46, -0.32, 0.32, 0.46] : isPorsche ? [-0.14, 0.14] : [-0.48, 0.48];
+        exhaustPositions.forEach((xPos) => {
+          const pipe = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.048, 0.052, 0.7, 14),
+            chromeMat
+          );
+          pipe.rotation.x = Math.PI / 2;
+          pipe.position.set(xPos, 0.28, -length * 0.44);
+          chassisGroup.add(pipe);
+        });
+
+        tagPart(chassisGroup, 'chassis');
+        carRoot.add(chassisGroup);
+        partGroups.chassis = chassisGroup;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 2: ENGINE ASSEMBLY                                        */
+        /* --------------------------------------------------------------- */
+        const engineGroup = new THREE.Group();
+        const engZ = car.engineLayout === 'rear' ? -1.12 : 1.12;
+
+        // Engine Block
+        const block = new THREE.Mesh(
+          new THREE.BoxGeometry(0.58, 0.36, 0.78),
+          darkMetalMat
+        );
+        block.position.set(0, 0.56, engZ);
+        engineGroup.add(block);
+
+        // Valve Covers / Cylinder Banks
+        const coverMat = new THREE.MeshStandardMaterial({
+          color: car.caliperHex,
+          metalness: 0.55,
+          roughness: 0.25
+        });
+
+        if (isMuscle || isGT500) {
+          // V8 Twin Banks + Supercharger / Carburetor Plenum
+          [-0.22, 0.22].forEach((side) => {
+            const bank = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 0.72), coverMat);
+            bank.position.set(side, 0.78, engZ);
+            bank.rotation.z = side > 0 ? -0.35 : 0.35;
+            engineGroup.add(bank);
+          });
+          const blower = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.18, 0.55), chromeMat);
+          blower.position.set(0, 0.85, engZ);
+          engineGroup.add(blower);
+        } else if (isPorsche) {
+          // Flat-6 Boxer Opposed Banks
+          [-0.36, 0.36].forEach((side) => {
+            const head = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.16, 0.65), coverMat);
+            head.position.set(side, 0.56, engZ);
+            engineGroup.add(head);
+          });
+          const plenum = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.14, 0.52), carbonMat);
+          plenum.position.set(0, 0.76, engZ);
+          engineGroup.add(plenum);
+        } else {
+          // Inline-6 (R34, M4, E30) with Turbo Piping
+          const valveCover = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.12, 0.8), coverMat);
+          valveCover.position.set(0, 0.79, engZ);
+          engineGroup.add(valveCover);
+
+          const intakePipe = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.68, 12), chromeMat);
+          intakePipe.rotation.x = Math.PI / 2;
+          intakePipe.position.set(0.24, 0.72, engZ + 0.08);
+          engineGroup.add(intakePipe);
+
+          // Front Intercooler for Turbo cars
+          const intercooler = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.24, 0.09), chromeMat);
+          intercooler.position.set(0, 0.42, length * 0.45);
+          engineGroup.add(intercooler);
+        }
+
+        tagPart(engineGroup, 'engine');
+        carRoot.add(engineGroup);
+        partGroups.engine = engineGroup;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 3: INTERIOR COCKPIT                                       */
+        /* --------------------------------------------------------------- */
+        const interiorGroup = new THREE.Group();
+
+        // Dashboard Console
+        const dash = new THREE.Mesh(new THREE.BoxGeometry(1.26, 0.26, 0.38), carbonMat);
+        dash.position.set(0, 0.74, 0.52);
+        interiorGroup.add(dash);
+
+        // Glowing Telemetry Gauge Strip
+        const gaugeGlow = new THREE.Mesh(
+          new THREE.BoxGeometry(0.32, 0.07, 0.02),
+          new THREE.MeshBasicMaterial({ color: car.accent })
+        );
+        gaugeGlow.position.set(-0.32, 0.82, 0.32);
+        interiorGroup.add(gaugeGlow);
+
+        // Steering Wheel
+        const wheelRing = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 10, 24), darkMetalMat);
+        wheelRing.position.set(-0.32, 0.84, 0.25);
+        wheelRing.rotation.x = -0.35;
+        interiorGroup.add(wheelRing);
+
+        // Twin Sport Bucket Seats
+        [-0.34, 0.34].forEach((xSeat) => {
+          const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.1, 0.48), carbonMat);
+          seatBase.position.set(xSeat, 0.44, -0.1);
+          const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.58, 0.1), carbonMat);
+          seatBack.position.set(xSeat, 0.74, -0.32);
+          seatBack.rotation.x = -0.18;
+          // Accent racing stripe on seat
+          const seatStripe = new THREE.Mesh(
+            new THREE.BoxGeometry(0.08, 0.46, 0.11),
+            caliperMat
+          );
+          seatStripe.position.set(xSeat, 0.75, -0.32);
+          seatStripe.rotation.x = -0.18;
+          interiorGroup.add(seatBase, seatBack, seatStripe);
+        });
+
+        // Roll Cage Hoop (especially visible in Explode View)
+        const hoopGeo = new THREE.TorusGeometry(0.58, 0.026, 8, 20, Math.PI);
+        const hoop = new THREE.Mesh(hoopGeo, caliperMat);
+        hoop.position.set(0, 0.65, -0.58);
+        interiorGroup.add(hoop);
+
+        tagPart(interiorGroup, 'interior');
+        carRoot.add(interiorGroup);
+        partGroups.interior = interiorGroup;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 4: WHEELS & BRAKES (4 Corner Sub-groups)                  */
+        /* --------------------------------------------------------------- */
+        const wheelsGroup = new THREE.Group();
+        const wheelZ = 1.28;
+        const wheelX = width * 0.48;
+        const wheelPositions = [
+          { x: -wheelX, z: wheelZ, sx: -1, sz: 1 },
+          { x: wheelX, z: wheelZ, sx: 1, sz: 1 },
+          { x: -wheelX, z: -wheelZ, sx: -1, sz: -1 },
+          { x: wheelX, z: -wheelZ, sx: 1, sz: -1 }
+        ];
+
+        wheelPositions.forEach((wp) => {
+          const corner = new THREE.Group();
+          corner.position.set(wp.x, 0.36, wp.z);
+          corner.userData.basePos = new THREE.Vector3(wp.x, 0.36, wp.z);
+          corner.userData.explodeOffset = new THREE.Vector3(wp.sx * 0.72, 0.02, wp.sz * 0.24);
+
+          // Rubber Tire
+          const tire = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.36, 0.36, 0.28, 28),
+            tireMat
+          );
+          tire.rotation.z = Math.PI / 2;
+          corner.add(tire);
+
+          // Alloy Rim Barrel
+          const rim = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.24, 0.24, 0.295, 22),
+            rimMat
+          );
+          rim.rotation.z = Math.PI / 2;
+          corner.add(rim);
+
+          // Multi-spoke Detail
+          for (let s = 0; s < 5; s++) {
+            const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.305, 0.036, 0.44), rimMat);
+            spoke.rotation.x = (s * Math.PI) / 5;
+            corner.add(spoke);
+          }
+
+          // Brake Rotor Disc
+          const rotor = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.19, 0.19, 0.05, 20),
+            chromeMat
+          );
+          rotor.rotation.z = Math.PI / 2;
+          rotor.position.x = -wp.sx * 0.08;
+          corner.add(rotor);
+
+          // Colored Brake Caliper
+          const caliper = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.14, 0.1), caliperMat);
+          caliper.position.set(-wp.sx * 0.08, 0.06, -0.14);
+          corner.add(caliper);
+
+          wheelsGroup.add(corner);
+          wheelCorners.push(corner);
+        });
+
+        tagPart(wheelsGroup, 'wheels');
+        carRoot.add(wheelsGroup);
+        partGroups.wheels = wheelsGroup;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 5: BODY SHELL (Archetype-Specific Styling)                */
+        /* --------------------------------------------------------------- */
+        const bodyGroup = new THREE.Group();
+
+        // 1. Unibody Frame Split: Front Nose/Fenders + Rear Quarters + Center Low Door Sill
+        const frontNose = new THREE.Mesh(
+          new THREE.BoxGeometry(width, bodyHeight * 0.7, length * 0.36),
+          paintMat
+        );
+        frontNose.position.set(0, 0.50, length * 0.32);
+
+        const rearQuarters = new THREE.Mesh(
+          new THREE.BoxGeometry(width, bodyHeight * 0.7, length * 0.36),
+          paintMat
+        );
+        rearQuarters.position.set(0, 0.50, -length * 0.32);
+
+        const centerSill = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.88, 0.12, length * 0.34),
+          carbonMat
+        );
+        centerSill.position.set(0, 0.28, 0);
+        bodyGroup.add(frontNose, rearQuarters, centerSill);
+
+        // 2. Articulated Hinged Bonnet (Hood) - opens upward on cowl hinge
+        const bonnetPivot = new THREE.Group();
+        const cowlZ = isPorsche ? -0.35 : length * 0.10;
+        bonnetPivot.position.set(0, 0.74, cowlZ);
+
+        const hoodLen = length * 0.38;
+        const hood = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.94, 0.12, hoodLen),
+          paintMat
+        );
+        hood.position.set(0, 0.04, isPorsche ? -hoodLen * 0.5 : hoodLen * 0.5);
+        hood.rotation.x = isPorsche ? 0.12 : 0.05;
+        bonnetPivot.add(hood);
+        tagPart(bonnetPivot, 'engine');
+        bodyGroup.add(bonnetPivot);
+        partGroups.bonnet = bonnetPivot;
+
+        // 3. Articulated Left Door (Hinged at front A-pillar) - swings wide open
+        const doorLeftPivot = new THREE.Group();
+        const doorHingeZ = length * 0.17;
+        doorLeftPivot.position.set(-width * 0.49, 0.58, doorHingeZ);
+        const doorLen = length * 0.34;
+        const doorLeftMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.12, bodyHeight * 0.78, doorLen),
+          paintMat
+        );
+        doorLeftMesh.position.set(0, 0, -doorLen * 0.5);
+        const doorLeftGlass = new THREE.Mesh(
+          new THREE.BoxGeometry(0.04, 0.34, doorLen * 0.92),
+          glassMat
+        );
+        doorLeftGlass.position.set(0, 0.38, -doorLen * 0.5);
+        const mirrorL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 0.12), paintMat);
+        mirrorL.position.set(-0.08, 0.28, -0.06);
+        const handleL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.12), chromeMat);
+        handleL.position.set(-0.08, 0.08, -doorLen * 0.75);
+        doorLeftPivot.add(doorLeftMesh, doorLeftGlass, mirrorL, handleL);
+        tagPart(doorLeftPivot, 'body');
+        bodyGroup.add(doorLeftPivot);
+        partGroups.doorL = doorLeftPivot;
+
+        // 4. Articulated Right Door (Hinged at front A-pillar) - swings wide open
+        const doorRightPivot = new THREE.Group();
+        doorRightPivot.position.set(width * 0.49, 0.58, doorHingeZ);
+        const doorRightMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.12, bodyHeight * 0.78, doorLen),
+          paintMat
+        );
+        doorRightMesh.position.set(0, 0, -doorLen * 0.5);
+        const doorRightGlass = new THREE.Mesh(
+          new THREE.BoxGeometry(0.04, 0.34, doorLen * 0.92),
+          glassMat
+        );
+        doorRightGlass.position.set(0, 0.38, -doorLen * 0.5);
+        const mirrorR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 0.12), paintMat);
+        mirrorR.position.set(0.08, 0.28, -0.06);
+        const handleR = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.12), chromeMat);
+        handleR.position.set(0.08, 0.08, -doorLen * 0.75);
+        doorRightPivot.add(doorRightMesh, doorRightGlass, mirrorR, handleR);
+        tagPart(doorRightPivot, 'body');
+        bodyGroup.add(doorRightPivot);
+        partGroups.doorR = doorRightPivot;
+
+        // 5. Articulated Trunk / Boot Lid - tilts open upward
+        const trunkPivot = new THREE.Group();
+        const trunkHingeZ = -length * 0.24;
+        trunkPivot.position.set(0, 0.88, trunkHingeZ);
+        const trunkLen = length * 0.24;
+        const trunkMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.88, 0.08, trunkLen),
+          paintMat
+        );
+        trunkMesh.position.set(0, 0.02, -trunkLen * 0.5);
+        trunkPivot.add(trunkMesh);
+        tagPart(trunkPivot, 'body');
+        bodyGroup.add(trunkPivot);
+        partGroups.trunk = trunkPivot;
+
+        // 6. Cabin Greenhouse / Roof
+        const roofGroup = new THREE.Group();
+        const roofLength = isBoxy ? length * 0.44 : isPorsche ? length * 0.4 : length * 0.38;
+        const roofHeight = isPorsche ? 0.38 : 0.42;
+        const cabin = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.78, roofHeight, roofLength),
+          glassMat
+        );
+        cabin.position.set(0, 1.04, -0.18);
+        roofGroup.add(cabin);
+
+        const roofCap = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.74, 0.05, roofLength * 0.78),
+          isM4 ? carbonMat : paintMat
+        );
+        roofCap.position.set(0, 1.26, -0.2);
+        roofGroup.add(roofCap);
+        tagPart(roofGroup, 'body');
+        bodyGroup.add(roofGroup);
+        partGroups.roof = roofGroup;
+
+        // Car-Specific Signature Details
+        if (isGT500) {
+          // Twin White Racing Stripes
+          const stripeMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.2 });
+          [-0.18, 0.18].forEach((sx) => {
+            const stripeHood = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.02, length * 0.98), stripeMat);
+            stripeHood.position.set(sx, 0.945, 0);
+            const stripeRoof = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.02, roofLength * 0.8), stripeMat);
+            stripeRoof.position.set(sx, 1.29, -0.2);
+            bodyGroup.add(stripeHood, stripeRoof);
+          });
+        }
+
+        if (isMuscle) {
+          // 1970 Challenger Raised Shaker Hood Scoop & Chrome Bumpers
+          const scoop = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.16, 0.65), carbonMat);
+          scoop.position.set(0, 0.98, 0.95);
+          bodyGroup.add(scoop);
+
+          const frontBumper = new THREE.Mesh(new THREE.BoxGeometry(width * 1.02, 0.12, 0.1), chromeMat);
+          frontBumper.position.set(0, 0.44, length * 0.51);
+          const rearBumper = new THREE.Mesh(new THREE.BoxGeometry(width * 1.02, 0.12, 0.1), chromeMat);
+          rearBumper.position.set(0, 0.44, -length * 0.51);
+          bodyGroup.add(frontBumper, rearBumper);
+        }
+
+        if (isM4) {
+          // Signature Vertical Twin Kidney Grille
+          [-0.18, 0.18].forEach((gx) => {
+            const kidney = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.36, 0.06), carbonMat);
+            kidney.position.set(gx, 0.58, length * 0.505);
+            bodyGroup.add(kidney);
+          });
+        } else {
+          // Front Intake Grille
+          const grille = new THREE.Mesh(new THREE.BoxGeometry(width * 0.62, 0.2, 0.05), carbonMat);
+          grille.position.set(0, 0.54, length * 0.505);
+          bodyGroup.add(grille);
+        }
+
+        // Headlights (Emissive Glow)
+        if (isPorsche) {
+          // Circular Porsche Headlights
+          [-0.64, 0.64].forEach((hx) => {
+            const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.06, 20), headlightMat);
+            lamp.rotation.x = Math.PI / 2 - 0.35;
+            lamp.position.set(hx, 0.72, length * 0.46);
+            bodyGroup.add(lamp);
+          });
+        } else {
+          // Sleek Dual Headlights
+          [-0.62, 0.62].forEach((hx) => {
+            const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.11, 0.06), headlightMat);
+            lamp.position.set(hx, 0.68, length * 0.505);
+            bodyGroup.add(lamp);
+          });
+        }
+
+        // Taillights (Signature R34 Quad Circles vs Sleek Lightbars)
+        if (car.id === 'r34') {
+          [-0.66, -0.44, 0.44, 0.66].forEach((tx, idx) => {
+            const r = idx === 0 || idx === 3 ? 0.095 : 0.075;
+            const tail = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.06, 20), taillightMat);
+            tail.rotation.x = Math.PI / 2;
+            tail.position.set(tx, 0.68, -length * 0.505);
+            bodyGroup.add(tail);
+          });
+        } else if (isPorsche || isMuscle) {
+          // Full-Width Red Lightbar
+          const bar = new THREE.Mesh(new THREE.BoxGeometry(width * 0.86, 0.09, 0.06), taillightMat);
+          bar.position.set(0, 0.68, -length * 0.505);
+          bodyGroup.add(bar);
+        } else {
+          [-0.62, 0.62].forEach((tx) => {
+            const tail = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.11, 0.06), taillightMat);
+            tail.position.set(tx, 0.68, -length * 0.505);
+            bodyGroup.add(tail);
+          });
+        }
+
+        tagPart(bodyGroup, 'body');
+        carRoot.add(bodyGroup);
+        partGroups.body = bodyGroup;
+
+        /* --------------------------------------------------------------- */
+        /* GROUP 6: AERO & WING (Rear Wing, Front Splitter, Diffuser)      */
+        /* --------------------------------------------------------------- */
+        const aeroGroup = new THREE.Group();
+
+        // Front Carbon Splitter
+        const splitter = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 1.04, 0.045, 0.36),
+          carbonMat
+        );
+        splitter.position.set(0, 0.31, length * 0.49);
+        aeroGroup.add(splitter);
+
+        // Rear Venturi Diffuser
+        const diffuser = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.88, 0.14, 0.22),
+          carbonMat
+        );
+        diffuser.position.set(0, 0.34, -length * 0.48);
+        aeroGroup.add(diffuser);
+
+        // Rear Spoiler / Wing (Custom per car)
+        const wingHeight = isPorsche ? 1.38 : isGT500 ? 1.32 : isM4 || isMuscle ? 0.96 : 1.15;
+        const wingWidth = isPorsche || isGT500 ? width * 1.06 : width * 0.92;
+        const wingBlade = new THREE.Mesh(
+          new THREE.BoxGeometry(wingWidth, 0.045, isPorsche ? 0.32 : 0.22),
+          isPorsche || isGT500 || isM4 ? carbonMat : paintMat
+        );
+        wingBlade.position.set(0, wingHeight, -length * 0.46);
+        wingBlade.rotation.x = 0.08;
+        aeroGroup.add(wingBlade);
+
+        // Wing Uprights & Endplates (for elevated wings)
+        if (!isM4 && !isMuscle) {
+          const strutH = wingHeight - 0.86;
+          [-0.48, 0.48].forEach((ux) => {
+            const strut = new THREE.Mesh(new THREE.BoxGeometry(0.05, strutH, 0.14), carbonMat);
+            strut.position.set(ux, 0.86 + strutH / 2, -length * 0.44);
+            aeroGroup.add(strut);
+          });
+          // Endplates
+          [-wingWidth / 2, wingWidth / 2].forEach((ex) => {
+            const plate = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.2, 0.34), carbonMat);
+            plate.position.set(ex, wingHeight, -length * 0.46);
+            aeroGroup.add(plate);
+          });
+        }
+
+        tagPart(aeroGroup, 'aero');
+        carRoot.add(aeroGroup);
+        partGroups.aero = aeroGroup;
+
+        // Rebuild HTML Hotspot Pins for this car
+        buildHotspotPins(car);
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 6. HOTSPOT PINS & COMPONENT INSPECTOR                             */
+      /* ----------------------------------------------------------------- */
+      const PART_LABELS = {
+        body: 'Bodywork',
+        engine: 'Engine',
+        wheels: 'Wheels & Brakes',
+        interior: 'Cockpit',
+        chassis: 'Chassis',
+        aero: 'Aero & Wing'
+      };
+
+      function buildHotspotPins(car) {
+        dom.hotspotsLayer.innerHTML = '';
+        hotspotButtons = {};
+
+        Object.keys(PART_LABELS).forEach((partId) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.partId = partId;
+          btn.className =
+            'pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-zinc-950/80 hover:bg-zinc-900 backdrop-blur-md border border-white/25 text-[10px] font-mono-tech uppercase tracking-wider text-white shadow-xl transition-transform duration-200 hover:scale-105 active:scale-95';
+          btn.innerHTML = `
+            <span class="relative w-2.5 h-2.5 rounded-full hotspot-pulse" style="background-color: ${car.accent}"></span>
+            <span>${PART_LABELS[partId]}</span>
+          `;
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectComponent(partId);
+          });
+          dom.hotspotsLayer.appendChild(btn);
+          hotspotButtons[partId] = btn;
+        });
+      }
+
+      function selectComponent(partId) {
+        const car = VEHICLES[state.currentIndex];
+        const info = car.parts[partId];
+        if (!info) return;
+
+        state.selectedPart = partId;
+
+        // Highlight selected 3D meshes gently via emissive tint
+        carRoot.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const isSelected = child.userData.partId === partId;
+            const mats = Array.isArray(child.material) ? child.material : [child.material];
+            mats.forEach((mat) => {
+              if (mat.emissive) {
+                if (child.userData.origEmissive === undefined) {
+                  child.userData.origEmissive = mat.emissive.clone();
+                  child.userData.origEmissiveIntensity = mat.emissiveIntensity !== undefined ? mat.emissiveIntensity : 0;
+                }
+                if (isSelected) {
+                  mat.emissive.setHex(0x3b82f6);
+                  mat.emissiveIntensity = 0.6;
+                } else if (child.userData.origEmissive) {
+                  mat.emissive.copy(child.userData.origEmissive);
+                  mat.emissiveIntensity = child.userData.origEmissiveIntensity;
+                }
+              }
+            });
+          }
+        });
+
+        // Update Hotspot Pin active styling
+        Object.entries(hotspotButtons).forEach(([id, btn]) => {
+          if (id === partId) {
+            btn.classList.add('ring-2', 'ring-white', 'bg-white', 'text-zinc-950');
+            btn.classList.remove('bg-zinc-950/80', 'text-white');
+          } else {
+            btn.classList.remove('ring-2', 'ring-white', 'bg-white', 'text-zinc-950');
+            btn.classList.add('bg-zinc-950/80', 'text-white');
+          }
+        });
+
+        // Populate & show Inspector Card
+        dom.inspectorTag.textContent = `${car.brand} // ${PART_LABELS[partId]}`;
+        dom.inspectorTag.style.color = car.accent;
+        dom.inspectorTitle.textContent = info.title;
+        dom.inspectorDesc.textContent = info.desc;
+        dom.inspectorSpecs.innerHTML = `
+          <div class="bg-white/5 rounded-xl px-2.5 py-2 border border-white/10">
+            <div class="font-mono-tech text-[9px] uppercase text-white/45">${info.s1Label}</div>
+            <div class="font-display font-bold text-xs text-white mt-0.5">${info.s1Val}</div>
+          </div>
+          <div class="bg-white/5 rounded-xl px-2.5 py-2 border border-white/10">
+            <div class="font-mono-tech text-[9px] uppercase text-white/45">${info.s2Label}</div>
+            <div class="font-display font-bold text-xs text-white mt-0.5">${info.s2Val}</div>
+          </div>
+        `;
+        dom.partInspector.classList.remove('hidden');
+      }
+
+      function clearComponentSelection() {
+        state.selectedPart = null;
+        dom.partInspector.classList.add('hidden');
+        carRoot.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const mats = Array.isArray(child.material) ? child.material : [child.material];
+            mats.forEach((mat) => {
+              if (mat.emissive && child.userData.origEmissive) {
+                mat.emissive.copy(child.userData.origEmissive);
+                mat.emissiveIntensity = child.userData.origEmissiveIntensity;
+              }
+            });
+          }
+        });
+        Object.values(hotspotButtons).forEach((btn) => {
+          btn.classList.remove('ring-2', 'ring-white', 'bg-white', 'text-zinc-950');
+          btn.classList.add('bg-zinc-950/80', 'text-white');
+        });
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 7. SWITCHING VEHICLES & UPDATING POSTER UI                        */
+      /* ----------------------------------------------------------------- */
+      function loadVehicle(index, spinEntrance = true) {
+        state.currentIndex = (index + VEHICLES.length) % VEHICLES.length;
+        const car = VEHICLES[state.currentIndex];
+
+        // Update CSS custom properties for smooth theme shift
+        document.documentElement.style.setProperty('--bg-from', car.bgFrom);
+        document.documentElement.style.setProperty('--bg-to', car.bgTo);
+        document.documentElement.style.setProperty('--accent', car.accent);
+
+        // Update 3D Studio Accent Lights
+        if (accentLight) accentLight.color.set(car.accent);
+        if (rimLight) rimLight.color.set(car.accent);
+
+        // Update Poster Hero Text
+        dom.carBadge.textContent = car.badge;
+        dom.carSubtitle.textContent = car.name;
+        dom.carYearChip.textContent = car.yearChip;
+        dom.posterBgText.textContent = car.posterText;
+
+        // Adjust font size slightly for longer poster words (like "911 GT3 RS")
+        if (car.posterText.length > 7) {
+          dom.posterBgText.className =
+            'poster-wordmark font-poster uppercase text-center whitespace-nowrap select-none text-[20vw] sm:text-[17vw] md:text-[14vw] leading-none -mt-14 sm:-mt-10';
+        } else {
+          dom.posterBgText.className =
+            'poster-wordmark font-poster uppercase text-center whitespace-nowrap select-none text-[28vw] sm:text-[22vw] md:text-[18vw] leading-none -mt-14 sm:-mt-10';
+        }
+
+        // Update Specs Sheet Content
+        dom.handleDot.style.backgroundColor = car.accent;
+        dom.specTagline.textContent = car.tagline;
+        dom.specTagline.style.color = car.accent;
+        dom.specFullTitle.textContent = car.name;
+        dom.specStamp.textContent = car.stamp;
+        dom.specVin.textContent = car.vin;
+        dom.specWriteup.textContent = car.writeup;
+
+        // 5-Column Performance Stats Strip
+        dom.statsStrip.innerHTML = car.stats
+          .map(
+            (st) => `
+          <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-3 text-center">
+            <div class="font-mono-tech text-[9px] tracking-widest uppercase text-white/45">${st.label}</div>
+            <div class="font-display font-bold text-base sm:text-lg text-white mt-1">${st.value}</div>
+            <div class="font-mono-tech text-[9px] text-white/55 mt-0.5">${st.sub}</div>
+          </div>
+        `
+          )
+          .join('');
+
+        // Interactive Quick-Inspect Component Cards
+        dom.componentQuickGrid.innerHTML = Object.entries(car.parts)
+          .map(
+            ([partId, pInfo]) => `
+          <button type="button" data-quick-part="${partId}" class="text-left p-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/25 transition active:scale-[0.98] group">
+            <div class="flex items-center justify-between">
+              <span class="font-mono-tech text-[9px] tracking-widest uppercase" style="color: ${car.accent}">${PART_LABELS[partId]}</span>
+              <svg class="w-3.5 h-3.5 text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="font-display font-bold text-xs sm:text-sm text-white mt-1 line-clamp-1">${pInfo.title}</div>
+            <div class="font-mono-tech text-[10px] text-white/50 mt-0.5">${pInfo.s1Val}</div>
+          </button>
+        `
+          )
+          .join('');
+
+        // Bind quick-inspect buttons
+        dom.componentQuickGrid.querySelectorAll('[data-quick-part]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const pId = btn.getAttribute('data-quick-part');
+            setSpecsOpen(false);
+            if (!state.exploded) toggleExplode(true);
+            setTimeout(() => selectComponent(pId), 260);
+          });
+        });
+
+        // Pre-fill Inquiry Form vehicle name
+        dom.formVehicle.value = `${car.name} (${car.yearChip})`;
+
+        // Reset selection & rebuild 3D car (Real GLB or Procedural)
+        clearComponentSelection();
+        if (car.modelUrl && gltfLoader) {
+          loadGLBCar(car.modelUrl, car);
+        } else {
+          if (dom.activeModelPill) dom.activeModelPill.classList.add('hidden');
+          buildProceduralCar(car);
+        }
+
+        if (spinEntrance) {
+          state.targetRotY += Math.PI * 1.15;
+        }
+
+        // Refresh Key Fob active badge if modal rendered
+        renderKeyFobGrid();
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 7.5 REAL 3D MODEL LOADER & ASSET PROCESSOR                        */
+      /* ----------------------------------------------------------------- */
+      function showModelLoader(show, text = 'Loading Real 3D Asset...', pct = 0) {
+        if (!dom.modelLoaderBadge) return;
+        if (show) {
+          dom.modelLoaderBadge.classList.remove('hidden');
+          dom.modelLoaderText.textContent = text;
+          updateModelProgress(pct);
+        } else {
+          dom.modelLoaderBadge.classList.add('hidden');
+        }
+      }
+
+      function updateModelProgress(pct) {
+        if (!dom.modelLoaderBar || !dom.modelLoaderPct) return;
+        const clamped = Math.min(Math.max(pct, 0), 100);
+        dom.modelLoaderBar.style.width = clamped + '%';
+        dom.modelLoaderPct.textContent = clamped + '%';
+      }
+
+      function showToast(msg, isError = false) {
+        if (!dom.toastPill) return;
+        dom.toastMsg.textContent = msg;
+        dom.toastDot.className = `w-2 h-2 rounded-full ${isError ? 'bg-red-400' : 'bg-emerald-400'}`;
+        dom.toastPill.classList.remove('hidden');
+        setTimeout(() => dom.toastPill.classList.add('hidden'), 3500);
+      }
+
+      function loadGLBCar(url, car) {
+        showModelLoader(true, `Loading Real ${car.name}...`, 15);
+        gltfLoader.load(
+          url,
+          (gltf) => {
+            showModelLoader(false);
+            setupLoadedGLB(gltf.scene, car, car.modelName || car.name);
+            showToast(`Real 3D Loaded: ${car.modelName || car.name}`);
+          },
+          (xhr) => {
+            if (xhr.total > 0) {
+              const pct = Math.round((xhr.loaded / xhr.total) * 100);
+              updateModelProgress(pct);
+            } else {
+              const estimate = Math.min(Math.round((xhr.loaded / 12000000) * 100), 99);
+              updateModelProgress(estimate);
+            }
+          },
+          (err) => {
+            console.warn('GLB load failed, falling back to procedural:', err);
+            showModelLoader(false);
+            showToast('GLB load fallback to procedural', true);
+            if (dom.activeModelPill) dom.activeModelPill.classList.add('hidden');
+            buildProceduralCar(car);
+          }
+        );
+      }
+
+      function getParentLocalDelta(child, carLocalVector) {
+        const p = child.parent || carRoot;
+        // Transform the carLocalVector from carRoot space into parent local space
+        const v1 = carRoot.localToWorld(carLocalVector.clone());
+        const v0 = carRoot.localToWorld(new THREE.Vector3(0, 0, 0));
+        const worldDelta = v1.sub(v0);
+        const m = new THREE.Matrix4().extractRotation(p.matrixWorld);
+        const mInv = m.invert();
+        const pScale = new THREE.Vector3();
+        p.getWorldScale(pScale);
+        return worldDelta.applyMatrix4(mInv).divide(pScale.lengthSq() > 0 ? pScale : new THREE.Vector3(1, 1, 1));
+      }
+
+      function setupLoadedGLB(model, car, displayName) {
+        // Clear previous car geometry safely
+        while (carRoot.children.length > 0) {
+          const obj = carRoot.children[0];
+          carRoot.remove(obj);
+        }
+        partGroups = {
+          body: new THREE.Group(),
+          aero: new THREE.Group(),
+          engine: new THREE.Group(),
+          wheels: new THREE.Group(),
+          interior: new THREE.Group(),
+          chassis: new THREE.Group()
+        };
+        wheelCorners = [];
+        loadedExplodeMeshes = [];
+
+        // 0. Prune surrounding environment / sky / terrain / cloud meshes if embedded in the GLB
+        const toPrune = [];
+        model.traverse((child) => {
+          if (child.isMesh) {
+            const n = (child.name || '').toLowerCase();
+            if (n.includes('cloud') || n.includes('sky') || n.includes('terrain') || n.includes('landscape') || n.includes('backdrop') || n.includes('environment')) {
+              toPrune.push(child);
+            }
+          }
+        });
+        toPrune.forEach((c) => {
+          if (c.parent) c.parent.remove(c);
+        });
+
+        // 1. Measure bounding dimensions
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+
+        // Standardize vehicle scale: target length ~4.3 units
+        const lengthDim = size.z > size.x ? size.z : size.x;
+        const targetLength = 4.3;
+        const scale = targetLength / (lengthDim || 1);
+        model.scale.set(scale, scale, scale);
+
+        // Re-measure after scale
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        const scaledCenter = new THREE.Vector3();
+        scaledBox.getCenter(scaledCenter);
+
+        // Center horizontally and align bottom tires exactly to y = 0
+        model.position.x = -scaledCenter.x;
+        model.position.z = -scaledCenter.z;
+        model.position.y = -scaledBox.min.y;
+
+        // Auto-orient car facing showroom front
+        if (size.x > size.z) {
+          model.rotation.y = Math.PI / 2;
+        }
+
+        carRoot.add(model);
+        carRoot.updateMatrixWorld(true);
+
+        // 2. Classify parts and calculate explode offsets for real 3D models
+        const candidateMeshes = [];
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            candidateMeshes.push(child);
+          }
+        });
+
+        candidateMeshes.forEach((mesh) => {
+          const meshBox = new THREE.Box3().setFromObject(mesh);
+          const worldCenter = new THREE.Vector3();
+          meshBox.getCenter(worldCenter);
+          const localCenter = carRoot.worldToLocal(worldCenter.clone());
+
+          const name = ((mesh.name || '') + ' ' + (mesh.parent ? mesh.parent.name || '' : '') + ' ' + (mesh.material && mesh.material.name ? mesh.material.name : '')).toLowerCase();
+
+          // Enhance materials
+          if (mesh.material) {
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((m) => enhanceCarMaterial(m, car, name));
+            } else {
+              enhanceCarMaterial(mesh.material, car, name);
+            }
+          }
+
+          let animType = 'body';
+          let sideSign = 1;
+          let partId = 'body';
+
+          // Aero: Wing / Spoiler
+          if (name.includes('wing') || name.includes('spoiler') || (localCenter.y > 0.8 && localCenter.z < -1.1)) {
+            partId = 'aero';
+            animType = 'wing';
+          }
+          // Hood / Bonnet (tilt open on hinge to expose engine!)
+          else if (name.includes('hood') || name.includes('bonnet') || (localCenter.y > 0.5 && localCenter.z > 0.65 && Math.abs(localCenter.x) < 0.8)) {
+            partId = 'engine';
+            animType = 'hood';
+          }
+          // Roof / Glass
+          else if (name.includes('roof') || name.includes('glass') || name.includes('windshield') || name.includes('window') || (localCenter.y > 0.88 && Math.abs(localCenter.z) < 0.7 && Math.abs(localCenter.x) < 0.75)) {
+            partId = 'body';
+            animType = 'roof';
+          }
+          // Tailgate / Trunk / Boot (tilt open upward)
+          else if (name.includes('tailgate') || name.includes('trunk') || name.includes('boot')) {
+            partId = 'body';
+            animType = 'trunk';
+          }
+          // Left Door (swing open wide)
+          else if (name.includes('door_l') || name.includes('door.l') || (name.includes('door') && localCenter.x < -0.1) || (localCenter.x < -0.72 && Math.abs(localCenter.z) < 0.75 && localCenter.y > 0.35)) {
+            partId = 'body';
+            animType = 'door_l';
+          }
+          // Right Door (swing open wide)
+          else if (name.includes('door_r') || name.includes('door.r') || (name.includes('door') && localCenter.x > 0.1) || (localCenter.x > 0.72 && Math.abs(localCenter.z) < 0.75 && localCenter.y > 0.35)) {
+            partId = 'body';
+            animType = 'door_r';
+          }
+          // Wheels & Brakes (strictly horizontal lateral slide - locked Y at ground height!)
+          else if (name.includes('wheel') || name.includes('tire') || name.includes('rim') || name.includes('caliper') || name.includes('brake') || name.includes('disc') || (localCenter.y < 0.55 && Math.abs(localCenter.x) > 0.62)) {
+            partId = 'wheels';
+            animType = 'wheel';
+            sideSign = localCenter.x < 0 ? -1 : 1;
+          }
+          // Engine components
+          else if (name.includes('engine') || name.includes('motor') || name.includes('exhaust') || name.includes('pipe') || name.includes('intake')) {
+            partId = 'engine';
+            animType = 'engine';
+          }
+          // Cockpit / Interior
+          else if (name.includes('interior') || name.includes('seat') || name.includes('steer') || name.includes('dash') || name.includes('carpet') || name.includes('leather')) {
+            partId = 'interior';
+            animType = 'interior';
+          }
+          // Chassis
+          else if (name.includes('chassis') || name.includes('floor') || name.includes('suspension') || name.includes('axle') || localCenter.y < 0.22) {
+            partId = 'chassis';
+            animType = 'chassis';
+          } else {
+            partId = 'body';
+            animType = 'body';
+          }
+
+          mesh.userData.partId = partId;
+          mesh.userData.origPos = mesh.position.clone();
+          mesh.userData.origRot = mesh.rotation.clone();
+
+          loadedExplodeMeshes.push({
+            mesh: mesh,
+            origPos: mesh.position.clone(),
+            origRot: mesh.rotation.clone(),
+            animType: animType,
+            sideSign: sideSign,
+            partId: partId
+          });
+        });
+
+        // Show Active Real 3D pill
+        if (dom.activeModelPill && dom.activeModelName) {
+          dom.activeModelPill.classList.remove('hidden');
+          dom.activeModelName.textContent = `REAL 3D: ${displayName || 'GLB ASSET'}`;
+        }
+
+        buildHotspotPins(car);
+      }
+
+      function enhanceCarMaterial(mat, car, meshName = '') {
+        const lower = meshName.toLowerCase();
+        // Body paint detection
+        if (lower.includes('body') || lower.includes('paint') || lower.includes('exterior') || lower.includes('hood') || lower.includes('door') || lower.includes('chassis_color') || lower.includes('shell') || lower.includes('car')) {
+          mat.metalness = 0.65;
+          mat.roughness = 0.16;
+          if (mat.clearcoat !== undefined) {
+            mat.clearcoat = 1.0;
+            mat.clearcoatRoughness = 0.06;
+          }
+          if (car && car.paintHex && !lower.includes('carbon') && !lower.includes('black')) {
+            mat.color = new THREE.Color(car.paintHex);
+          }
+        } else if (lower.includes('glass') || lower.includes('window') || lower.includes('windshield')) {
+          mat.transparent = true;
+          mat.opacity = 0.38;
+          mat.roughness = 0.05;
+          mat.metalness = 0.85;
+        } else if (lower.includes('wheel') || lower.includes('rim') || lower.includes('chrome')) {
+          mat.metalness = 0.9;
+          mat.roughness = 0.18;
+        } else if (lower.includes('tire') || lower.includes('rubber')) {
+          mat.roughness = 0.88;
+          mat.metalness = 0.05;
+        } else if (lower.includes('light') || lower.includes('lamp') || lower.includes('headlight')) {
+          mat.emissive = new THREE.Color(0xffffff);
+          mat.emissiveIntensity = 1.8;
+        } else if (lower.includes('taillight') || lower.includes('brake_light')) {
+          mat.emissive = new THREE.Color(0xff1828);
+          mat.emissiveIntensity = 1.9;
+        }
+        mat.needsUpdate = true;
+      }
+
+      function initModelImport() {
+        if (dom.loadGlbBtn && dom.glbFilePicker) {
+          dom.loadGlbBtn.addEventListener('click', () => {
+            dom.glbFilePicker.click();
+          });
+
+          dom.glbFilePicker.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              loadLocalGLB(file);
+            }
+          });
+        }
+
+        // Drag and drop handlers
+        window.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (dom.dropOverlay) dom.dropOverlay.classList.remove('hidden');
+        });
+
+        window.addEventListener('dragleave', (e) => {
+          if (e.relatedTarget === null && dom.dropOverlay) {
+            dom.dropOverlay.classList.add('hidden');
+          }
+        });
+
+        window.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (dom.dropOverlay) dom.dropOverlay.classList.add('hidden');
+          const file = e.dataTransfer && e.dataTransfer.files[0];
+          if (file && (file.name.endsWith('.glb') || file.name.endsWith('.gltf'))) {
+            loadLocalGLB(file);
+          } else if (file) {
+            showToast('Please drop a .glb or .gltf 3D file', true);
+          }
+        });
+      }
+
+      function loadLocalGLB(file) {
+        showModelLoader(true, `Importing ${file.name}...`, 25);
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const arrayBuffer = e.target.result;
+          if (gltfLoader) {
+            gltfLoader.parse(
+              arrayBuffer,
+              '',
+              (gltf) => {
+                showModelLoader(false);
+                const currentCar = VEHICLES[state.currentIndex];
+                currentCar.modelUrl = 'custom';
+                setupLoadedGLB(gltf.scene, currentCar, file.name);
+                showToast(`Loaded ${file.name} successfully!`);
+              },
+              (err) => {
+                console.error('Error parsing GLTF:', err);
+                showModelLoader(false);
+                showToast('Failed to parse 3D file', true);
+              }
+            );
+          }
+        };
+        reader.onprogress = function (e) {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            updateModelProgress(pct);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 8. LUXURY KEY-FOB GARAGE SELECTOR GRID                            */
+      /* ----------------------------------------------------------------- */
+      function getKeyFobSVG(car) {
+        // Custom luxury fob silhouettes per vehicle
+        switch (car.id) {
+          case 'gt3rs':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <defs>
+                  <linearGradient id="pGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3f3f46"/><stop offset="50%" stop-color="#18181b"/><stop offset="100%" stop-color="${car.accent}"/>
+                  </linearGradient>
+                </defs>
+                <!-- Sculpted 911 Car Silhouette Fob -->
+                <path d="M22 14 C22 6 58 6 58 14 L64 46 C66 70 64 98 58 114 C54 122 26 122 22 114 C16 98 14 70 16 46 Z" fill="url(#pGrad)" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+                <path d="M26 30 Q40 22 54 30 L52 52 Q40 48 28 52 Z" fill="#09090b" opacity="0.85"/>
+                <path d="M27 78 Q40 84 53 78 L50 96 Q40 100 30 96 Z" fill="#09090b" opacity="0.8"/>
+                <rect x="33" y="102" width="14" height="10" rx="2" fill="#d97706" stroke="#fef08a" stroke-width="0.8"/>
+              </svg>`;
+          case 'm4':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Angular BMW M Fob with Tri-Stripe -->
+                <path d="M20 12 L52 12 L64 28 L64 106 L52 120 L22 120 L16 106 L16 26 Z" fill="#18181b" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                <path d="M52 12 L64 28 L64 106 L56 106 L56 30 L47 18 Z" fill="#2563eb"/>
+                <path d="M56 30 L60 30 L60 106 L56 106 Z" fill="#ef4444"/>
+                <circle cx="38" cy="44" r="12" fill="#09090b" stroke="#e4e4e7" stroke-width="1.5"/>
+                <path d="M38 32 A12 12 0 0 1 50 44 L38 44 Z" fill="#38bdf8"/>
+                <path d="M38 56 A12 12 0 0 1 26 44 L38 44 Z" fill="#38bdf8"/>
+                <rect x="26" y="68" width="24" height="10" rx="3" fill="#27272a"/>
+                <rect x="26" y="84" width="24" height="10" rx="3" fill="#27272a"/>
+              </svg>`;
+          case 'e30':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Retro Heritage E30 Key -->
+                <rect x="18" y="12" width="44" height="58" rx="8" fill="#14532d" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+                <rect x="24" y="18" width="32" height="46" rx="5" fill="#18181b"/>
+                <circle cx="40" cy="40" r="11" fill="#09090b" stroke="#d4d4d8" stroke-width="1.4"/>
+                <path d="M40 29 A11 11 0 0 1 51 40 L40 40 Z" fill="#34d399"/>
+                <path d="M40 51 A11 11 0 0 1 29 40 L40 40 Z" fill="#34d399"/>
+                <!-- Classic Metal Key Blade -->
+                <path d="M35 70 L45 70 L45 116 L41 122 L35 116 L35 106 L39 102 L35 98 L35 90 L39 86 L35 82 Z" fill="#d4d4d8"/>
+              </svg>`;
+          case 'challenger':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Bold Pentagonal Muscle Fob -->
+                <path d="M22 12 L58 12 L66 36 L60 112 L40 122 L20 112 L14 36 Z" fill="#1e1b4b" stroke="${car.accent}" stroke-width="1.6"/>
+                <rect x="24" y="24" width="32" height="16" rx="4" fill="#09090b"/>
+                <text x="40" y="36" text-anchor="middle" fill="#e9d5ff" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="10">R/T</text>
+                <rect x="24" y="50" width="32" height="14" rx="4" fill="#27272a"/>
+                <rect x="24" y="70" width="32" height="14" rx="4" fill="#27272a"/>
+                <rect x="28" y="92" width="24" height="12" rx="4" fill="#ef4444" opacity="0.85"/>
+              </svg>`;
+          case 'gt500':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Chamfered Shelby Track Fob -->
+                <polygon points="24,10 56,10 66,30 62,108 40,122 18,108 14,30" fill="#18181b" stroke="#fb923c" stroke-width="1.8"/>
+                <rect x="37" y="12" width="6" height="106" fill="#ea580c" opacity="0.35"/>
+                <circle cx="40" cy="40" r="14" fill="#09090b" stroke="#fb923c" stroke-width="1.2"/>
+                <text x="40" y="45" text-anchor="middle" fill="#fb923c" font-family="Anton, sans-serif" font-size="11" letter-spacing="1">GT500</text>
+                <rect x="25" y="64" width="30" height="12" rx="3" fill="#27272a"/>
+                <rect x="25" y="82" width="30" height="12" rx="3" fill="#27272a"/>
+              </svg>`;
+          case 'ferrari':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <defs>
+                  <linearGradient id="ferrariGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/>
+                  </linearGradient>
+                </defs>
+                <!-- Curvaceous Sculpted Rosso Corsa Fob -->
+                <path d="M22 14 C22 6 58 6 58 14 C64 34 68 76 60 114 C56 122 24 122 20 114 C12 76 16 34 22 14 Z" fill="url(#ferrariGrad)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <ellipse cx="40" cy="38" rx="14" ry="16" fill="#facc15" stroke="#78350f" stroke-width="1"/>
+                <text x="40" y="43" text-anchor="middle" fill="#000000" font-family="Anton, sans-serif" font-size="14">SF</text>
+                <rect x="28" y="70" width="24" height="12" rx="4" fill="#18181b" stroke="#ffffff" stroke-width="0.5"/>
+                <rect x="28" y="88" width="24" height="12" rx="4" fill="#18181b" stroke="#ffffff" stroke-width="0.5"/>
+              </svg>`;
+          case 'aventador':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Stealth Angular Hexagonal Carbon Fob -->
+                <polygon points="40,8 68,26 64,106 40,124 16,106 12,26" fill="#18181b" stroke="#f59e0b" stroke-width="1.8"/>
+                <polygon points="40,14 62,28 58,102 40,118 22,102 18,28" fill="#09090b"/>
+                <polygon points="40,24 54,34 50,56 40,62 30,56 26,34" fill="#f59e0b" stroke="#78350f" stroke-width="0.8"/>
+                <text x="40" y="46" text-anchor="middle" fill="#000000" font-family="Anton, sans-serif" font-size="10">SV</text>
+                <rect x="26" y="74" width="28" height="12" rx="3" fill="#27272a" stroke="#d97706" stroke-width="0.8"/>
+                <rect x="26" y="92" width="28" height="12" rx="3" fill="#27272a" stroke="#d97706" stroke-width="0.8"/>
+              </svg>`;
+          case 'datsun':
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Vintage Datsun Brass & Chrome Key -->
+                <rect x="20" y="12" width="40" height="54" rx="10" fill="#78350f" stroke="#fbbf24" stroke-width="1.8"/>
+                <circle cx="40" cy="38" r="14" fill="#18181b" stroke="#fbbf24" stroke-width="1.4"/>
+                <text x="40" y="44" text-anchor="middle" fill="#fbbf24" font-family="Anton, sans-serif" font-size="16">Z</text>
+                <!-- Steel Key Blade -->
+                <path d="M36 66 L44 66 L44 116 L40 122 L36 116 L36 104 L40 100 L36 94 L36 86 L40 82 L36 78 Z" fill="#d4d4d8"/>
+              </svg>`;
+          default: // Nissan GT-R R34
+            return `
+              <svg viewBox="0 0 80 130" class="w-16 h-26 mx-auto drop-shadow-2xl">
+                <!-- Iconic Oval Carbon GT-R Fob -->
+                <rect x="16" y="10" width="48" height="110" rx="24" fill="#18181b" stroke="rgba(192,132,252,0.55)" stroke-width="1.8"/>
+                <rect x="23" y="22" width="34" height="26" rx="8" fill="#09090b" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <text x="40" y="34" text-anchor="middle" fill="#ffffff" font-family="Anton, sans-serif" font-size="11" letter-spacing="1">GT</text>
+                <text x="40" y="44" text-anchor="middle" fill="#ef4444" font-family="Anton, sans-serif" font-size="11" letter-spacing="1">R</text>
+                <rect x="27" y="58" width="26" height="12" rx="4" fill="#27272a"/>
+                <rect x="27" y="75" width="26" height="12" rx="4" fill="#27272a"/>
+                <rect x="27" y="92" width="26" height="12" rx="4" fill="#27272a"/>
+              </svg>`;
+        }
+      }
+
+      function renderKeyFobGrid() {
+        dom.keyFobGrid.innerHTML = VEHICLES.map((car, idx) => {
+          const isActive = idx === state.currentIndex;
+          return `
+            <button type="button" data-fob-index="${idx}" class="fob-card relative carbon-weave rounded-3xl p-4 sm:p-5 text-center border ${
+              isActive
+                ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.18)]'
+                : 'border-white/10 hover:border-white/30'
+            } focus:outline-none">
+              ${
+                isActive
+                  ? `<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-white text-zinc-950 font-mono-tech text-[9px] font-bold tracking-wider uppercase">ACTIVE</span>`
+                  : ''
+              }
+              <div class="py-2">${getKeyFobSVG(car)}</div>
+              <div class="mt-2">
+                <div class="font-mono-tech text-[9px] tracking-[0.2em] uppercase" style="color: ${car.accent}">${car.brand}</div>
+                <div class="font-display font-bold text-xs sm:text-sm text-white mt-0.5 line-clamp-1">${car.name}</div>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        dom.keyFobGrid.querySelectorAll('[data-fob-index]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-fob-index'), 10);
+            loadVehicle(idx, true);
+            dom.garageModal.classList.add('hidden');
+          });
+        });
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 9. CONTROLS: AUTO-ROTATE, EXPLODE VIEW, SPECS DRAWER              */
+      /* ----------------------------------------------------------------- */
+      function toggleAutoRotate(forceState) {
+        state.autoRotate = typeof forceState === 'boolean' ? forceState : !state.autoRotate;
+        if (state.autoRotate) {
+          dom.autoRotateBtn.classList.add('bg-white', 'text-zinc-950');
+          dom.autoRotateBtn.classList.remove('bg-white/10', 'text-white');
+          dom.autoRotateIcon.classList.add('animate-spin');
+        } else {
+          dom.autoRotateBtn.classList.remove('bg-white', 'text-zinc-950');
+          dom.autoRotateBtn.classList.add('bg-white/10', 'text-white');
+          dom.autoRotateIcon.classList.remove('animate-spin');
+        }
+      }
+
+      function toggleExplode(forceState) {
+        state.exploded = typeof forceState === 'boolean' ? forceState : !state.exploded;
+        if (state.exploded) {
+          dom.explodeBtn.classList.add('bg-white', 'text-zinc-950');
+          dom.explodeBtn.classList.remove('bg-white/10', 'text-white');
+          dom.hotspotsLayer.classList.remove('opacity-0');
+          dom.hotspotsLayer.classList.add('opacity-100');
+        } else {
+          dom.explodeBtn.classList.remove('bg-white', 'text-zinc-950');
+          dom.explodeBtn.classList.add('bg-white/10', 'text-white');
+          dom.hotspotsLayer.classList.add('opacity-0');
+          dom.hotspotsLayer.classList.remove('opacity-100');
+          clearComponentSelection();
+        }
+      }
+
+      function setSpecsOpen(open) {
+        state.specsOpen = open;
+        if (open) {
+          // Compact 3D stage to top 32% as a live mini-preview
+          dom.stageViewport.style.height = '34dvh';
+          dom.specsSheet.style.transform = 'translateY(0%)';
+          dom.handleLabel.textContent = 'Scroll Down to Return to 3D Stage';
+          dom.handleChevron.style.transform = 'rotate(180deg)';
+          dom.stageControls.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+          dom.heroMeta.classList.add('opacity-0', '-translate-y-2');
+          dom.restoreStagePill.classList.remove('hidden');
+          dom.restoreStagePill.classList.add('flex');
+          clearComponentSelection();
+          if (state.exploded) toggleExplode(false);
+        } else {
+          // Restore full-screen 3D turntable stage
+          dom.stageViewport.style.height = '100%';
+          dom.specsSheet.style.transform = 'translateY(calc(100% - 64px))';
+          dom.handleLabel.textContent = 'Scroll Up for Specs & Telemetry';
+          dom.handleChevron.style.transform = 'rotate(0deg)';
+          dom.stageControls.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+          dom.heroMeta.classList.remove('opacity-0', '-translate-y-2');
+          dom.restoreStagePill.classList.add('hidden');
+          dom.restoreStagePill.classList.remove('flex');
+          dom.specsScrollBody.scrollTop = 0;
+        }
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 10. POINTER / TOUCH GESTURES (360° Turntable + Vertical Drawer)   */
+      /* ----------------------------------------------------------------- */
+      let isDragging = false;
+      let dragAxis = null; // 'x' for turntable, 'y' for specs drawer
+      let startX = 0;
+      let startY = 0;
+      let lastX = 0;
+      let totalMoved = 0;
+
+      function onPointerDown(e) {
+        isDragging = true;
+        dragAxis = null;
+        startX = e.clientX;
+        startY = e.clientY;
+        lastX = e.clientX;
+        totalMoved = 0;
+        state.rotVelocity = 0;
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        const dxTotal = e.clientX - startX;
+        const dyTotal = e.clientY - startY;
+        totalMoved = Math.hypot(dxTotal, dyTotal);
+
+        if (!dragAxis && totalMoved > 6) {
+          dragAxis = Math.abs(dxTotal) >= Math.abs(dyTotal) ? 'x' : 'y';
+        }
+
+        if (dragAxis === 'x') {
+          const dx = e.clientX - lastX;
+          lastX = e.clientX;
+          const deltaAngle = dx * 0.0115;
+          state.targetRotY += deltaAngle;
+          state.rotVelocity = deltaAngle;
+
+          if (!state.hasInteracted) {
+            state.hasInteracted = true;
+            dom.swipeHint.classList.add('opacity-0');
+          }
+        } else if (dragAxis === 'y') {
+          // Swipe up on stage -> open Specs Sheet
+          if (!state.specsOpen && dyTotal < -45) {
+            setSpecsOpen(true);
+            isDragging = false;
+          } else if (state.specsOpen && dyTotal > 35) {
+            setSpecsOpen(false);
+            isDragging = false;
+          }
+        }
+      }
+
+      function onPointerUp(e) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        // If user tapped (minimal movement), run Raycaster to inspect tapped 3D part
+        if (totalMoved < 9) {
+          if (state.specsOpen) {
+            // Tapping the mini-preview restores the full 3D stage
+            setSpecsOpen(false);
+            return;
+          }
+          handleCanvasTap(e.clientX, e.clientY);
+        }
+      }
+
+      function handleCanvasTap(clientX, clientY) {
+        const rect = dom.canvas.getBoundingClientRect();
+        pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hits = raycaster.intersectObjects(carRoot.children, true);
+
+        if (hits.length > 0) {
+          const hitPart = hits[0].object.userData.partId;
+          if (hitPart) {
+            if (!state.exploded) {
+              // Automatically explode slightly or open inspector directly
+              selectComponent(hitPart);
+            } else {
+              selectComponent(hitPart);
+            }
+          }
+        } else {
+          clearComponentSelection();
+        }
+      }
+
+      // Mouse Wheel Vertical Scroll Transition (Desktop Convenience)
+      let wheelCooldown = false;
+      function onWheel(e) {
+        if (!dom.garageModal.classList.contains('hidden') || !dom.inquireModal.classList.contains('hidden')) {
+          return;
+        }
+        if (wheelCooldown) return;
+
+        // Scrolling down on hero stage -> expand Specs Sheet
+        if (!state.specsOpen && e.deltaY > 28) {
+          setSpecsOpen(true);
+          wheelCooldown = true;
+          setTimeout(() => (wheelCooldown = false), 550);
+        }
+        // Scrolling up while at top of Specs Sheet -> restore 3D Stage
+        else if (state.specsOpen && e.deltaY < -28 && dom.specsScrollBody.scrollTop <= 2) {
+          setSpecsOpen(false);
+          wheelCooldown = true;
+          setTimeout(() => (wheelCooldown = false), 550);
+        }
+      }
+
+      // Touch swipe on Specs Sheet handle
+      let handleTouchStartY = 0;
+      dom.specsHandle.addEventListener('touchstart', (e) => {
+        handleTouchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      dom.specsHandle.addEventListener('touchend', (e) => {
+        const dy = e.changedTouches[0].clientY - handleTouchStartY;
+        if (dy < -25 && !state.specsOpen) setSpecsOpen(true);
+        else if (dy > 25 && state.specsOpen) setSpecsOpen(false);
+      }, { passive: true });
+
+      /* ----------------------------------------------------------------- */
+      /* 11. ANIMATION LOOP (60fps Turntable, Explode Lerp, Hotspots)      */
+      /* ----------------------------------------------------------------- */
+      const tempVec = new THREE.Vector3();
+
+      function updateResize() {
+        const w = dom.canvasContainer.clientWidth;
+        const h = dom.canvasContainer.clientHeight;
+        if (w <= 0 || h <= 0) return;
+
+        if (dom.canvas.width !== Math.floor(w * renderer.getPixelRatio()) ||
+            dom.canvas.height !== Math.floor(h * renderer.getPixelRatio())) {
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h, false);
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        updateResize();
+
+        // 1. Turntable Rotation + Inertia
+        if (state.autoRotate && !isDragging) {
+          state.targetRotY += 0.0085;
+        } else if (!isDragging && Math.abs(state.rotVelocity) > 0.0002) {
+          state.targetRotY += state.rotVelocity;
+          state.rotVelocity *= 0.93;
+        }
+        state.currentRotY += (state.targetRotY - state.currentRotY) * 0.12;
+        carRoot.rotation.y = state.currentRotY;
+
+        // Update 360° degree readout
+        const deg = (((Math.round((state.currentRotY * 180) / Math.PI) % 360) + 360) % 360);
+        dom.angleReadout.textContent = String(deg).padStart(3, '0') + '°';
+
+        // 2. Smooth Camera Framing (Compact Mini-Preview vs Full Stage vs Explode Zoom)
+        const targetCamZ = state.specsOpen ? 7.4 : state.exploded ? 8.1 : 6.35;
+        const targetCamY = state.specsOpen ? 1.5 : state.exploded ? 2.25 : 1.52;
+        camera.position.z += (targetCamZ - camera.position.z) * 0.08;
+        camera.position.y += (targetCamY - camera.position.y) * 0.08;
+        camera.lookAt(0, state.exploded ? 0.75 : 0.42, 0);
+
+        // 3. Smooth Explode View Interpolation
+        const targetExplode = state.exploded ? 1 : 0;
+        state.explodeProgress += (targetExplode - state.explodeProgress) * 0.09;
+        const ep = state.explodeProgress;
+
+        if (loadedExplodeMeshes && loadedExplodeMeshes.length > 0) {
+          // Dynamic sub-part explosion for Real 3D Models
+          loadedExplodeMeshes.forEach((item) => {
+            const m = item.mesh;
+            const orig = item.origPos;
+            const origR = item.origRot;
+
+            if (item.animType === 'hood') {
+              // Tilt bonnet open on hinge and lift to expose engine
+              m.position.y = orig.y + 0.32 * ep;
+              m.position.z = orig.z + 0.14 * ep;
+              m.rotation.x = origR.x - 0.58 * ep;
+            } else if (item.animType === 'door_l') {
+              // Swing driver door open
+              m.position.x = orig.x - 0.28 * ep;
+              m.position.z = orig.z + 0.08 * ep;
+              m.rotation.y = origR.y - 0.68 * ep;
+            } else if (item.animType === 'door_r') {
+              // Swing passenger door open
+              m.position.x = orig.x + 0.28 * ep;
+              m.position.z = orig.z + 0.08 * ep;
+              m.rotation.y = origR.y + 0.68 * ep;
+            } else if (item.animType === 'trunk') {
+              // Tilt trunk/boot lid open
+              m.position.y = orig.y + 0.26 * ep;
+              m.position.z = orig.z - 0.14 * ep;
+              m.rotation.x = origR.x + 0.52 * ep;
+            } else if (item.animType === 'wheel') {
+              // PERFECT LATERAL ALIGNMENT:
+              // Strictly horizontal slide along track width (X), locked Y at ground height, locked Z!
+              m.position.x = orig.x + item.sideSign * 0.36 * ep;
+              m.position.y = orig.y; // ZERO vertical displacement
+              m.position.z = orig.z; // ZERO drift
+              m.rotation.copy(origR); // PRESERVE wheel rotation
+            } else if (item.animType === 'wing') {
+              m.position.y = orig.y + 0.55 * ep;
+              m.position.z = orig.z - 0.35 * ep;
+            } else if (item.animType === 'roof') {
+              m.position.y = orig.y + 0.62 * ep;
+            } else if (item.animType === 'engine') {
+              m.position.y = orig.y + 0.16 * ep;
+            } else {
+              m.position.y = orig.y + 0.08 * ep;
+            }
+          });
+        } else {
+          // Procedural Model Articulated Explode View (Bonnet, Doors, Trunk, Wheels)
+          const car = VEHICLES[state.currentIndex];
+          if (partGroups.bonnet) {
+            const hingeDir = car.engineLayout === 'rear' ? 1 : -1;
+            partGroups.bonnet.rotation.x = hingeDir * ep * 0.72; // Tilt bonnet open wide, exposing engine!
+          }
+          if (partGroups.doorL) {
+            partGroups.doorL.rotation.y = -ep * 0.82; // Swing left door open wide!
+          }
+          if (partGroups.doorR) {
+            partGroups.doorR.rotation.y = ep * 0.82; // Swing right door open wide!
+          }
+          if (partGroups.trunk) {
+            partGroups.trunk.rotation.x = ep * 0.62; // Tilt boot / trunk open upward!
+          }
+          if (partGroups.roof) {
+            partGroups.roof.position.y = ep * 0.55; // Roof floats upward!
+          }
+          if (partGroups.aero) {
+            partGroups.aero.position.y = ep * 0.58;
+            partGroups.aero.position.z = -ep * 0.42;
+          }
+          if (partGroups.engine) {
+            partGroups.engine.position.y = ep * 0.18; // Elevate engine slightly for clear view
+          }
+          if (partGroups.chassis) {
+            partGroups.chassis.position.y = -ep * 0.08;
+          }
+          wheelCorners.forEach((corner) => {
+            // STRICT LATERAL TRACK-WIDTH OFFSET ONLY!
+            // Zero Y drop (perfect ground level), Zero Z shift!
+            const side = corner.userData.basePos.x >= 0 ? 1 : -1;
+            corner.position.x = corner.userData.basePos.x + side * 0.38 * ep;
+            corner.position.y = corner.userData.basePos.y; // STRICTLY LOCKED GROUND HEIGHT
+            corner.position.z = corner.userData.basePos.z; // STRICTLY LOCKED WHEELBASE
+          });
+        }
+
+        // 4. Project 3D Part Positions to Floating HTML Hotspot Pins
+        if (ep > 0.15 && !state.specsOpen) {
+          const cw = dom.canvasContainer.clientWidth;
+          const ch = dom.canvasContainer.clientHeight;
+          const car = VEHICLES[state.currentIndex];
+          const engDir = car.engineLayout === 'rear' ? -1 : 1;
+
+          const anchors = {
+            body: new THREE.Vector3(0, 1.35 + ep * 1.18, 0.2),
+            engine: new THREE.Vector3(0, 0.78 + ep * 0.46, (1.12 + ep * 1.15) * engDir),
+            wheels: new THREE.Vector3(0.95 + ep * 0.72, 0.36, 1.28 + ep * 0.24),
+            interior: new THREE.Vector3(-0.2, 0.92 + ep * 0.56, -0.15),
+            chassis: new THREE.Vector3(0, 0.25 - ep * 0.16, 0),
+            aero: new THREE.Vector3(0, 1.2 + ep * 0.52, -1.9 - ep * 0.65)
+          };
+
+          Object.entries(anchors).forEach(([partId, localPos]) => {
+            const btn = hotspotButtons[partId];
+            if (!btn) return;
+            tempVec.copy(localPos);
+            carRoot.localToWorld(tempVec);
+            tempVec.project(camera);
+
+            const x = (tempVec.x * 0.5 + 0.5) * cw;
+            const y = (-tempVec.y * 0.5 + 0.5) * ch;
+
+            // Clamp slightly inside viewport so pins remain tappable on mobile
+            const clampedX = Math.max(54, Math.min(cw - 54, x));
+            const clampedY = Math.max(88, Math.min(ch - 140, y));
+            btn.style.left = `${clampedX}px`;
+            btn.style.top = `${clampedY}px`;
+          });
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 12. EVENT LISTENERS & MODAL HANDLERS                              */
+      /* ----------------------------------------------------------------- */
+      function bindEvents() {
+        // 3D Canvas Pointer Events (Unified Mouse + Touch)
+        dom.canvasContainer.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
+        window.addEventListener('wheel', onWheel, { passive: true });
+
+        // Stage Control Buttons
+        dom.prevCarBtn.addEventListener('click', () => loadVehicle(state.currentIndex - 1, true));
+        dom.nextCarBtn.addEventListener('click', () => loadVehicle(state.currentIndex + 1, true));
+        dom.autoRotateBtn.addEventListener('click', () => toggleAutoRotate());
+        dom.explodeBtn.addEventListener('click', () => toggleExplode());
+        dom.closeInspectorBtn.addEventListener('click', clearComponentSelection);
+
+        // Brand Home button resets view
+        dom.brandHomeBtn.addEventListener('click', () => {
+          setSpecsOpen(false);
+          if (state.exploded) toggleExplode(false);
+          state.targetRotY = 0.62;
+        });
+
+        // Specs Sheet Handle & Restore Pill
+        dom.specsHandle.addEventListener('click', () => setSpecsOpen(!state.specsOpen));
+        dom.restoreStagePill.addEventListener('click', () => setSpecsOpen(false));
+
+        // Garage Modal
+        const openGarage = () => {
+          renderKeyFobGrid();
+          dom.garageModal.classList.remove('hidden');
+        };
+        dom.openGarageBtn.addEventListener('click', openGarage);
+        dom.specsGarageBtn.addEventListener('click', openGarage);
+        dom.closeGarageBtn.addEventListener('click', () => dom.garageModal.classList.add('hidden'));
+
+        // Inquire Modal
+        const openInquire = () => {
+          dom.inquiryFormView.classList.remove('hidden');
+          dom.inquirySuccessView.classList.add('hidden');
+          dom.inquireModal.classList.remove('hidden');
+        };
+        dom.openInquireBtn.addEventListener('click', openInquire);
+        dom.specsInquireBtn.addEventListener('click', openInquire);
+        dom.closeInquireBtn.addEventListener('click', () => dom.inquireModal.classList.add('hidden'));
+        dom.doneInquireBtn.addEventListener('click', () => dom.inquireModal.classList.add('hidden'));
+
+        // Inquiry Form Submit
+        dom.inquiryForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = dom.formName.value.trim() || 'Guest';
+          const type = dom.formType.value;
+          const vehicle = dom.formVehicle.value;
+          const refCode = 'APX-' + Math.floor(1000 + Math.random() * 9000);
+
+          dom.refCodeText.textContent = refCode;
+          dom.successSummary.textContent = `Thank you, ${name}. Your ${type.toLowerCase()} inquiry for the ${vehicle} has been prioritized by our concierge desk.`;
+          dom.inquiryFormView.classList.add('hidden');
+          dom.inquirySuccessView.classList.remove('hidden');
+          dom.inquiryForm.reset();
+          dom.formVehicle.value = vehicle;
+        });
+
+        // Copy Concierge Reference (iFrame-safe execCommand)
+        dom.copyRefBtn.addEventListener('click', () => {
+          const text = dom.refCodeText.textContent;
+          const tempInput = document.createElement('input');
+          tempInput.value = text;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          try {
+            document.execCommand('copy');
+            dom.copyRefBtn.textContent = 'Copied!';
+            setTimeout(() => (dom.copyRefBtn.textContent = 'Copy'), 1800);
+          } catch (err) {
+            dom.copyRefBtn.textContent = 'Done';
+          }
+          document.body.removeChild(tempInput);
+        });
+
+        // Keyboard Arrow Support on Desktop
+        window.addEventListener('keydown', (e) => {
+          if (!dom.garageModal.classList.contains('hidden') || !dom.inquireModal.classList.contains('hidden')) {
+            if (e.key === 'Escape') {
+              dom.garageModal.classList.add('hidden');
+              dom.inquireModal.classList.add('hidden');
+            }
+            return;
+          }
+          if (e.key === 'ArrowRight') state.targetRotY += 0.35;
+          if (e.key === 'ArrowLeft') state.targetRotY -= 0.35;
+          if (e.key === 'ArrowUp') setSpecsOpen(true);
+          if (e.key === 'ArrowDown') setSpecsOpen(false);
+        });
+
+        // Initialize 3D Model File Picker and Drag & Drop
+        initModelImport();
+      }
+
+      /* ----------------------------------------------------------------- */
+      /* 13. BOOTSTRAP ON WINDOW LOAD                                      */
+      /* ----------------------------------------------------------------- */
+      window.onload = function () {
+        try {
+          initThree();
+          bindEvents();
+          animate();
+        } catch (err) {
+          console.error('APEX VAULT initialization error:', err);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

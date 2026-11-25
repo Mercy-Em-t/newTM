@@ -210,7 +210,7 @@ body {
 
 /* Brand Typographic Wordmark */
 .brand-first {
-    color: #F8F2F5;
+    color: #FAF4F7;
     font-weight: 700;
 }
 [data-theme="dawn"] .brand-first {
@@ -219,12 +219,12 @@ body {
 }
 
 .brand-last {
-    color: #DDD2E2;
-    font-weight: 500;
+    color: #FAF4F7;
+    font-weight: 700;
 }
 [data-theme="dawn"] .brand-last {
-    color: #381934;
-    font-weight: 600;
+    color: #1C0522;
+    font-weight: 700;
 }
 
 .brand-sub {
@@ -232,7 +232,7 @@ body {
     font-weight: 700;
 }
 [data-theme="dawn"] .brand-sub {
-    color: #B84E2C;
+    color: #9E381A;
     font-weight: 700;
 }
 
