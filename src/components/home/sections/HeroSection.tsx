@@ -160,9 +160,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           {/* Block 3: Manifesto Lead, Action Buttons & Telemetry Proof */}
           <div className="lg:col-span-7 lg:row-start-2 z-10 space-y-6 sm:space-y-8">
             <p className="text-base sm:text-lg lg:text-xl font-light t-text-secondary leading-relaxed max-w-2xl">
-              I partner with founders, executives, and technical leaders to design, verify, and ship mission-critical,
-              high-concurrency architectures. Every engagement begins with mathematical feasibility, concurrency risk
-              audits, and 3NF relational data integrity before a single line of code is committed.
+              When 50 buyers hit your checkout at the exact same second or your tournament schedule faces a sudden rain delay, brittle code crumbles. I design and build resilient backends, zero-overselling commerce engines, and sovereign Linux systems that stay fast, accurate, and completely under your control.
             </p>
 
             {/* Action Buttons */}
