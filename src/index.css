@@ -214,24 +214,26 @@ body {
     font-weight: 700;
 }
 [data-theme="dawn"] .brand-first {
-    color: #25061C;
+    color: #1C0522;
     font-weight: 700;
 }
 
 .brand-last {
-    color: #B4A5BC;
-    font-weight: 400;
+    color: #DDD2E2;
+    font-weight: 500;
 }
 [data-theme="dawn"] .brand-last {
-    color: #6E4F63;
-    font-weight: 400;
+    color: #381934;
+    font-weight: 600;
 }
 
 .brand-sub {
     color: #D16E4F;
+    font-weight: 700;
 }
 [data-theme="dawn"] .brand-sub {
     color: #B84E2C;
+    font-weight: 700;
 }
 
 /* Luminous Primary CTA (Theme Adaptive: Gold in Thorn, Deep Amaranth-Plum in Dawn) */

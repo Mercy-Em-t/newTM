@@ -47,20 +47,20 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenCmdK }) => {
             <button
               type="button"
               onClick={() => navigate('home')}
-              className="flex items-center gap-3 focus:outline-none text-left group"
+              className="flex items-center gap-2.5 focus:outline-none text-left group"
               aria-label="Tryphen Emurugat Home"
             >
               <BrandLogo size="sm" />
-              <span className="t-text-muted text-xs">/</span>
-              <span className="font-serif text-xs sm:text-sm t-text-secondary italic font-normal truncate max-w-xs">
+              <span className="t-accent-warm/70 font-mono text-xs px-0.5 select-none">/</span>
+              <span className="font-serif text-xs sm:text-sm t-text-primary italic font-medium tracking-wide truncate max-w-sm">
                 {routeTitles[currentRoute]}
               </span>
             </button>
           ) : (
             <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="uppercase tracking-[0.2em] t-accent-warm font-semibold">Savannah Atelier</span>
-              <span className="t-text-muted">/</span>
-              <span className="font-serif text-sm t-text-primary italic font-normal">
+              <span className="uppercase tracking-[0.2em] t-accent-warm font-bold">Savannah Atelier</span>
+              <span className="t-accent-warm/70 font-mono select-none">/</span>
+              <span className="font-serif text-sm t-text-primary italic font-medium">
                 {routeTitles[currentRoute]}
               </span>
             </div>
